@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import ImageUploader from "./components/ImageUploader";
 import CropperWrapper from "./components/CropperWrapper";
 import ImagePreview from "./components/ImagePreview";
+import TabContent from "./components/TabContent";
+
 import {
   parseAspectRatio,
   getCroppedImg,
@@ -10,19 +12,27 @@ import {
 import { readFile, createImage } from "./utils/imageHelpers";
 
 const PAPER_FORMATS = {
-  "9x13": { width: 8.9, height: 12.7 },
+  "9/13 cm": { width: 8.9, height: 12.7 },
   A4: { width: 21, height: 29.7 },
 };
 
+const TABS = [
+  { key: "id", label: "Zdjęcie do dowodu", aspect: "35/45" },
+  { key: "license", label: "Zdjęcie do prawa jazdy", aspect: "50/50" },
+  { key: "visa", label: "Visa", aspect: "50/50" },
+  { key: "custom", label: "Inne", aspect: "50/50" },
+];
+
 function App() {
+  const [activeTab, setActiveTab] = useState("id");
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1.9);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [noBgImage, setNoBgImage] = useState(null);
-  const [aspectInput, setAspectInput] = useState("35/45");
-  const [selectedFormat, setSelectedFormat] = useState("9x13");
+  const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
+  const [selectedFormat, setSelectedFormat] = useState("9/13 cm");
   const [sheetImages, setSheetImages] = useState([]);
   const [sheetUrl, setSheetUrl] = useState(null);
 
@@ -43,7 +53,7 @@ function App() {
 
   const createCroppedImage = async () => {
     if (!imageSrc || !croppedAreaPixels) return;
-    const width = 350; // px — tutaj możesz zostawić jak jest
+    const width = 350;
     const height = width / aspectRatio;
     const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
     setCroppedImage(cropped);
@@ -83,9 +93,10 @@ function App() {
 
   const generateSheet = async () => {
     if (sheetImages.length === 0) return;
+    const dpi = 300;
     const format = PAPER_FORMATS[selectedFormat];
-    const widthPx = Math.round(cmToPx(format.width));
-    const heightPx = Math.round(cmToPx(format.height));
+    const widthPx = Math.round(cmToPx(format.width,dpi));
+    const heightPx = Math.round(cmToPx(format.height,dpi));
 
     const canvas = document.createElement("canvas");
     canvas.width = widthPx;
@@ -96,20 +107,17 @@ function App() {
 
     const margin = 20;
 
-    // stałe wymiary zdjęcia w cm
-    const photoWidthCm = 3.5;  // 35 mm
-    const photoHeightCm = 4.5; // 45 mm
+    const photoWidthCm = 3.5;
+    const photoHeightCm = 4.5;
 
-    // wymiary w px
-    const imgWidth = Math.round(cmToPx(photoWidthCm));
-    const imgHeight = Math.round(cmToPx(photoHeightCm));
+    const imgWidth = Math.round(cmToPx(photoWidthCm,dpi));
+    const imgHeight = Math.round(cmToPx(photoHeightCm,dpi));
 
-    // liczymy ile kolumn i wierszy zmieści się na kartce
     const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
     const rows = Math.floor((heightPx + margin) / (imgHeight + margin));
 
     for (let i = 0; i < sheetImages.length; i++) {
-      if (i >= cols * rows) break; // nie przekraczamy liczby dostępnych miejsc
+      if (i >= cols * rows) break;
 
       const img = await createImage(sheetImages[i]);
       const x = margin + (i % cols) * (imgWidth + margin);
@@ -149,6 +157,32 @@ function App() {
     setSheetUrl(null);
   };
 
+  const handleTabChange = (tabKey) => {
+    setActiveTab(tabKey);
+    const tab = TABS.find((t) => t.key === tabKey);
+    setAspectInput(tab.aspect);
+    setImageSrc(null);
+    setCroppedImage(null);
+    setNoBgImage(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1.9);
+    setCroppedAreaPixels(null);
+  };
+
+  // Styl bazowy dla wszystkich przycisków
+  const buttonBaseStyle = {
+    padding: "12px 28px",
+    fontSize: 16,
+    color: "white",
+    border: "none",
+    borderRadius: 8,
+    cursor: "pointer",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    transition: "background-color 0.25s ease",
+    fontWeight: 600,
+    userSelect: "none",
+  };
+
   return (
     <div
       style={{
@@ -172,8 +206,33 @@ function App() {
           textShadow: "0 1px 3px rgba(0,0,0,0.1)",
         }}
       >
-        Document photo
+        Twoje zdjęcie do dokumentów
       </h2>
+
+      <div style={{ display: "flex", gap: 12, marginBottom: 24, justifyContent: "center" }}>
+        {TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => handleTabChange(tab.key)}
+            style={{
+              padding: "10px 24px",
+              fontSize: 16,
+              borderRadius: 8,
+              border: activeTab === tab.key ? "2px solid #3498db" : "1.5px solid #bdc3c7",
+              background: activeTab === tab.key ? "#eaf6fb" : "white",
+              color: "#2c3e50",
+              fontWeight: activeTab === tab.key ? 700 : 500,
+              cursor: "pointer",
+              boxShadow: activeTab === tab.key ? "0 2px 8px #3498dbaa" : "none",
+              transition: "all 0.2s",
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <TabContent tabKey={activeTab} setAspectInput={setAspectInput} aspectInput={aspectInput} />
 
       <div style={{ marginBottom: 24 }}>
         <ImageUploader onChange={onFileChange} />
@@ -197,35 +256,7 @@ function App() {
               fontSize: 14,
             }}
           >
-            Proportion (mm, np. 35/45):
-          </div>
-          <input
-            type="text"
-            value={aspectInput}
-            onChange={(e) => setAspectInput(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "8px 12px",
-              fontSize: 15,
-              borderRadius: 6,
-              border: "1.5px solid #bdc3c7",
-              transition: "border-color 0.3s",
-            }}
-            onFocus={(e) => (e.target.style.borderColor = "#3498db")}
-            onBlur={(e) => (e.target.style.borderColor = "#bdc3c7")}
-          />
-        </label>
-
-        <label style={{ flex: "1 1 180px", minWidth: 180 }}>
-          <div
-            style={{
-              marginBottom: 6,
-              fontWeight: 600,
-              color: "#34495e",
-              fontSize: 14,
-            }}
-          >
-            Size:
+            Format drukowanej kartki:
           </div>
           <select
             value={selectedFormat}
@@ -277,19 +308,12 @@ function App() {
           <button
             onClick={createCroppedImage}
             style={{
+              ...buttonBaseStyle,
               marginTop: 16,
-              padding: "12px 28px",
-              fontSize: 17,
               backgroundColor: "#3498db",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(52,152,219,0.4)",
-              transition: "background-color 0.25s ease",
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#2980b9")
+              (e.currentTarget.style.backgroundColor = "#3498db")
             }
             onMouseLeave={(e) =>
               (e.currentTarget.style.backgroundColor = "#3498db")
@@ -324,26 +348,20 @@ function App() {
             <button
               onClick={handleSend}
               style={{
+                ...buttonBaseStyle,
                 marginTop: 14,
-                padding: "10px 20px",
-                fontSize: 15,
-                backgroundColor: "#f39c12",
-                color: "white",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer",
-                boxShadow: "0 3px 10px rgba(243,156,18,0.5)",
-                transition: "background-color 0.25s ease",
+                backgroundColor: "#3498db",
               }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#d87e00")
+                (e.currentTarget.style.backgroundColor = "#3498db")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "#f39c12")
+                (e.currentTarget.style.backgroundColor = "#3498db")
               }
             >
               Usuń tło
             </button>
+
           </div>
         )}
 
@@ -362,22 +380,15 @@ function App() {
             <button
               onClick={addToSheet}
               style={{
+                ...buttonBaseStyle,
                 marginTop: 14,
-                padding: "10px 20px",
-                fontSize: 15,
-                backgroundColor: "#27ae60",
-                color: "white",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer",
-                boxShadow: "0 3px 10px rgba(39,174,96,0.5)",
-                transition: "background-color 0.25s ease",
+                backgroundColor: "#3498db",
               }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#1e8449")
+                (e.currentTarget.style.backgroundColor = "#3498db")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "#27ae60")
+                (e.currentTarget.style.backgroundColor = "#3498db")
               }
             >
               Dodaj zdjęcie do kartki ({selectedFormat})
@@ -400,16 +411,9 @@ function App() {
           <button
             onClick={createSheetImage}
             style={{
+              ...buttonBaseStyle,
               marginRight: 14,
-              padding: "12px 24px",
-              fontSize: 16,
               backgroundColor: "#2980b9",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-              boxShadow: "0 3px 14px rgba(41,128,185,0.6)",
-              transition: "background-color 0.25s ease",
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.backgroundColor = "#1c5980")
@@ -423,15 +427,8 @@ function App() {
           <button
             onClick={clearSheet}
             style={{
-              padding: "12px 24px",
-              fontSize: 16,
+              ...buttonBaseStyle,
               backgroundColor: "#c0392b",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-              boxShadow: "0 3px 14px rgba(192,57,43,0.6)",
-              transition: "background-color 0.25s ease",
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.backgroundColor = "#89231d")
@@ -479,16 +476,9 @@ function App() {
           <button
             onClick={downloadSheet}
             style={{
+              ...buttonBaseStyle,
               marginTop: 16,
-              padding: "12px 28px",
-              fontSize: 17,
               backgroundColor: "#16a085",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-              boxShadow: "0 4px 14px rgba(22,160,133,0.5)",
-              transition: "background-color 0.25s ease",
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.backgroundColor = "#117a65")

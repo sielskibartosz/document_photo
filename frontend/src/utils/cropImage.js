@@ -6,8 +6,8 @@ export function parseAspectRatio(value) {
   return parts[0] / parts[1];
 }
 
-export function cmToPx(cm) {
-  return (cm / 2.54) * DPI;
+export function cmToPx(cm, dpi = 300) {
+  return Math.round((cm / 2.54) * dpi);
 }
 
 export async function getCroppedImg(imageSrc, crop, width, height) {
