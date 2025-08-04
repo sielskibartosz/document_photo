@@ -1,70 +1,55 @@
 import React, { useState, useCallback } from "react";
-import Cropper from "react-easy-crop";
-
-const DPI = 300;
-const cmToPx = (cm) => (cm / 2.54) * DPI;
+import ImageUploader from "./components/ImageUploader";
+import CropperWrapper from "./components/CropperWrapper";
+import ImagePreview from "./components/ImagePreview";
+import {
+  parseAspectRatio,
+  getCroppedImg,
+  cmToPx,
+} from "./utils/cropImage";
+import { readFile, createImage } from "./utils/imageHelpers";
 
 const PAPER_FORMATS = {
-  "9x13": { width: 9, height: 13 }, // w cm
-  "A4": { width: 21, height: 29.7 },
+  "9x13": { width: 8.9, height: 12.7 },
+  A4: { width: 21, height: 29.7 },
 };
 
-// Konwersja proporcji mm na float aspect ratio
-function parseAspectRatio(ratioStr) {
-  // np. "35/45" => 35/45 = 0.777...
-  if (!ratioStr.includes("/")) return null;
-  const [w, h] = ratioStr.split("/").map((v) => parseFloat(v));
-  if (!w || !h) return null;
-  return w / h;
-}
-
 function App() {
-  // Stany globalne
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1.9);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [noBgImage, setNoBgImage] = useState(null);
-
-  // Proporcja do cropowania wpisana przez użytkownika (string)
   const [aspectInput, setAspectInput] = useState("35/45");
-  const aspectRatio = parseAspectRatio(aspectInput) || 35 / 45;
-
-  // Format kartki do układania zdjęć
   const [selectedFormat, setSelectedFormat] = useState("9x13");
-
-  // Tablica zdjęć bez tła dodanych do kartki
   const [sheetImages, setSheetImages] = useState([]);
   const [sheetUrl, setSheetUrl] = useState(null);
 
-  // Cropper callbacks
-  const onCropComplete = useCallback((_, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
+  const aspectRatio = parseAspectRatio(aspectInput) || 35 / 45;
+
+  const onCropComplete = useCallback((_, areaPixels) => {
+    setCroppedAreaPixels(areaPixels);
   }, []);
 
-  // Wczytanie pliku i konwersja do base64
   const onFileChange = async (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      const base64 = await readFile(file);
-      setImageSrc(base64);
-      setCroppedImage(null);
-      setNoBgImage(null);
-    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const base64 = await readFile(file);
+    setImageSrc(base64);
+    setCroppedImage(null);
+    setNoBgImage(null);
   };
 
-  // Przycięcie zdjęcia wg cropu i proporcji (zmieniamy rozmiar na 350x (350 / aspect))
   const createCroppedImage = async () => {
     if (!imageSrc || !croppedAreaPixels) return;
-    const width = 350;
+    const width = 350; // px — tutaj możesz zostawić jak jest
     const height = width / aspectRatio;
     const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
     setCroppedImage(cropped);
     setNoBgImage(null);
   };
 
-  // Wysyłamy przycięte zdjęcie do backendu (usuwanie tła)
   const handleSend = async () => {
     if (!croppedImage) return;
 
@@ -88,7 +73,6 @@ function App() {
     setNoBgImage("data:image/png;base64," + data.image_no_bg);
   };
 
-  // Dodaj aktualne zdjęcie bez tła do tablicy zdjęć na kartce
   const addToSheet = () => {
     if (!noBgImage) return;
     setSheetImages((prev) => [...prev, noBgImage]);
@@ -97,10 +81,8 @@ function App() {
     setCroppedImage(null);
   };
 
-  // Generowanie kartki z ułożonymi zdjęciami
   const generateSheet = async () => {
     if (sheetImages.length === 0) return;
-
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width));
     const heightPx = Math.round(cmToPx(format.height));
@@ -109,30 +91,32 @@ function App() {
     canvas.width = widthPx;
     canvas.height = heightPx;
     const ctx = canvas.getContext("2d");
-
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, widthPx, heightPx);
 
-    // Parametry układu zdjęć na kartce
     const margin = 20;
-    const cols = 3;
-    const imgWidth = (widthPx - margin * (cols + 1)) / cols;
-    const imgHeight = imgWidth / aspectRatio;
 
-    const rows = Math.floor((heightPx - margin) / (imgHeight + margin));
+    // stałe wymiary zdjęcia w cm
+    const photoWidthCm = 3.5;  // 35 mm
+    const photoHeightCm = 4.5; // 45 mm
 
-    // Rysujemy zdjęcia po kolei, dodając ramkę
+    // wymiary w px
+    const imgWidth = Math.round(cmToPx(photoWidthCm));
+    const imgHeight = Math.round(cmToPx(photoHeightCm));
+
+    // liczymy ile kolumn i wierszy zmieści się na kartce
+    const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
+    const rows = Math.floor((heightPx + margin) / (imgHeight + margin));
+
     for (let i = 0; i < sheetImages.length; i++) {
+      if (i >= cols * rows) break; // nie przekraczamy liczby dostępnych miejsc
+
       const img = await createImage(sheetImages[i]);
       const x = margin + (i % cols) * (imgWidth + margin);
       const y = margin + Math.floor(i / cols) * (imgHeight + margin);
 
-      if (y + imgHeight > heightPx) break; // za dużo zdjęć na kartkę
-
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
-
-      // ramka wokół zdjęcia
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2;
       ctx.strokeStyle = "black";
       ctx.strokeRect(x, y, imgWidth, imgHeight);
     }
@@ -145,13 +129,11 @@ function App() {
     });
   };
 
-  // Tworzymy i ustawiamy podgląd kartki
   const createSheetImage = async () => {
     const url = await generateSheet();
     setSheetUrl(url);
   };
 
-  // Pobieranie kartki
   const downloadSheet = () => {
     if (!sheetUrl) return;
     const link = document.createElement("a");
@@ -162,166 +144,365 @@ function App() {
     document.body.removeChild(link);
   };
 
-  // Usuwanie wszystkich zdjęć z kartki
   const clearSheet = () => {
     setSheetImages([]);
     setSheetUrl(null);
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Dodaj zdjęcie, przytnij i usuń tło</h2>
+    <div
+      style={{
+        padding: 32,
+        maxWidth: 900,
+        margin: "40px auto",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        color: "#333",
+        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+        borderRadius: 12,
+        boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: "center",
+          marginBottom: 32,
+          fontWeight: 700,
+          fontSize: 28,
+          color: "#2c3e50",
+          textShadow: "0 1px 3px rgba(0,0,0,0.1)",
+        }}
+      >
+        Document photo
+      </h2>
 
-      <input type="file" accept="image/*" onChange={onFileChange} />
-      <br />
-      <label>
-        Proporcje przycinania (mm, np. 35/45):{" "}
-        <input
-          type="text"
-          value={aspectInput}
-          onChange={(e) => setAspectInput(e.target.value)}
-          style={{ width: 80 }}
-        />
-      </label>
-      <br />
+      <div style={{ marginBottom: 24 }}>
+        <ImageUploader onChange={onFileChange} />
+      </div>
 
-      <label>
-        Format kartki:{" "}
-        <select value={selectedFormat} onChange={(e) => setSelectedFormat(e.target.value)}>
-          {Object.keys(PAPER_FORMATS).map((key) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      {imageSrc && (
-        <>
+      <div
+        style={{
+          display: "flex",
+          gap: 24,
+          flexWrap: "wrap",
+          marginBottom: 32,
+          justifyContent: "center",
+        }}
+      >
+        <label style={{ flex: "1 1 180px", minWidth: 180 }}>
           <div
             style={{
-              position: "relative",
-              width: 350,
-              height: 350 / aspectRatio,
-              marginTop: 20,
-              background: "#333",
+              marginBottom: 6,
+              fontWeight: 600,
+              color: "#34495e",
+              fontSize: 14,
             }}
           >
-            <Cropper
-              image={imageSrc}
-              crop={crop}
-              zoom={zoom}
-              aspect={aspectRatio}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropComplete}
-              objectFit="horizontal-cover"
-            />
+            Proportion (mm, np. 35/45):
           </div>
-          <div style={{ marginTop: 10 }}>
+          <input
+            type="text"
+            value={aspectInput}
+            onChange={(e) => setAspectInput(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              fontSize: 15,
+              borderRadius: 6,
+              border: "1.5px solid #bdc3c7",
+              transition: "border-color 0.3s",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "#3498db")}
+            onBlur={(e) => (e.target.style.borderColor = "#bdc3c7")}
+          />
+        </label>
 
-        </div>
+        <label style={{ flex: "1 1 180px", minWidth: 180 }}>
+          <div
+            style={{
+              marginBottom: 6,
+              fontWeight: 600,
+              color: "#34495e",
+              fontSize: 14,
+            }}
+          >
+            Size:
+          </div>
+          <select
+            value={selectedFormat}
+            onChange={(e) => setSelectedFormat(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              fontSize: 15,
+              borderRadius: 6,
+              border: "1.5px solid #bdc3c7",
+              cursor: "pointer",
+              transition: "border-color 0.3s",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "#3498db")}
+            onBlur={(e) => (e.target.style.borderColor = "#bdc3c7")}
+          >
+            {Object.keys(PAPER_FORMATS).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
-          <button onClick={createCroppedImage} style={{ marginTop: 10 }}>
+      {imageSrc && (
+        <div
+          style={{
+            marginBottom: 28,
+            textAlign: "center",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            borderRadius: 12,
+            padding: 12,
+            backgroundColor: "white",
+            maxWidth: 400,
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          <CropperWrapper
+            imageSrc={imageSrc}
+            crop={crop}
+            setCrop={setCrop}
+            zoom={zoom}
+            setZoom={setZoom}
+            aspectRatio={aspectRatio}
+            onCropComplete={onCropComplete}
+          />
+          <button
+            onClick={createCroppedImage}
+            style={{
+              marginTop: 16,
+              padding: "12px 28px",
+              fontSize: 17,
+              backgroundColor: "#3498db",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(52,152,219,0.4)",
+              transition: "background-color 0.25s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#2980b9")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#3498db")
+            }
+          >
             Przytnij zdjęcie
           </button>
-        </>
+        </div>
       )}
 
-      {croppedImage && (
-        <>
-          <h3>Przycięte zdjęcie</h3>
-          <img
-            src={croppedImage}
-            alt="cropped"
-            style={{ maxWidth: 350, border: "1px solid #ccc" }}
-          />
+      <div
+        style={{
+          display: "flex",
+          gap: 30,
+          flexWrap: "wrap",
+          justifyContent: "center",
+          marginBottom: 36,
+        }}
+      >
+        {croppedImage && (
+          <div
+            style={{
+              textAlign: "center",
+              maxWidth: 360,
+              backgroundColor: "white",
+              borderRadius: 12,
+              padding: 16,
+              boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+            }}
+          >
+            <ImagePreview image={croppedImage} label="Przycięte zdjęcie" />
+            <button
+              onClick={handleSend}
+              style={{
+                marginTop: 14,
+                padding: "10px 20px",
+                fontSize: 15,
+                backgroundColor: "#f39c12",
+                color: "white",
+                border: "none",
+                borderRadius: 8,
+                cursor: "pointer",
+                boxShadow: "0 3px 10px rgba(243,156,18,0.5)",
+                transition: "background-color 0.25s ease",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#d87e00")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "#f39c12")
+              }
+            >
+              Usuń tło
+            </button>
+          </div>
+        )}
 
-          <br />
-          <button onClick={handleSend} style={{ marginTop: 10 }}>
-            Usuń tło
-          </button>
-        </>
-      )}
-
-      {noBgImage && (
-        <>
-          <h3>Zdjęcie po usunięciu tła</h3>
-          <img src={noBgImage} alt="no-bg" style={{ maxWidth: 350, border: "1px solid black" }} />
-          <br />
-          <button onClick={addToSheet} style={{ marginTop: 10 }}>
-            Dodaj zdjęcie do kartki ({selectedFormat})
-          </button>
-        </>
-      )}
+        {noBgImage && (
+          <div
+            style={{
+              textAlign: "center",
+              maxWidth: 360,
+              backgroundColor: "white",
+              borderRadius: 12,
+              padding: 16,
+              boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+            }}
+          >
+            <ImagePreview image={noBgImage} label="Zdjęcie po usunięciu tła" />
+            <button
+              onClick={addToSheet}
+              style={{
+                marginTop: 14,
+                padding: "10px 20px",
+                fontSize: 15,
+                backgroundColor: "#27ae60",
+                color: "white",
+                border: "none",
+                borderRadius: 8,
+                cursor: "pointer",
+                boxShadow: "0 3px 10px rgba(39,174,96,0.5)",
+                transition: "background-color 0.25s ease",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#1e8449")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "#27ae60")
+              }
+            >
+              Dodaj zdjęcie do kartki ({selectedFormat})
+            </button>
+          </div>
+        )}
+      </div>
 
       {sheetImages.length > 0 && (
-        <>
-          <h3>Zdjęcia dodane do kartki ({selectedFormat}): {sheetImages.length}</h3>
-          <button onClick={createSheetImage}>Pokaż podgląd kartki</button>{" "}
-          <button onClick={clearSheet}>Wyczyść kartkę</button>
-        </>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <h3
+            style={{
+              fontWeight: 600,
+              color: "#34495e",
+              marginBottom: 18,
+            }}
+          >
+            Zdjęcia dodane do kartki ({selectedFormat}): {sheetImages.length}
+          </h3>
+          <button
+            onClick={createSheetImage}
+            style={{
+              marginRight: 14,
+              padding: "12px 24px",
+              fontSize: 16,
+              backgroundColor: "#2980b9",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              boxShadow: "0 3px 14px rgba(41,128,185,0.6)",
+              transition: "background-color 0.25s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1c5980")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#2980b9")
+            }
+          >
+            Pokaż podgląd kartki
+          </button>
+          <button
+            onClick={clearSheet}
+            style={{
+              padding: "12px 24px",
+              fontSize: 16,
+              backgroundColor: "#c0392b",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              boxShadow: "0 3px 14px rgba(192,57,43,0.6)",
+              transition: "background-color 0.25s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#89231d")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#c0392b")
+            }
+          >
+            Wyczyść kartkę
+          </button>
+        </div>
       )}
 
       {sheetUrl && (
-        <>
-          <h3>Podgląd kartki {selectedFormat} z Twoimi zdjęciami</h3>
-          <img src={sheetUrl} alt="sheet" style={{ maxWidth: "100%", border: "1px solid #ccc" }} />
+        <div
+          style={{
+            textAlign: "center",
+            marginBottom: 24,
+            backgroundColor: "white",
+            borderRadius: 12,
+            padding: 16,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+          }}
+        >
+          <h3
+            style={{
+              marginBottom: 18,
+              color: "#34495e",
+              fontWeight: 600,
+            }}
+          >
+            Podgląd kartki {selectedFormat}
+          </h3>
+          <img
+            src={sheetUrl}
+            alt="sheet"
+            style={{
+              maxWidth: "100%",
+              borderRadius: 10,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+              border: "1px solid #ddd",
+            }}
+          />
           <br />
-          <button onClick={downloadSheet} style={{ marginTop: 10 }}>
+          <button
+            onClick={downloadSheet}
+            style={{
+              marginTop: 16,
+              padding: "12px 28px",
+              fontSize: 17,
+              backgroundColor: "#16a085",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              boxShadow: "0 4px 14px rgba(22,160,133,0.5)",
+              transition: "background-color 0.25s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#117a65")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#16a085")
+            }
+          >
             Pobierz kartkę
           </button>
-        </>
+        </div>
       )}
     </div>
   );
 }
 
 export default App;
-
-// Pomocnicze funkcje
-
-function readFile(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => resolve(reader.result));
-    reader.readAsDataURL(file);
-  });
-}
-
-async function createImage(url) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.addEventListener("load", () => resolve(img));
-    img.addEventListener("error", (e) => reject(e));
-    img.setAttribute("crossOrigin", "anonymous");
-    img.src = url;
-  });
-}
-
-async function getCroppedImg(imageSrc, pixelCrop, outputWidth, outputHeight) {
-  const image = await createImage(imageSrc);
-  const canvas = document.createElement("canvas");
-  canvas.width = outputWidth;
-  canvas.height = outputHeight;
-  const ctx = canvas.getContext("2d");
-
-  ctx.drawImage(
-    image,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
-    0,
-    0,
-    outputWidth,
-    outputHeight
-  );
-
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      resolve(url);
-    }, "image/png");
-  });
-}

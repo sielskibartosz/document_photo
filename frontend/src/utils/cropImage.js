@@ -1,34 +1,47 @@
-export const getCroppedImg = (imageSrc, pixelCrop) => {
+export const DPI = 300;
+
+export function parseAspectRatio(value) {
+  const parts = value.split("/").map(Number);
+  if (parts.length !== 2 || parts.some(isNaN)) return null;
+  return parts[0] / parts[1];
+}
+
+export function cmToPx(cm) {
+  return (cm / 2.54) * DPI;
+}
+
+export async function getCroppedImg(imageSrc, crop, width, height) {
+  const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  canvas.width = width;
+  canvas.height = height;
   const ctx = canvas.getContext("2d");
 
-  const image = new Image();
-  image.src = imageSrc;
+  ctx.drawImage(
+    image,
+    crop.x,
+    crop.y,
+    crop.width,
+    crop.height,
+    0,
+    0,
+    width,
+    height
+  );
 
-  return new Promise((resolve, reject) => {
-    image.onload = () => {
-      ctx.drawImage(
-        image,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
-
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          reject(new Error("Canvas is empty"));
-          return;
-        }
-        resolve(blob);
-      }, "image/png");
-    };
-    image.onerror = (err) => reject(err);
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      resolve(URL.createObjectURL(blob));
+    }, "image/png");
   });
-};
+}
+
+export function createImage(url) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => resolve(image);
+    image.onerror = (error) => reject(error);
+    image.src = url;
+  });
+}
