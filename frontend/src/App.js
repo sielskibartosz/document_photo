@@ -29,7 +29,7 @@ function App() {
   const [croppedImage, setCroppedImage] = useState(null);
   const [noBgImage, setNoBgImage] = useState(null);
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
-  const [selectedFormat, setSelectedFormat] = useState("9/13 cm");
+  const [selectedFormat, setSelectedFormat] = useState("10/15 cm");
   const [sheetImages, setSheetImages] = useState([]);
   const [sheetUrl, setSheetUrl] = useState(null);
 
@@ -46,6 +46,7 @@ function App() {
     setImageSrc(base64);
     setCroppedImage(null);
     setNoBgImage(null);
+    setSheetUrl(null)
   };
 
   const createCroppedImage = async () => {

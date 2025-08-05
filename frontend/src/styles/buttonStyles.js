@@ -21,6 +21,7 @@ export const buttonFrameStyle={
     transition: "background-color 0.25s ease",
     fontWeight: 600,
     userSelect: "none",
-    marginTop: 14,
+    // marginTop: 14,
     backgroundColor: "#3498db",
+    margin:5
             };

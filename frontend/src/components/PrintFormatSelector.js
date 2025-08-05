@@ -3,7 +3,7 @@ import {textStyles} from "../styles/textStyles";
 
 const PrintFormatSelector = ({ selectedFormat, setSelectedFormat }) => {
   const PAPER_FORMATS = {
-    "9/13 cm": { width: 8.9, height: 12.7 },
+    "10/15 cm": { width: 10, height: 15 },
     A4: { width: 21, height: 29.7 },
   };
 
@@ -21,13 +21,13 @@ const PrintFormatSelector = ({ selectedFormat, setSelectedFormat }) => {
         <div
           style={{textStyles}}
         >
-          Format drukowanej kartki:
+          Format arkusza:
         </div>
         <select
           value={selectedFormat}
           onChange={(e) => setSelectedFormat(e.target.value)}
           style={{
-            width: "15%",
+            width: "20%",
             padding: "8px 12px",
             fontSize: 15,
             borderRadius: 6,

@@ -1,11 +1,7 @@
-// components/SheetManager.js
-import React from "react";
-import { cmToPx, createImage } from "../utils/cropImage.js"; // dostosuj ścieżki
-
-const PAPER_FORMATS = {
-  "9/13 cm": { width: 8.9, height: 12.7 },
-  A4: { width: 21, height: 29.7 },
-};
+import React, { useEffect } from "react";
+import { cmToPx, createImage } from "../utils/cropImage.js";
+import StyledButton from "./buttons/StyledButton";
+import { PAPER_FORMATS } from "../constants/paperFormats";
 
 const SheetManager = ({
   sheetImages,
@@ -13,7 +9,6 @@ const SheetManager = ({
   sheetUrl,
   setSheetUrl,
   setSheetImages,
-  buttonBaseStyle,
 }) => {
   const generateSheet = async () => {
     if (sheetImages.length === 0) return null;
@@ -54,7 +49,7 @@ const SheetManager = ({
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         resolve(url);
-      }, "image/png");
+      }, "image/jpeg",0.92);
     });
   };
 
@@ -63,11 +58,17 @@ const SheetManager = ({
     if (url) setSheetUrl(url);
   };
 
+  useEffect(() => {
+    if (sheetImages.length > 0) {
+      createSheetImage();
+    }
+  }, [sheetImages]);
+
   const downloadSheet = () => {
     if (!sheetUrl) return;
     const link = document.createElement("a");
     link.href = sheetUrl;
-    link.download = `sheet_${selectedFormat}.png`;
+    link.download = `sheet_${selectedFormat}.jpg`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -83,39 +84,11 @@ const SheetManager = ({
       {sheetImages.length > 0 && (
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <h3 style={{ fontWeight: 600, color: "#34495e", marginBottom: 18 }}>
-            Zdjęcia dodane do kartki ({selectedFormat}): {sheetImages.length}
+            Zdjęcia dodane do arkusza ({selectedFormat}): {sheetImages.length}
           </h3>
-          <button
-            onClick={createSheetImage}
-            style={{
-              ...buttonBaseStyle,
-              marginRight: 14,
-              backgroundColor: "#2980b9",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#1c5980")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#2980b9")
-            }
-          >
-            Pokaż podgląd kartki
-          </button>
-          <button
-            onClick={clearSheet}
-            style={{
-              ...buttonBaseStyle,
-              backgroundColor: "#c0392b",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#89231d")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#c0392b")
-            }
-          >
-            Wyczyść kartkę
-          </button>
+          <StyledButton onClick={createSheetImage}>Podgląd arkusza</StyledButton>
+          <StyledButton onClick={clearSheet}>Wyczysc</StyledButton>
+          <StyledButton onClick={downloadSheet}>Pobierz arkusz</StyledButton>
         </div>
       )}
 
@@ -131,7 +104,7 @@ const SheetManager = ({
           }}
         >
           <h3 style={{ marginBottom: 18, color: "#34495e", fontWeight: 600 }}>
-            Podgląd kartki {selectedFormat}
+            Podgląd arkusza {selectedFormat}
           </h3>
           <img
             src={sheetUrl}
@@ -143,23 +116,6 @@ const SheetManager = ({
               border: "1px solid #ddd",
             }}
           />
-          <br />
-          <button
-            onClick={downloadSheet}
-            style={{
-              ...buttonBaseStyle,
-              marginTop: 16,
-              backgroundColor: "#16a085",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#117a65")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#16a085")
-            }
-          >
-            Pobierz kartkę
-          </button>
         </div>
       )}
     </>
