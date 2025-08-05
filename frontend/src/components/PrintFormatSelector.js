@@ -1,12 +1,8 @@
 import React from "react";
 import {textStyles} from "../styles/textStyles";
+import {PAPER_FORMATS} from "../constants/paperFormats";
 
 const PrintFormatSelector = ({ selectedFormat, setSelectedFormat }) => {
-  const PAPER_FORMATS = {
-    "10/15 cm": { width: 10, height: 15 },
-    A4: { width: 21, height: 29.7 },
-  };
-
   return (
     <div
       style={{
