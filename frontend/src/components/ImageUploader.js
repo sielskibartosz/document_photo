@@ -1,14 +1,12 @@
-import React from "react";
-
-function ImageUploader({ onChange }) {
+function ImageUploader({ onChange, uploaderStyle, inputStyle }) {
   return (
-    <div>
+    <div style={uploaderStyle}>
       <label>
-        Wybierz zdjęcie:{" "}
-        <input type="file" accept="image/*" onChange={onChange} />
+        <input type="file" accept="image/*" onChange={onChange} style={inputStyle} />
       </label>
     </div>
   );
 }
 
 export default ImageUploader;
+
