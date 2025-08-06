@@ -2,7 +2,7 @@ export const textStyles={
             marginBottom: 6,
             fontWeight: 600,
             color: "#34495e",
-            fontSize: 14,
+            fontSize: 15,
           };
 export const headerText = {
           textAlign: "center",

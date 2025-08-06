@@ -1,6 +1,6 @@
 import React from "react";
-import {textStyles} from "../styles/textStyles";
 import {PAPER_FORMATS} from "../constants/paperFormats";
+import {textStyles} from "../styles/textStyles";
 
 const PrintFormatSelector = ({ selectedFormat, setSelectedFormat }) => {
   return (
@@ -15,9 +15,9 @@ const PrintFormatSelector = ({ selectedFormat, setSelectedFormat }) => {
     >
       <label style={{ flex: "1 1 180px", minWidth: 180 }}>
         <div
-          style={{textStyles}}
+          style={textStyles}
         >
-          Format arkusza:
+          Wybierz format arkusza:
         </div>
         <select
           value={selectedFormat}

@@ -1,6 +1,6 @@
 export const mainContainer = {
   padding: 32,
-  maxWidth: 900,
+  maxWidth: "60%",
   margin: "40px auto",
   fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   color: "#333",

@@ -1,8 +1,17 @@
 // src/tabs.js
 
 export const TABS = [
-  { key: "id", label: "Zdjęcie do dowodu", aspect: "35/45" },
-  { key: "license", label: "Zdjęcie do prawa jazdy", aspect: "50/50" },
-  { key: "visa", label: "Visa", aspect: "50/50" },
-  { key: "custom", label: "Inne", aspect: "50/50" },
+  { key: "id", label: "Dowód osobisty/Prawo jazdy", aspect: "35/45" },
+  { key: "custom", label: "Inne", aspect: "50/60" },
 ];
+
+export const TAB_DESCTIPTION = {
+  id: {
+    text: "Zdjęcie do dowodu osobistego — wymiary 35x45 mm.",
+    image: "/images/ID_correct_foto.png",
+  },
+  custom: {
+    text: "Wymiary zdjęcia, np. 50/60 mm.",
+    image: "/images/dyplom.jpg",
+  },
+};

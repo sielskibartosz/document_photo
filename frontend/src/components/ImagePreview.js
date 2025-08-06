@@ -1,16 +1,21 @@
 import React from "react";
 
-function ImagePreview({ image, label }) {
+function ImagePreview({ image, label, aspectRatio }) {
+  const width = 300;
+  const height = width / aspectRatio;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <h4 style={{ marginBottom: 8 }}>{label}</h4>
       <div
         style={{
           position: "relative",
-          width: 300,
-          height: 400,
+          width,
+          height,
           background: "#f0f0f0",
-          overflow: "hidden", // ważne, żeby obraz nie wychodził
+          overflow: "hidden",
+          borderRadius: 8,
+          border: "1px solid #ccc",
         }}
       >
         {image ? (
@@ -20,7 +25,7 @@ function ImagePreview({ image, label }) {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "cover", // <-- najważniejsze
+              objectFit: "contain", // dopasowanie bez przycinania
             }}
           />
         ) : (
