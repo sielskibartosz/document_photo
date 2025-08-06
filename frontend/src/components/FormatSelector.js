@@ -2,7 +2,7 @@ import React from "react";
 import {PAPER_FORMATS} from "../constants/paperFormats";
 import {textStyles} from "../styles/textStyles";
 
-const PrintFormatSelector = ({ selectedFormat, setSelectedFormat }) => {
+const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
   return (
     <div
       style={{
@@ -43,4 +43,4 @@ const PrintFormatSelector = ({ selectedFormat, setSelectedFormat }) => {
   );
 };
 
-export default PrintFormatSelector;
+export default FormatSelector;
