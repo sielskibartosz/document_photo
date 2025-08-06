@@ -1,6 +1,5 @@
-import React, {useState, useCallback} from "react";
+import React, {useState} from "react";
 import ImageUploader from "./components/ImageUploader";
-import CropperWrapper from "./components/CropperWrapper";
 import ImagePreview from "./components/ImagePreview";
 import TabSelector from "./components/TabSelector";
 import TabContent from "./components/TabContent";
@@ -16,8 +15,10 @@ import {mainContainer} from "./styles/mainContainer";
 import {uploaderContainer, inputStyle, frameStyle} from "./styles/imagesStyles";
 import {headerText} from "./styles/textStyles";
 
-import {parseAspectRatio, getCroppedImg} from "./utils/cropImage";
+import {parseAspectRatio} from "./utils/cropImage";
 import {readFile} from "./utils/imageHelpers";
+import CropperActions from "./components/CropperActions";
+import SheetMinature from "./components/SheetMinature";
 
 function App() {
     const [activeTab, setActiveTab] = useState("id");
@@ -36,10 +37,6 @@ function App() {
     const [sheetCreatedAfterNewPhoto, setSheetCreatedAfterNewPhoto] = useState(false);
 
     const aspectRatio = parseAspectRatio(aspectInput) || 35 / 45;
-
-    const onCropComplete = useCallback((_, areaPixels) => {
-        setCroppedAreaPixels(areaPixels);
-    }, []);
 
     const resetImageStates = () => {
         setImageSrc(null);
@@ -61,39 +58,6 @@ function App() {
         setShowSheetPreview(false);
         setSheetCreatedAfterNewPhoto(true);
     };
-
-    const createCroppedImage = async () => {
-        if (!imageSrc || !croppedAreaPixels) return;
-        const width = 350;
-        const height = width / aspectRatio;
-        const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
-        setCroppedImage(cropped);
-        setNoBgImage(null);
-    };
-
-    // const removeBackground = async () => {
-    //     if (!croppedImage) return;
-    //
-    //     try {
-    //         const res = await fetch(croppedImage);
-    //         const blob = await res.blob();
-    //
-    //         const formData = new FormData();
-    //         formData.append("image", blob, "cropped.png");
-    //
-    //         const response = await fetch("http://localhost:8000/api/remove-bg/", {
-    //             method: "POST",
-    //             body: formData,
-    //         });
-    //
-    //         if (!response.ok) throw new Error("Błąd przy usuwaniu tła");
-    //
-    //         const data = await response.json();
-    //         setNoBgImage("data:image/png;base64," + data.image_no_bg);
-    //     } catch (error) {
-    //         alert(error.message);
-    //     }
-    // };
 
     const addToSheet = () => {
         if (!noBgImage) return;
@@ -152,31 +116,12 @@ function App() {
                 </div>
 
                 {sheetHistory.length > 0 && (
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            cursor: "pointer",
-                            marginLeft: 20
-                        }}
+                    <SheetMinature
+                        thumbnailUrl={sheetHistory[0]}
                         onClick={() => setShowSheetPreview(true)}
-                        title="Podgląd arkusza"
-                    >
-                        <span style={{marginBottom: 6, fontSize: 12, color: "#333"}}>Miniatura arkusza</span>
-                        <img
-                            src={sheetHistory[0]}
-                            alt="Miniatura arkusza"
-                            style={{
-                                width: 80,
-                                height: 80,
-                                objectFit: "cover",
-                                border: "3px solid #4a90e2",
-                                borderRadius: 6,
-                            }}
-                        />
-                    </div>
+                    />
                 )}
+
             </div>
 
             <ImageUploader onChange={onFileChange} uploaderStyle={uploaderContainer} inputStyle={inputStyle}/>
@@ -196,17 +141,18 @@ function App() {
 
             {imageSrc && (
                 <div style={frameStyle}>
-                    <CropperWrapper
+                    <CropperActions
                         imageSrc={imageSrc}
                         crop={crop}
                         setCrop={setCrop}
                         zoom={zoom}
                         setZoom={setZoom}
                         aspectRatio={aspectRatio}
-                        onCropComplete={onCropComplete}
-                        label="Przycinanie"
+                        onCropped={(cropped) => {
+                            setCroppedImage(cropped);
+                            setNoBgImage(null);
+                        }}
                     />
-                    <StyledButton onClick={createCroppedImage}>Przytnij zdjęcie</StyledButton>
                 </div>
             )}
 
