@@ -14,10 +14,7 @@ import {mainContainer} from "./styles/mainContainer";
 import {uploaderContainer, inputStyle, frameStyle} from "./styles/imagesStyles";
 import {headerText} from "./styles/textStyles";
 
-import {
-    parseAspectRatio,
-    getCroppedImg,
-} from "./utils/cropImage";
+import {parseAspectRatio, getCroppedImg} from "./utils/cropImage";
 import {readFile} from "./utils/imageHelpers";
 
 function App() {
@@ -31,7 +28,11 @@ function App() {
     const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
     const [selectedFormat, setSelectedFormat] = useState("10/15 cm");
     const [sheetImages, setSheetImages] = useState([]);
-    const [sheetUrl, setSheetUrl] = useState(null);
+    const [sheetHistory, setSheetHistory] = useState([]);
+    const [selectedSheetUrl, setSelectedSheetUrl] = useState(null);
+    const [showSheetPreview, setShowSheetPreview] = useState(false);
+    const [sheetCreatedAfterNewPhoto, setSheetCreatedAfterNewPhoto] = useState(false);
+
     const aspectRatio = parseAspectRatio(aspectInput) || 35 / 45;
 
     const onCropComplete = useCallback((_, areaPixels) => {
@@ -45,7 +46,8 @@ function App() {
         setImageSrc(base64);
         setCroppedImage(null);
         setNoBgImage(null);
-        setSheetUrl(null)
+        setShowSheetPreview(false); // chowamy arkusz przy nowym zdjęciu
+        setSheetCreatedAfterNewPhoto(true); // czekamy na nowy arkusz po dodaniu zdjęcia
     };
 
     const createCroppedImage = async () => {
@@ -86,12 +88,25 @@ function App() {
         setNoBgImage(null);
         setImageSrc(null);
         setCroppedImage(null);
+        setShowSheetPreview(true);
     };
 
+    // Powielenie ostatniego zdjęcia w arkuszu - NIE dodajemy do historii ani nie zmieniamy miniatury
     const duplicateLastImage = () => {
         if (sheetImages.length === 0) return;
         const lastImage = sheetImages[sheetImages.length - 1];
-        setSheetImages(prev => [...prev, lastImage]);
+        setSheetImages((prev) => [...prev, lastImage]);
+        setShowSheetPreview(true);
+    };
+
+    // Callback po wygenerowaniu arkusza
+    const onSheetGenerated = (url) => {
+        setSelectedSheetUrl(url);
+        // Dodajemy do historii i miniatury tylko jeśli wcześniej oznaczyliśmy, że czekamy na nowy sheet (czyli po wybraniu nowego zdjęcia)
+        if (sheetCreatedAfterNewPhoto) {
+            setSheetHistory([url]); // tylko jedna miniatura w historii
+            setSheetCreatedAfterNewPhoto(false);
+        }
     };
 
     const handleTabChange = (tabKey) => {
@@ -104,6 +119,7 @@ function App() {
         setCrop({x: 0, y: 0});
         setZoom(1.9);
         setCroppedAreaPixels(null);
+        setShowSheetPreview(false);
     };
 
     return (
@@ -112,17 +128,48 @@ function App() {
 
             <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange}/>
             <TabContent tabKey={activeTab} aspectInput={aspectInput} setAspectInput={setAspectInput}/>
-            <PrintFormatSelector selectedFormat={selectedFormat} setSelectedFormat={setSelectedFormat}/>
+
+            {/* Nowy flex container dla PrintFormatSelector + miniatury */}
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 10,
+                gap: 20
+            }}>
+                <div style={{flex: 1}}>
+                    <PrintFormatSelector selectedFormat={selectedFormat} setSelectedFormat={setSelectedFormat}/>
+                </div>
+
+                {sheetHistory.length > 0 && (
+                    <img
+                        src={sheetHistory[0]}
+                        alt="Miniatura arkusza"
+                        style={{
+                            width: 80,
+                            height: 80,
+                            objectFit: "cover",
+                            border: "3px solid #4a90e2",
+                            cursor: "pointer",
+                            borderRadius: 6,
+                        }}
+                        onClick={() => setShowSheetPreview(true)}
+                        title="Podgląd arkusza"
+                    />
+                )}
+            </div>
             <ImageUploader onChange={onFileChange} uploaderStyle={uploaderContainer} inputStyle={inputStyle}/>
 
             <SheetManager
                 sheetImages={sheetImages}
                 setSheetImages={setSheetImages}
-                sheetUrl={sheetUrl}
-                setSheetUrl={setSheetUrl}
+                sheetUrl={selectedSheetUrl}
+                setSheetUrl={onSheetGenerated}
                 selectedFormat={selectedFormat}
                 buttonBaseStyle={buttonBaseStyle}
-                onDuplicate={duplicateLastImage}
+                duplicateImage={duplicateLastImage}
+                showSheetPreview={showSheetPreview}
+                setShowSheetPreview={setShowSheetPreview}
             />
 
             {imageSrc && (

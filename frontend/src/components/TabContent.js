@@ -1,6 +1,6 @@
 import React from "react";
 import {textStyles} from "../styles/textStyles";
-import {TAB_DESCTIPTION,TABS} from "../constants/tabs";
+import {TAB_DESCTIPTION} from "../constants/tabs";
 import {inputFieldStyle} from "../styles/inputFields";
 
 
