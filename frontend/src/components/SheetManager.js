@@ -1,7 +1,8 @@
 import React, {useEffect} from "react";
 import {cmToPx, createImage} from "../utils/cropImage.js";
-import StyledButton from "./buttons/StyledButton";
 import {PAPER_FORMATS} from "../constants/paperFormats";
+import FrameBox from "../styles/imagesStyles";
+import {Box, Typography, Button} from "@mui/material";
 
 const SheetManager = ({
                           sheetImages,
@@ -12,7 +13,7 @@ const SheetManager = ({
                           duplicateImage,
                           showSheetPreview,
                           setShowSheetPreview,
-                          clearSheet, // funkcja do czyszczenia arkusza z App.js
+                          clearSheet,
                       }) => {
     const generateSheet = async () => {
         if (sheetImages.length === 0) return null;
@@ -48,8 +49,8 @@ const SheetManager = ({
             const img = await createImage(image);
 
             let imgHeight = Math.round(imgWidth / aspectRatio);
-
             const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
+
             if (imgHeight > maxHeightPx) {
                 imgHeight = maxHeightPx;
                 imgWidth = Math.round(imgHeight * aspectRatio);
@@ -129,42 +130,66 @@ const SheetManager = ({
 
     return (
         <>
-            {sheetImages.length > 0 && (
-                <div style={{textAlign: "center", marginBottom: 32}}>
-                    <h3 style={{fontWeight: 600, color: "#34495e", marginBottom: 18}}>
-                        Zdjęcia dodane do arkusza ({selectedFormat}): {sheetImages.length}
-                    </h3>
-                    <StyledButton onClick={duplicateImage}>Powiel zdjęcie</StyledButton>
-                    <StyledButton onClick={onClearSheetClick}>Wyczyść arkusz</StyledButton>
-                    <StyledButton onClick={downloadSheet}>Pobierz arkusz</StyledButton>
-                </div>
-            )}
-
-            {sheetUrl && (
-                <div
-                    style={{
-                        textAlign: "center",
-                        marginBottom: 24,
-                        backgroundColor: "white",
-                        borderRadius: 12,
-                        padding: 16,
-                        boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            {sheetImages.length > 0 && sheetUrl && (
+                <FrameBox
+                    sx={{
+                        maxWidth: 'none',
+                        width: {
+                            xs: '90%',  // na małych ekranach (xs) 90%
+                            md: '70%',  // na średnich i większych (md+) 70%
+                        },
+                        mx: 'auto', // wyśrodkowanie poziome
                     }}
                 >
-                    <h3 style={{marginBottom: 18, color: "#34495e", fontWeight: 600}}>
-                        Podgląd arkusza {selectedFormat}
-                    </h3>
-                    <img
+                    {/* Nagłówek na środku */}
+                    <Typography
+                        variant="h6"
+                        fontWeight={600}
+                        color="text.primary"
+                        mb={2}
+                        textAlign="center"
+                    >
+                        Zdjęcia dodane do arkusza ({selectedFormat}): {sheetImages.length}
+                    </Typography>
+
+                    {/* Przyciski w jednej linii */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center", // wyśrodkowanie w poziomie
+                            alignItems: "center",     // wyśrodkowanie w pionie
+                            gap: 2,
+                            flexWrap: "wrap",
+                            mb: 3,
+                            width: "100%",            // zajmuje całą szerokość
+                        }}
+                    >
+                        <Button variant="contained" onClick={duplicateImage}>
+                            Powiel zdjęcie
+                        </Button>
+                        <Button variant="outlined" color="error" onClick={onClearSheetClick}>
+                            Wyczyść arkusz
+                        </Button>
+                        <Button variant="contained" color="success" onClick={downloadSheet}>
+                            Pobierz arkusz
+                        </Button>
+                    </Box>
+
+                    {/* Podgląd arkusza */}
+                    <Box
+                        component="img"
                         src={sheetUrl}
                         alt="sheet"
-                        style={{
+                        sx={{
                             maxWidth: "100%",
-                            borderRadius: 10,
+                            borderRadius: 2,
                             boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
                             border: "1px solid #ddd",
+                            display: "block",
+                            margin: "0 auto",
                         }}
                     />
-                </div>
+                </FrameBox>
             )}
         </>
     );

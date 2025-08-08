@@ -10,12 +10,19 @@ const TabContent = ({ tabKey, aspectInput, setAspectInput }) => {
   return (
     <Box sx={{ textAlign: "center", mb: 4 }}>
       {image && (
-        <Box
-          component="img"
-          src={image}
-          alt={`Przykład zdjęcia - ${tabKey}`}
-          sx={{ maxWidth: 400, mb: 2, borderRadius: 2, boxShadow: 3, mx: "auto" }}
-        />
+        <Box sx={{ maxWidth: 400, mx: "auto", mb: 2 }}>
+          <Box
+            component="img"
+            src={image}
+            alt={`Przykład zdjęcia - ${tabKey}`}
+            sx={{
+              width: "100%",
+              borderRadius: 2,
+              boxShadow: 3,
+              display: "block",
+            }}
+          />
+        </Box>
       )}
 
       {title && (

@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import ImagePreview from "./ImagePreview";
 import StyledButton from "./buttons/StyledButton";
+import {Box, Button} from "@mui/material";
+import FrameBox from "../styles/imagesStyles";
 
-function RemoveBackground({croppedImage, aspectRatio, setNoBgImage, addToSheet}) {
+function RemoveBackgroundPanel({croppedImage, aspectRatio, setNoBgImage}) {
     const [loading, setLoading] = useState(false);
 
     const removeBackground = async () => {
@@ -33,13 +35,15 @@ function RemoveBackground({croppedImage, aspectRatio, setNoBgImage, addToSheet})
     };
 
     return (
-        <div style={{marginTop: 20}}>
-            <ImagePreview image={croppedImage} label="Przycięte zdjęcie" aspectRatio={aspectRatio}/>
-            <StyledButton onClick={removeBackground} disabled={loading}>
+        <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={0}>
+
+            <ImagePreview image={croppedImage} aspectRatio={aspectRatio}/>
+            <Button variant="contained" onClick={removeBackground} disabled={loading}>
                 {loading ? "Usuwanie..." : "Usuń tło"}
-            </StyledButton>
-        </div>
+            </Button>
+
+        </Box>
     );
 }
 
-export default RemoveBackground;
+export default RemoveBackgroundPanel;

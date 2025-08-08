@@ -23,7 +23,7 @@ const SheetMinature = ({thumbnailUrl, onClick}) => (
                 height: 80,
                 objectFit: "cover",
                 border: "3px solid #4a90e2",
-                borderRadius: 6,
+                borderRadius: 2,
             }}
         />
     </div>
