@@ -8,19 +8,23 @@ import SheetManager from "./components/SheetManager";
 import StyledButton from "./components/buttons/StyledButton";
 import RemoveBackground from "./components/removeBackground";
 
+import {
+    Box,
+    Typography,
+    CssBaseline,
+    ThemeProvider,
+    Stack,
+} from "@mui/material";
 
 import {TABS} from "./constants/tabs";
 import {buttonBaseStyle} from "./styles/buttonStyles";
-import {mainContainer} from "./styles/mainContainer";
-import {uploaderContainer, inputStyle, frameStyle} from "./styles/imagesStyles";
-import {headerText} from "./styles/textStyles";
+import FrameBox, {uploaderContainer, inputStyle, frameStyle} from "./styles/imagesStyles";
 
 import {parseAspectRatio} from "./utils/cropImage";
 import {readFile} from "./utils/imageHelpers";
 import CropperActions from "./components/CropperActions";
 import SheetMinature from "./components/SheetMinature";
 import darkTheme from "./styles/theme";
-import {CssBaseline, ThemeProvider} from "@mui/material";
 
 function App() {
     const [activeTab, setActiveTab] = useState("id");
@@ -89,7 +93,6 @@ function App() {
         resetImageStates();
     };
 
-    // Funkcja czyszczenia arkusza - wywoływana z SheetManager
     const clearSheet = () => {
         setSheetImages([]);
         setSheetHistory([]);
@@ -99,86 +102,103 @@ function App() {
 
     return (
         <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-        <div style={mainContainer}>
-            <h2 style={headerText}>Twoje zdjęcie do dokumentów</h2>
-
-            <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange}/>
-            <TabContent tabKey={activeTab} aspectInput={aspectInput} setAspectInput={setAspectInput}/>
-
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: 10,
-                    gap: 20,
-                }}
+            <CssBaseline/>
+            <Box
+                sx={(theme) => ({
+                    padding: 4, // 32px
+                    maxWidth: "60%",
+                    margin: "40px auto",
+                    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                    color: theme.palette.text.primary,
+                    background:
+                        theme.palette.mode === "dark"
+                            ? "linear-gradient(135deg, #1f2937 0%, #374151 100%)"
+                            : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+                    borderRadius: 3,
+                    boxShadow: theme.shadows[4],
+                })}
             >
-                <div style={{flex: 1}}>
-                    <FormatSelector selectedFormat={selectedFormat} setSelectedFormat={setSelectedFormat}/>
-                </div>
+                <Typography
+                    variant="h4"
+                    align="center"
+                    fontWeight={700}
+                    sx={{mb: 4, textShadow: "0 1px 3px rgba(0,0,0,0.1)"}}
+                >
+                    Twoje zdjęcie do dokumentów
+                </Typography>
 
-                {sheetHistory.length > 0 && (
-                    <SheetMinature
-                        thumbnailUrl={sheetHistory[0]}
-                        onClick={() => setShowSheetPreview(true)}
-                    />
+                <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange}/>
+                <TabContent tabKey={activeTab} aspectInput={aspectInput} setAspectInput={setAspectInput}/>
+
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    spacing={2}
+                    sx={{mb: 1.25}} // ~10px marginBottom
+                >
+                    <Box sx={{flex: 1}}>
+                        <FormatSelector selectedFormat={selectedFormat} setSelectedFormat={setSelectedFormat}/>
+                    </Box>
+
+                    {sheetHistory.length > 0 && (
+                        <SheetMinature
+                            thumbnailUrl={sheetHistory[0]}
+                            onClick={() => setShowSheetPreview(true)}
+                        />
+                    )}
+                </Stack>
+
+                <ImageUploader onChange={onFileChange}/>
+
+                <SheetManager
+                    sheetImages={sheetImages}
+                    setSheetImages={setSheetImages}
+                    sheetUrl={selectedSheetUrl}
+                    setSheetUrl={onSheetGenerated}
+                    selectedFormat={selectedFormat}
+                    buttonBaseStyle={buttonBaseStyle}
+                    duplicateImage={duplicateLastImage}
+                    showSheetPreview={showSheetPreview}
+                    setShowSheetPreview={setShowSheetPreview}
+                    clearSheet={clearSheet}
+                />
+
+                {imageSrc && (
+                    <FrameBox>
+                        <CropperActions
+                            imageSrc={imageSrc}
+                            crop={crop}
+                            setCrop={setCrop}
+                            zoom={zoom}
+                            setZoom={setZoom}
+                            aspectRatio={aspectRatio}
+                            onCropped={(cropped) => {
+                                setCroppedImage(cropped);
+                                setNoBgImage(null);
+                            }}
+                        />
+                    </FrameBox>
                 )}
 
-            </div>
-
-            <ImageUploader onChange={onFileChange} uploaderStyle={uploaderContainer} inputStyle={inputStyle}/>
-
-            <SheetManager
-                sheetImages={sheetImages}
-                setSheetImages={setSheetImages}
-                sheetUrl={selectedSheetUrl}
-                setSheetUrl={onSheetGenerated}
-                selectedFormat={selectedFormat}
-                buttonBaseStyle={buttonBaseStyle}
-                duplicateImage={duplicateLastImage}
-                showSheetPreview={showSheetPreview}
-                setShowSheetPreview={setShowSheetPreview}
-                clearSheet={clearSheet} // przekazujemy funkcję czyszczenia
-            />
-
-            {imageSrc && (
-                <div style={frameStyle}>
-                    <CropperActions
-                        imageSrc={imageSrc}
-                        crop={crop}
-                        setCrop={setCrop}
-                        zoom={zoom}
-                        setZoom={setZoom}
-                        aspectRatio={aspectRatio}
-                        onCropped={(cropped) => {
-                            setCroppedImage(cropped);
-                            setNoBgImage(null);
-                        }}
-                    />
-                </div>
-            )}
-
-            {croppedImage && (
-                <div style={frameStyle}>
-                    <RemoveBackground
-                        croppedImage={croppedImage}
-                        aspectRatio={aspectRatio}
-                        setNoBgImage={setNoBgImage}
-                        addToSheet={addToSheet}
-                    />
-                </div>
-            )}
-
-            {noBgImage && (
-                <div style={frameStyle}>
-                    <ImagePreview image={noBgImage} label="Zdjęcie bez tła"/>
-                    <StyledButton onClick={addToSheet}>Dodaj do arkusza</StyledButton>
-                </div>
-            )}
-        </div>
-             </ThemeProvider>
+                {croppedImage && (
+                    <FrameBox>
+                        <RemoveBackground
+                            croppedImage={croppedImage}
+                            aspectRatio={aspectRatio}
+                            setNoBgImage={setNoBgImage}
+                            addToSheet={addToSheet}
+                        />
+                    </FrameBox>
+                )}
+                {noBgImage && (
+                    <FrameBox>
+                        <ImagePreview image={noBgImage} label="Zdjęcie bez tła"/>
+                        <StyledButton onClick={addToSheet}>Dodaj do arkusza</StyledButton>
+                    </FrameBox>
+                )}
+            </Box>
+        </ThemeProvider>
     );
 }
 

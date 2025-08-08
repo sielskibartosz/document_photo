@@ -1,19 +1,30 @@
-import {textStyles} from "../styles/textStyles";
+import React from "react";
+import { Box, Typography, Button } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-function ImageUploader({onChange, uploaderStyle, inputStyle}) {
-    return (
-        <div>
-            <div style={textStyles}>
-                Wybierz zdjęcie do przesłania:
-            </div>
-            <div style={uploaderStyle}>
-                <label>
-                    <input type="file" accept="image/*" onChange={onChange} style={inputStyle}/>
-                </label>
-            </div>
-        </div>
-    );
+function ImageUploader({ onChange }) {
+  return (
+    <Box sx={{ mb: 3 }}>
+      {/* Hidden input + MUI Button */}
+      <label htmlFor="upload-button" style={{ cursor: "pointer" }}>
+        <input
+          id="upload-button"
+          type="file"
+          accept="image/*"
+          onChange={onChange}
+          style={{ display: "none" }}
+        />
+        <Button
+          variant="contained"
+          component="span"
+          color="primary"
+          startIcon={<CloudUploadIcon />}
+        >
+          Wybierz zdjęcie
+        </Button>
+      </label>
+    </Box>
+  );
 }
 
 export default ImageUploader;
-

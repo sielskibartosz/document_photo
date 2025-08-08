@@ -6,12 +6,14 @@ export const TABS = [
 ];
 
 export const TAB_DESCTIPTION = {
-    id: {
-        text: "Zdjęcie do dowodu osobistego — wymiary 35x45 mm.",
-        image: "/images/ID_correct_foto.png",
-    },
-    custom: {
-        text: "Wymiary zdjęcia, np. 50/60 mm.",
-        image: "/images/dyplom.jpg",
-    },
+  id: {
+    title: "Zdjęcie 35x45 mm",
+    description: "",
+    link: "https://www.gov.pl/web/gov/zdjecie-do-dowodu-lub-paszportu",
+    image: "/images/ID_correct_foto.png",
+  },
+  custom: {
+    title: "Wymiary zdjęcia, np. 50/60 mm.",
+    image: "/images/dyplom.jpg",
+  },
 };
