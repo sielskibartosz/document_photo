@@ -19,6 +19,8 @@ import {parseAspectRatio} from "./utils/cropImage";
 import {readFile} from "./utils/imageHelpers";
 import CropperActions from "./components/CropperActions";
 import SheetMinature from "./components/SheetMinature";
+import darkTheme from "./styles/theme";
+import {CssBaseline, ThemeProvider} from "@mui/material";
 
 function App() {
     const [activeTab, setActiveTab] = useState("id");
@@ -96,6 +98,8 @@ function App() {
     };
 
     return (
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
         <div style={mainContainer}>
             <h2 style={headerText}>Twoje zdjęcie do dokumentów</h2>
 
@@ -174,6 +178,7 @@ function App() {
                 </div>
             )}
         </div>
+             </ThemeProvider>
     );
 }
 
