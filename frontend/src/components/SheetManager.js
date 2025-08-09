@@ -168,7 +168,7 @@ const SheetManager = ({
                             Powiel zdjęcie
                         </Button>
                         <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 600 }}>
-                            Wyczyść arkusz
+                            Usuń arkusz
                         </Button>
                         <Button variant="contained" color="success" onClick={downloadSheet} sx={{ fontWeight: 600 }}>
                             Pobierz arkusz

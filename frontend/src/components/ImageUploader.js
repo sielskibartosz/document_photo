@@ -4,7 +4,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 function ImageUploader({ onChange }) {
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ mb: 3, display: "flex", justifyContent: "center"}}>
       {/* Hidden input + MUI Button */}
       <label htmlFor="upload-button" style={{ cursor: "pointer" }}>
         <input

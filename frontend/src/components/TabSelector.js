@@ -17,10 +17,13 @@ const TabSelector = ({tabs, activeTab, onTabChange}) => {
                     color={activeTab === tab.key ? 'primary' : 'inherit'}
                     onClick={() => onTabChange(tab.key)}
                     sx={{
-                        fontWeight: activeTab === tab.key ? 'bold' : 'bold',
-                        fontSize: 16, // optional
-                        fontFamily: 'Roboto, sans-serif', // optional
-                        textTransform: 'none' // optional: prevent uppercase
+                        fontWeight: 'bold',
+                        fontSize: 16,
+                        fontFamily: 'Roboto, sans-serif',
+                        textTransform: 'none',
+                        minHeight: 40,          // wysokość spójna z inputem
+                        padding: '6px 16px',    // domyślne paddingi, możesz dostosować
+                        boxSizing: 'border-box',
                     }}
                 >
                     {tab.label}

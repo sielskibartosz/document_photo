@@ -14,6 +14,6 @@ export const TAB_DESCTIPTION = {
   },
   custom: {
     title: "Wymiary zdjęcia, np. 50/60 mm.",
-    image: "/images/dyplom.jpg",
+    image: "/images/custom_foto.jpg",
   },
 };
