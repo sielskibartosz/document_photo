@@ -164,13 +164,13 @@ const SheetManager = ({
                             width: "100%",            // zajmuje całą szerokość
                         }}
                     >
-                        <Button variant="contained" onClick={duplicateImage}>
+                        <Button variant="contained" onClick={duplicateImage} sx={{ fontWeight: 600 }}>
                             Powiel zdjęcie
                         </Button>
-                        <Button variant="outlined" color="error" onClick={onClearSheetClick}>
+                        <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 600 }}>
                             Wyczyść arkusz
                         </Button>
-                        <Button variant="contained" color="success" onClick={downloadSheet}>
+                        <Button variant="contained" color="success" onClick={downloadSheet} sx={{ fontWeight: 600 }}>
                             Pobierz arkusz
                         </Button>
                     </Box>

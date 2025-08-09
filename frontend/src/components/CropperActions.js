@@ -38,7 +38,7 @@ const CropperActions = ({
                 onCropComplete={onCropComplete}
             />
             <Box display="flex" flexDirection="column" alignItems="center">
-                <Button alignItems={"center"} variant="contained" color="primary" onClick={handleCrop} size="large">
+                <Button alignItems={"center"} variant="contained" color="primary" onClick={handleCrop} size="large" sx={{ fontWeight: 600 }}>
                     Przytnij zdjęcie
                 </Button>
             </Box>

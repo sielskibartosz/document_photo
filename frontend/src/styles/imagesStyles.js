@@ -12,6 +12,7 @@ const FrameBox = ({children, sx = {}}) => (
             maxWidth: 400,
             width: "100%",   // by skalowało się responsywnie
             mx: "auto",
+            mb:2,
             ...sx,
         }}
     >

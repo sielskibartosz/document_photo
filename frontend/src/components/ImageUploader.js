@@ -19,6 +19,7 @@ function ImageUploader({ onChange }) {
           component="span"
           color="primary"
           startIcon={<CloudUploadIcon />}
+          sx={{ fontWeight: 600 }}
         >
           Wybierz zdjęcie
         </Button>

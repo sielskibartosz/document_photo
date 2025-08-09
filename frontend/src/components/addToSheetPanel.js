@@ -8,7 +8,7 @@ function AddToSheetPanel({ image, aspectRatio, onAddToSheet }) {
 
       <ImagePreview image={image} aspectRatio={aspectRatio} />
 
-      <Button variant="contained" onClick={onAddToSheet}>
+      <Button variant="contained" onClick={onAddToSheet} sx={{ fontWeight: 600 }}>
         Dodaj do arkusza
       </Button>
     </Box>

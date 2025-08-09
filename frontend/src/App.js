@@ -23,7 +23,7 @@ import { parseAspectRatio } from "./utils/cropImage";
 import { readFile } from "./utils/imageHelpers";
 import CropperActions from "./components/CropperActions";
 import SheetMinature from "./components/SheetMinature";
-import darkTheme from "./styles/theme";
+import {darkTheme, greyTheme} from "./styles/theme";
 import AddToSheetPanel from "./components/addToSheetPanel";
 
 function App() {
@@ -154,7 +154,7 @@ function App() {
           fontWeight={700}
           sx={{ mb: 4, textShadow: "0 1px 3px rgba(0,0,0,0.1)" }}
         >
-          Twoje zdjęcie do dokumentów
+          Stwórz własne zdjęcie do dowodu i dyplomu — szybko i bez kosztów
         </Typography>
 
         <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
@@ -192,7 +192,7 @@ function App() {
         />
 
         {imageSrc && (
-          <FrameBox >
+          <FrameBox>
             <CropperActions
               imageSrc={imageSrc}
               crop={crop}

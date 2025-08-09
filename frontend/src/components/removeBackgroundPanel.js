@@ -38,7 +38,7 @@ function RemoveBackgroundPanel({croppedImage, aspectRatio, setNoBgImage}) {
         <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={0}>
 
             <ImagePreview image={croppedImage} aspectRatio={aspectRatio}/>
-            <Button variant="contained" onClick={removeBackground} disabled={loading}>
+            <Button variant="contained" onClick={removeBackground} disabled={loading} sx={{ fontWeight: 600 }}>
                 {loading ? "Usuwanie..." : "Usuń tło"}
             </Button>
 
