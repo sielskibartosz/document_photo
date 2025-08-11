@@ -1,17 +1,25 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 function ImageUploader({ onChange }) {
+  const inputRef = useRef(null);
+
+  const handleChange = (e) => {
+    onChange(e);
+    // resetujemy wartość inputa, aby można było wybrać ten sam plik ponownie
+    e.target.value = null;
+  };
+
   return (
-    <Box sx={{ mb: 3, display: "flex", justifyContent: "center"}}>
-      {/* Hidden input + MUI Button */}
+    <Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
       <label htmlFor="upload-button" style={{ cursor: "pointer" }}>
         <input
           id="upload-button"
           type="file"
           accept="image/*"
-          onChange={onChange}
+          onChange={handleChange}
+          ref={inputRef}
           style={{ display: "none" }}
         />
         <Button

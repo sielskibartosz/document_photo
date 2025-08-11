@@ -10,7 +10,7 @@ export const TAB_DESCTIPTION = {
     title: "Zdjęcie 35x45 mm",
     description: "",
     link: "https://www.gov.pl/web/gov/zdjecie-do-dowodu-lub-paszportu",
-    image: "/images/ID_correct_foto.png",
+    image: "/images/IDsolo.png",
   },
   custom: {
     title: "Wymiary zdjęcia, np. 50/60 mm.",

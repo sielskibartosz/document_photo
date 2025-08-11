@@ -6,13 +6,13 @@ import TabContent from "./components/TabContent";
 import FormatSelector from "./components/FormatSelector";
 import SheetManager from "./components/SheetManager";
 import RemoveBackgroundPanel from "./components/removeBackgroundPanel";
+import FotoBackgroundColor from "./components/FotoBackgroundColor";
 
 import {
     Box,
     Typography,
     CssBaseline,
     ThemeProvider,
-    Stack,
 } from "@mui/material";
 
 import {TABS} from "./constants/tabs";
@@ -23,7 +23,7 @@ import {parseAspectRatio} from "./utils/cropImage";
 import {readFile} from "./utils/imageHelpers";
 import CropperActions from "./components/CropperActions";
 import SheetMinature from "./components/SheetMinature";
-import {darkTheme, greyTheme} from "./styles/theme";
+import {darkTheme} from "./styles/theme";
 import AddToSheetPanel from "./components/addToSheetPanel";
 
 function App() {
@@ -41,6 +41,12 @@ function App() {
     const [selectedSheetUrl, setSelectedSheetUrl] = useState(null);
     const [showSheetPreview, setShowSheetPreview] = useState(false);
     const [sheetCreatedAfterNewPhoto, setSheetCreatedAfterNewPhoto] = useState(false);
+
+    // Kolor tła tylko dla zakładki "custom"
+    const [bgColorCustom, setBgColorCustom] = useState("#ffffff");
+
+    // Jeśli nie "custom", to tło jest białe
+    const bgColor = activeTab === "custom" ? bgColorCustom : "#ffffff";
 
     const aspectRatio = parseAspectRatio(aspectInput);
 
@@ -119,7 +125,7 @@ function App() {
             }
         };
 
-        handleResize(); // ustaw początkowo
+        handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -154,11 +160,12 @@ function App() {
                     fontWeight={700}
                     sx={{mb: 4, textShadow: "0 1px 3px rgba(0,0,0,0.1)"}}
                 >
-                    Stwórz własne zdjęcie do dowodu i dyplomu — szybko i za darmo
+                    Zdjęcie do dowodu — szybko i za darmo
                 </Typography>
 
                 <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange}/>
                 <TabContent tabKey={activeTab} aspectInput={aspectInput} setAspectInput={setAspectInput}/>
+
                 <Box
                     sx={{
                         display: 'flex',
@@ -185,18 +192,24 @@ function App() {
                     )}
 
                     <Box
-                        sx={{
-                            width: '100%',
-                            maxWidth: 300,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            mt: 1.5,
-                        }}
+                      sx={{
+                        width: '100%',
+                        maxWidth: 350,
+                        mt: 1.5,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                      }}
                     >
-                        <FormatSelector
-                            selectedFormat={selectedFormat}
-                            setSelectedFormat={setSelectedFormat}
-                        />
+                      <FormatSelector
+                        selectedFormat={selectedFormat}
+                        setSelectedFormat={setSelectedFormat}
+                      />
+                      {activeTab === "custom" && (
+                        <Box sx={{ mt: 2, width: '100%', maxWidth: 150 }}>
+                          <FotoBackgroundColor color={bgColorCustom} onChange={setBgColorCustom} />
+                        </Box>
+                      )}
                     </Box>
                 </Box>
 
@@ -213,7 +226,7 @@ function App() {
                     showSheetPreview={showSheetPreview}
                     setShowSheetPreview={setShowSheetPreview}
                     clearSheet={clearSheet}
-                    cols={cols} // Przekazujemy dynamiczną liczbę kolumn
+                    cols={cols}
                 />
 
                 {imageSrc && (
@@ -235,8 +248,12 @@ function App() {
 
                 {croppedImage && (
                     <FrameBox>
-                        <RemoveBackgroundPanel croppedImage={croppedImage} aspectRatio={aspectRatio}
-                                               setNoBgImage={setNoBgImage}/>
+                        <RemoveBackgroundPanel
+                            croppedImage={croppedImage}
+                            aspectRatio={aspectRatio}
+                            setNoBgImage={setNoBgImage}
+                            bgColor={bgColor} // dynamiczny kolor w zależności od zakładki
+                        />
                     </FrameBox>
                 )}
 

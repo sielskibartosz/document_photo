@@ -6,6 +6,20 @@ import io
 import base64
 from rembg import remove
 
+def hex_to_rgba(hex_color):
+    hex_color = hex_color.lstrip('#')
+    length = len(hex_color)
+    if length == 6:
+        r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+        a = 255
+    elif length == 8:
+        r, g, b, a = (int(hex_color[0:2], 16), int(hex_color[2:4], 16),
+                      int(hex_color[4:6], 16), int(hex_color[6:8], 16))
+    else:
+        # Domyślny biały, jeśli format niepoprawny
+        return (255, 255, 255, 255)
+    return (r, g, b, a)
+
 class RemoveBackgroundView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
@@ -15,17 +29,20 @@ class RemoveBackgroundView(APIView):
 
         file_obj = request.FILES['image']
 
+        # Pobierz kolor tła z request.data (opcjonalnie)
+        bg_color_hex = request.data.get('bg_color', '#ffffff')
+        bg_color_rgba = hex_to_rgba(bg_color_hex)
+
         # Otwórz obraz
         input_image = Image.open(file_obj).convert("RGBA")
 
         # Usuń tło
         output_image = remove(input_image)
 
-        # Zamień przezroczyste tło na białe
-        bg = Image.new("RGBA", output_image.size, (255, 255, 255, 255))
+        # Zamień przezroczyste tło na wybrany kolor
+        bg = Image.new("RGBA", output_image.size, bg_color_rgba)
         bg.paste(output_image, mask=output_image.split()[3])
 
-        # NIE ZMIENIAMY rozmiaru, zwracamy obraz w oryginalnym rozmiarze
         final_img = bg
 
         buffered = io.BytesIO()
