@@ -1,19 +1,36 @@
 import React from "react";
-import { Box, Typography, Link, TextField, Tooltip, IconButton } from "@mui/material";
+import { Box, Typography, Link } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { TABS, TAB_DESCTIPTION } from "../constants/tabs";
+import AspectInput from "./AspectInput";
+import { PAPER_FORMATS } from "../constants/paperFormats";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ImageUploader from "./ImageUploader";
 
-const TabContent = ({ tabKey, aspectInput, setAspectInput }) => {
+const TabContent = ({
+  tabKey,
+  aspectInput,
+  setAspectInput,
+  selectedFormat,
+  setSelectedFormat,
+  onFileChange, // nowy prop
+}) => {
   const tab = TAB_DESCTIPTION[tabKey] || {};
   const tabFromList = TABS.find((t) => t.key === tabKey);
   const aspect = tabFromList ? tabFromList.aspect : "";
 
   const getFormatDescription = () => {
-    return `Format arkusza to rozmiar kartki papieru na ktorej umieszczone bedzie zdjęcie.`;
+    return `Format arkusza to rozmiar kartki papieru, na której umieszczone będzie zdjęcie.`;
   };
 
-  // Handler zmiany inputa proporcji
   const handleAspectChange = (e) => {
     setAspectInput(e.target.value);
   };
@@ -23,7 +40,8 @@ const TabContent = ({ tabKey, aspectInput, setAspectInput }) => {
       {tab.image && (
         <Box
           sx={{
-            width: 300,
+            width: "100%",
+            maxWidth: 350,
             minHeight: 200,
             margin: "0 auto",
             display: "flex",
@@ -33,7 +51,6 @@ const TabContent = ({ tabKey, aspectInput, setAspectInput }) => {
             backgroundColor: "transparent",
             padding: 1,
             boxSizing: "border-box",
-            mb: 0,
           }}
         >
           <Box
@@ -43,13 +60,10 @@ const TabContent = ({ tabKey, aspectInput, setAspectInput }) => {
             sx={{
               maxWidth: "100%",
               height: "auto",
-              width: "auto",
               objectFit: "contain",
               borderRadius: 2,
-              boxShadow: "none",
               display: "block",
               backgroundColor: "transparent",
-              border: "none",
             }}
           />
         </Box>
@@ -58,7 +72,12 @@ const TabContent = ({ tabKey, aspectInput, setAspectInput }) => {
       {tab.title && (
         <Typography
           variant="body1"
-          sx={{ mb: 0.5, fontWeight: "normal", textAlign: "center", mt: 0, pt: 0, lineHeight: 1.2 }}
+          sx={{
+            mb: 0.5,
+            fontWeight: "normal",
+            textAlign: "center",
+            lineHeight: 1.2,
+          }}
         >
           {tab.title}
         </Typography>
@@ -122,43 +141,60 @@ const TabContent = ({ tabKey, aspectInput, setAspectInput }) => {
         </Link>
       )}
 
-      {tabKey === "custom" && (
-        <Box
-          sx={{
-            position: "relative",
-            maxWidth: 180,
-            mx: "auto",
-            mt: 3,
-          }}
-        >
-          <TextField
-            label={`Podaj proporcje [mm]`}
-            variant="outlined"
-            size="small"
-            value={aspectInput}
-            onChange={handleAspectChange}
-            InputProps={{ sx: { height: 40 } }}
-            inputProps={{ style: { fontSize: 16, fontFamily: "Roboto, sans-serif" } }}
-            placeholder={`np. ${aspect}`}
-            fullWidth
-          />
-          <Tooltip title={getFormatDescription()} arrow placement="top">
-            <IconButton
-              size="small"
-              aria-label="info"
-              sx={{
-                position: "absolute",
-                right: 4,
-                top: "50%",
-                transform: "translateY(-50%)",
-                padding: 0,
-              }}
+      {/* Kontener na format, aspect i uploader */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+          mt: 2,
+          mx: "auto",
+          maxWidth: 220,
+          width: "100%",
+        }}
+      >
+        {/* Kontener z selectem i ikoną w linii */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+          <FormControl size="small" sx={{ flexGrow: 1 }}>
+            <InputLabel id="format-select-label">Format arkusza</InputLabel>
+            <Select
+              labelId="format-select-label"
+              value={selectedFormat}
+              label="Format arkusza"
+              onChange={(e) => setSelectedFormat(e.target.value)}
             >
+              {Object.keys(PAPER_FORMATS).map((key) => (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Tooltip title={getFormatDescription()} arrow>
+            <IconButton size="small" aria-label="info" sx={{ p: 0 }}>
               <InfoOutlinedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
         </Box>
-      )}
+
+        {/* AspectInput */}
+        {tabKey === "custom" && (
+          <AspectInput
+            value={aspectInput}
+            onChange={handleAspectChange}
+            placeholder={`np. ${aspect}`}
+            tooltip={getFormatDescription()}
+            sx={{ width: "100%" }}
+          />
+        )}
+
+        {/* ImageUploader */}
+        <Box sx={{ width: "100%" }}>
+          <ImageUploader onChange={onFileChange} />
+        </Box>
+      </Box>
     </Box>
   );
 };

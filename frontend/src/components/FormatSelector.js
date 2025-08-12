@@ -14,19 +14,29 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
   const getFormatDescription = (format) => {
     const formatData = PAPER_FORMATS[format];
-    return formatData ? `Format arkusza to rozmiar kartki papieru na ktorej umieszczone bedzie zdjęcie.` : "";
+    return formatData ? `Format arkusza to rozmiar kartki papieru na której umieszczone będzie zdjęcie.` : "";
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, width: '100%' }}>
-      <FormControl sx={{ minWidth: 160 }} size="small">
-        <InputLabel id="format-select-label">Wybierz format arkusza</InputLabel>
+    <Box sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 1,
+      width: '100%',
+      maxWidth: 300,           // maksymalna szerokość całego kontenera
+      mx: "auto",
+    }}>
+      <FormControl
+        size="small"
+        sx={{ minWidth: 160, maxWidth: 220, flexShrink: 0 }}  // ustalamy szerokość selecta
+      >
+        <InputLabel id="format-select-label">Format arkusza</InputLabel>
         <Select
           labelId="format-select-label"
           value={selectedFormat}
-          label="Wybierz format arkusza"
+          label="Format arkusza"
           onChange={(e) => setSelectedFormat(e.target.value)}
-          sx={{ pr: '36px' }} // padding po prawej, by zrobić miejsce na ikonę
         >
           {Object.keys(PAPER_FORMATS).map((key) => (
             <MenuItem key={key} value={key}>
@@ -36,9 +46,12 @@ const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
         </Select>
       </FormControl>
 
-      {/* Ikona "i" obok Selecta */}
       <Tooltip title={getFormatDescription(selectedFormat)} arrow placement="top">
-        <IconButton size="small" aria-label="info" sx={{ p: 0 }}>
+        <IconButton
+          size="small"
+          aria-label="info"
+          sx={{ p: 0, color: 'primary.main', zIndex: 10 }}
+        >
           <InfoOutlinedIcon fontSize="small" />
         </IconButton>
       </Tooltip>
