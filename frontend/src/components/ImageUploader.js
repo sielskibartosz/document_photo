@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 function ImageUploader({ onChange }) {
@@ -7,13 +7,12 @@ function ImageUploader({ onChange }) {
 
   const handleChange = (e) => {
     onChange(e);
-    // resetujemy wartość inputa, aby można było wybrać ten sam plik ponownie
-    e.target.value = null;
+    e.target.value = null; // reset inputa
   };
 
   return (
-    <Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
-      <label htmlFor="upload-button" style={{ cursor: "pointer" }}>
+    <Box sx={{ mb: 3, width: "100%" }}>
+      <label htmlFor="upload-button" style={{ cursor: "pointer", width: "100%" }}>
         <input
           id="upload-button"
           type="file"
@@ -27,7 +26,7 @@ function ImageUploader({ onChange }) {
           component="span"
           color="primary"
           startIcon={<CloudUploadIcon />}
-          sx={{ fontWeight: 600 }}
+          sx={{ fontWeight: 600, width: "100%" }}
         >
           Wybierz zdjęcie
         </Button>

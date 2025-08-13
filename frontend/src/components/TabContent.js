@@ -3,17 +3,9 @@ import { Box, Typography, Link } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
 import { TABS, TAB_DESCTIPTION } from "../constants/tabs";
 import AspectInput from "./AspectInput";
-import { PAPER_FORMATS } from "../constants/paperFormats";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Tooltip,
-  IconButton,
-} from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import FormatSelector from "./FormatSelector";
 import ImageUploader from "./ImageUploader";
+import FotoBackgroundColor from "./FotoBackgroundColor";
 
 const TabContent = ({
   tabKey,
@@ -21,15 +13,13 @@ const TabContent = ({
   setAspectInput,
   selectedFormat,
   setSelectedFormat,
-  onFileChange, // nowy prop
+  onFileChange,
+  bgColor,    // kolor z App
+  setBgColor, // setter z App
 }) => {
   const tab = TAB_DESCTIPTION[tabKey] || {};
   const tabFromList = TABS.find((t) => t.key === tabKey);
   const aspect = tabFromList ? tabFromList.aspect : "";
-
-  const getFormatDescription = () => {
-    return `Format arkusza to rozmiar kartki papieru, na której umieszczone będzie zdjęcie.`;
-  };
 
   const handleAspectChange = (e) => {
     setAspectInput(e.target.value);
@@ -141,7 +131,6 @@ const TabContent = ({
         </Link>
       )}
 
-      {/* Kontener na format, aspect i uploader */}
       <Box
         sx={{
           display: "flex",
@@ -154,43 +143,29 @@ const TabContent = ({
           width: "100%",
         }}
       >
-        {/* Kontener z selectem i ikoną w linii */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
-          <FormControl size="small" sx={{ flexGrow: 1 }}>
-            <InputLabel id="format-select-label">Format arkusza</InputLabel>
-            <Select
-              labelId="format-select-label"
-              value={selectedFormat}
-              label="Format arkusza"
-              onChange={(e) => setSelectedFormat(e.target.value)}
-            >
-              {Object.keys(PAPER_FORMATS).map((key) => (
-                <MenuItem key={key} value={key}>
-                  {key}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <Tooltip title={getFormatDescription()} arrow>
-            <IconButton size="small" aria-label="info" sx={{ p: 0 }}>
-              <InfoOutlinedIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          <FormatSelector
+            selectedFormat={selectedFormat}
+            setSelectedFormat={setSelectedFormat}
+          />
         </Box>
 
-        {/* AspectInput */}
         {tabKey === "custom" && (
-          <AspectInput
-            value={aspectInput}
-            onChange={handleAspectChange}
-            placeholder={`np. ${aspect}`}
-            tooltip={getFormatDescription()}
-            sx={{ width: "100%" }}
-          />
-        )}
+              <>
+                <AspectInput
+                  value={aspectInput}
+                  onChange={handleAspectChange}
+                  placeholder={`np. ${aspect}`}
+                  sx={{ width: "100%" }}
+                />
+                <FotoBackgroundColor
+                  color={tabKey === "custom" ? bgColor : "#ffffff"} // tylko custom korzysta z bgColor
+                  onChange={tabKey === "custom" ? setBgColor : undefined} // tylko custom może zmieniać
+                  sx={{ width: "100%" }}
+/>
+              </>
+            )}
 
-        {/* ImageUploader */}
         <Box sx={{ width: "100%" }}>
           <ImageUploader onChange={onFileChange} />
         </Box>

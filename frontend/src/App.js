@@ -13,15 +13,14 @@ import { parseAspectRatio } from "./utils/cropImage";
 import { readFile } from "./utils/imageHelpers";
 import { darkTheme } from "./styles/theme";
 
-import ImageUploader from "./components/ImageUploader";
 import TabSelector from "./components/TabSelector";
 import TabContent from "./components/TabContent";
-import FormatSelector from "./components/FormatSelector";
 import SheetManager from "./components/SheetManager";
 import CropperActions from "./components/CropperActions";
 import SheetMinature from "./components/SheetMinature";
 import RemoveBackgroundPanel from "./components/removeBackgroundPanel";
 import AddToSheetPanel from "./components/addToSheetPanel";
+
 
 function App() {
   const [activeTab, setActiveTab] = useState("id");
@@ -40,10 +39,11 @@ function App() {
   const [selectedSheetUrl, setSelectedSheetUrl] = useState(null);
   const [showSheetPreview, setShowSheetPreview] = useState(false);
   const [sheetCreatedAfterNewPhoto, setSheetCreatedAfterNewPhoto] = useState(false);
+  const [bgColor, setBgColor] = useState("#ffffff");
 
   // Kolor tła (tylko w trybie custom)
-  const [bgColorCustom, setBgColorCustom] = useState("#ffffff");
-  const bgColor = activeTab === "custom" ? bgColorCustom : "#ffffff";
+//  const [bgColorCustom, setBgColorCustom] = useState("#ffffff");
+//  const bgColor = activeTab === "custom" ? bgColorCustom : "#ffffff";
 
   const aspectRatio = parseAspectRatio(aspectInput);
 
@@ -160,7 +160,9 @@ function App() {
           setAspectInput={setAspectInput}
           selectedFormat={selectedFormat}
           setSelectedFormat={setSelectedFormat}
-          onFileChange={onFileChange} // dodane
+          onFileChange={onFileChange}
+          bgColor={bgColor}          // <-- przekazujesz kolor
+          setBgColor={setBgColor}    // <-- przekazujesz setter
         />
 
         {sheetHistory.length > 0 && sheetCreatedAfterNewPhoto && (
@@ -209,7 +211,7 @@ function App() {
               croppedImage={croppedImage}
               aspectRatio={aspectRatio}
               setNoBgImage={setNoBgImage}
-              bgColor={bgColor}
+              bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
             />
           </FrameBox>
         )}
