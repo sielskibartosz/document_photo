@@ -1,0 +1,19 @@
+# Pliki środowiska wirtualnego
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Pliki systemowe
+.DS_Store
+*.log
+
+# Konfiguracje IDE (opcjonalnie)
+.vscode/
+.idea/
+node_modules/
+build/
+.DS_Store
+.env
