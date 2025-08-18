@@ -1,5 +1,6 @@
 import React from "react";
 import { PAPER_FORMATS } from "../constants/paperFormats";
+import { useTranslation } from "react-i18next";
 import {
   FormControl,
   InputLabel,
@@ -11,10 +12,11 @@ import {
 } from "@mui/material";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-// Stała z opisem tooltipa w tym samym pliku
-const FORMAT_TOOLTIP = "Rozmiar kartki papieru na której drukowaneZdjęcie będzie zdjęcie.";
-
 const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
+  const { t } = useTranslation(); // <- musi być wewnątrz komponentu
+
+  const FORMAT_TOOLTIP = t("format_info"); // tłumaczenie tooltipa
+
   return (
     <Box sx={{
       display: 'flex',
@@ -26,35 +28,35 @@ const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
       mx: "auto",
     }}>
       <FormControl size="small" sx={{ flexGrow: 1 }}>
-              <InputLabel id="format-select-label" shrink>
-                Format arkusza
-              </InputLabel>
-              <Select
-                labelId="format-select-label"
-                value={selectedFormat}
-                label="Format arkusza"
-                onChange={(e) => setSelectedFormat(e.target.value)}
-                sx={{
-                  textAlign: "left",           // wyrównanie samego Select
-                  "& .MuiSelect-select": {
-                    display: "flex",
-                    alignItems: "center",      // wyrównanie wertykalne do środka
-                    justifyContent: "flex-start", // wyrównanie poziome do lewej
-                  },
-                }}
-                MenuProps={{
-                  PaperProps: {
-                    sx: { textAlign: "left" }, // wyrównanie w liście
-                  },
-                }}
-              >
-                {Object.keys(PAPER_FORMATS).map((key) => (
-                  <MenuItem key={key} value={key}>
-                    {key}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+        <InputLabel id="format-select-label" shrink>
+          {t("format")}
+        </InputLabel>
+        <Select
+          labelId="format-select-label"
+          value={selectedFormat}
+          label={t("format")}
+          onChange={(e) => setSelectedFormat(e.target.value)}
+          sx={{
+            textAlign: "left",
+            "& .MuiSelect-select": {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            },
+          }}
+          MenuProps={{
+            PaperProps: {
+              sx: { textAlign: "left" },
+            },
+          }}
+        >
+          {Object.keys(PAPER_FORMATS).map((key) => (
+            <MenuItem key={key} value={key}>
+              {key}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
       <Tooltip title={FORMAT_TOOLTIP} arrow placement="top">
         <IconButton

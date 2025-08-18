@@ -1,0 +1,18 @@
+{
+  "language": "Język",
+  "title": "Zdjęcie do dowodu — szybko i bezpłatnie",
+  "id_tab": "Dowód osobisty / Prawo jazdy",
+  "custom_tab": "Własne",
+  "id_link": "Oficjalne wymagania gov.pl",
+  "format": "Format papieru",
+  "format_info": "Wybierz format papieru do wydruku zdjęcia",
+  "foto_selection": "Wybierz zdjęcie",
+  "foto_size": "Wymiary zdjęcia",
+  "color_choice": "Kolor tła",
+  "aspect_tooltip": "Szerokość / Wysokość [mm]",
+  "crop_photo": "Przytnij zdjęcie",
+  "removing_bg": "Usuwanie tła...",
+  "remove_bg": "Usuń tło",
+  "add_to_sheet": "Dodaj do arkusza",
+  "zoom": "Powiększenie"
+}

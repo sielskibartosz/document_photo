@@ -1,19 +1,20 @@
+# Wybieramy lekkiego Pythona
 FROM python:3.12-slim
 
-# Ustawiamy katalog roboczy na katalog, gdzie jest manage.py
+# Ustawiamy katalog roboczy
 WORKDIR /app
 
-# Kopiujemy wymagania
+# Kopiujemy plik z wymaganiami
 COPY requirements.txt .
 
-# Instalacja zależności
+# Instalujemy zależności
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Kopiujemy cały projekt
-COPY . .
+# Kopiujemy resztę projektu
+COPY app .
 
-# Eksponujemy port Django
+# Eksponujemy port FastAPI
 EXPOSE 8000
 
-# Uruchomienie serwera dev Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Uruchamiamy serwer uvicorn
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

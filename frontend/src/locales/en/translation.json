@@ -1,0 +1,22 @@
+{
+  "language": "Language",
+  "title": "ID Photo — Quick & Free",
+  "id_tab": "ID / Driving License",
+  "custom_tab": "Custom",
+  "id_link": "Official requirements gov.pl",
+  "format": "Paper Size",
+  "format_info": "Select the paper size for printing the photo",
+  "foto_selection": "Select a Photo",
+  "foto_size": "Photo Dimensions",
+  "color_choice": "Background Color",
+  "aspect_tooltip": "Width/Height [mm]",
+  "crop_photo": "Crop Photo",
+  "removing_bg": "Removing Background...",
+  "remove_bg": "Remove Background",
+  "add_to_sheet": "Add to Sheet",
+  "zoom": "Zoom",
+  "sheet_header": "Photos added to sheet",
+  "duplicate_photo": "Duplicate Photo",
+  "clear_sheet": "Clear Sheet",
+  "download_sheet": "Download Sheet"
+}

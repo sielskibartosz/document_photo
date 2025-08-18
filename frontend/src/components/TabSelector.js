@@ -1,15 +1,12 @@
-// TabSelector.js
 import React from 'react';
-import {Button, Stack} from '@mui/material';
+import { Button, Stack } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
-const TabSelector = ({tabs, activeTab, onTabChange}) => {
+const TabSelector = ({ tabs, activeTab, onTabChange }) => {
+    const { t } = useTranslation();
+
     return (
-        <Stack
-            direction="row"
-            spacing={2}
-            justifyContent="center"
-            sx={{marginBottom: 3}}
-        >
+        <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 3 }}>
             {tabs.map((tab) => (
                 <Button
                     key={tab.key}
@@ -21,12 +18,11 @@ const TabSelector = ({tabs, activeTab, onTabChange}) => {
                         fontSize: 16,
                         fontFamily: 'Roboto, sans-serif',
                         textTransform: 'none',
-                        minHeight: 40,          // wysokość spójna z inputem
-                        padding: '6px 16px',    // domyślne paddingi, możesz dostosować
-                        boxSizing: 'border-box',
+                        minHeight: 40,
+                        padding: '6px 16px',
                     }}
                 >
-                    {tab.label}
+                    {t(tab.labelKey)}
                 </Button>
             ))}
         </Stack>

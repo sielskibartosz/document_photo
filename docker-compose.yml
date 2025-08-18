@@ -3,7 +3,7 @@ version: '3.9'
 services:
   backend:
     build: ./backend
-    container_name: django-backend
+    container_name: FotoCropper-fastAPI
     ports:
       - "8000:8000"
     volumes:
@@ -11,7 +11,7 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: react-frontend
+    container_name: FotoCropper-frontend
     ports:
       - "3000:80"
     depends_on:

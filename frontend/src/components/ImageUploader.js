@@ -1,9 +1,11 @@
 import React, { useRef } from "react";
 import { Box, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useTranslation } from "react-i18next";
 
 function ImageUploader({ onChange }) {
   const inputRef = useRef(null);
+  const { t } = useTranslation();
 
   const handleChange = (e) => {
     onChange(e);
@@ -28,7 +30,7 @@ function ImageUploader({ onChange }) {
           startIcon={<CloudUploadIcon />}
           sx={{ fontWeight: 600, width: "100%" }}
         >
-          Wybierz zdjęcie
+          {t("foto_selection")}
         </Button>
       </label>
     </Box>

@@ -1,4 +1,3 @@
-from PIL import Image
 
 def hex_to_rgba(hex_color: str):
     hex_color = hex_color.lstrip('#')

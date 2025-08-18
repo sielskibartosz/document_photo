@@ -1,11 +1,10 @@
-// src/tabs.js
-
+// src/constants/tabs.js
 export const TABS = [
-    {key: "id", label: "Dowód osobisty/Prawo jazdy", aspect: "35/45"},
-    {key: "custom", label: "Personalizowane", aspect: "50/50"},
+    { key: "id", labelKey: "id_tab", aspect: "35/45" },
+    { key: "custom", labelKey: "custom_tab", aspect: "50/50" },
 ];
 
-export const TAB_DESCTIPTION = {
+export const TAB_DESCRIPTION = {
   id: {
     title: "35/45 mm",
     description: "",

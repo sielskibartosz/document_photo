@@ -1,7 +1,9 @@
+// TabContent.js
 import React from "react";
 import { Box, Typography, Link } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
-import { TABS, TAB_DESCTIPTION } from "../constants/tabs";
+import { useTranslation } from "react-i18next";
+import { TABS, TAB_DESCRIPTION } from "../constants/tabs";
 import AspectInput from "./AspectInput";
 import FormatSelector from "./FormatSelector";
 import ImageUploader from "./ImageUploader";
@@ -14,16 +16,14 @@ const TabContent = ({
   selectedFormat,
   setSelectedFormat,
   onFileChange,
-  bgColor,    // kolor z App
-  setBgColor, // setter z App
+  bgColor,
+  setBgColor,
 }) => {
-  const tab = TAB_DESCTIPTION[tabKey] || {};
+  const { t } = useTranslation();
+
+  const tab = TAB_DESCRIPTION[tabKey] || {};
   const tabFromList = TABS.find((t) => t.key === tabKey);
   const aspect = tabFromList ? tabFromList.aspect : "";
-
-  const handleAspectChange = (e) => {
-    setAspectInput(e.target.value);
-  };
 
   return (
     <Box sx={{ textAlign: "center", mb: 0, "& > *": { mb: 0 } }}>
@@ -46,7 +46,7 @@ const TabContent = ({
           <Box
             component="img"
             src={tab.image}
-            alt={`Przykład zdjęcia - ${tabKey}`}
+            alt={t(tabFromList?.labelKey || "")}
             sx={{
               maxWidth: "100%",
               height: "auto",
@@ -110,26 +110,26 @@ const TabContent = ({
       )}
 
       {tab.link && (
-        <Link
-          href={tab.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 0.5,
-            fontWeight: 700,
-            color: "primary.main",
-            textDecoration: "none",
-            "&:hover": { textDecoration: "underline" },
-            maxWidth: 600,
-            mx: "auto",
-          }}
-        >
-          <LinkIcon fontSize="small" />
-          Link do wymagań gov.pl
-        </Link>
-      )}
+          <Link
+            href={tab.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
+              fontWeight: 700,
+              color: "primary.main",
+              textDecoration: "none",
+              "&:hover": { textDecoration: "underline" },
+              maxWidth: 600,
+              mx: "auto",
+            }}
+          >
+            <LinkIcon fontSize="small" />
+            {t("id_link")}
+          </Link>
+        )}
 
       <Box
         sx={{
@@ -144,27 +144,24 @@ const TabContent = ({
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
-          <FormatSelector
-            selectedFormat={selectedFormat}
-            setSelectedFormat={setSelectedFormat}
-          />
+          <FormatSelector selectedFormat={selectedFormat} setSelectedFormat={setSelectedFormat} />
         </Box>
 
         {tabKey === "custom" && (
-              <>
-                <AspectInput
-                  value={aspectInput}
-                  onChange={handleAspectChange}
-                  placeholder={`np. ${aspect}`}
-                  sx={{ width: "100%" }}
-                />
-                <FotoBackgroundColor
-                  color={tabKey === "custom" ? bgColor : "#ffffff"} // tylko custom korzysta z bgColor
-                  onChange={tabKey === "custom" ? setBgColor : undefined} // tylko custom może zmieniać
-                  sx={{ width: "100%" }}
-/>
-              </>
-            )}
+          <>
+            <AspectInput
+              value={aspectInput}
+              onChange={(val) => setAspectInput(val)} // <- tu nie używaj e.target.value
+              placeholder={`np. ${aspect}`}
+              sx={{ width: "100%" }}
+            />
+            <FotoBackgroundColor
+              color={bgColor || "#ffffff"}
+              onChange={setBgColor}
+              sx={{ width: "100%" }}
+            />
+          </>
+        )}
 
         <Box sx={{ width: "100%" }}>
           <ImageUploader onChange={onFileChange} />

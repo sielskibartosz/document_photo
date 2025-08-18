@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Box, Typography, Popover, Button } from "@mui/material";
 import { HexColorPicker } from "react-colorful";
+import { useTranslation } from "react-i18next";
 
 const FotoBackgroundColor = ({ color, onChange }) => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const open = Boolean(anchorEl);
@@ -11,7 +13,7 @@ const FotoBackgroundColor = ({ color, onChange }) => {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 160 }}>
       <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>
-        Kolor tła:
+        {t("color_choice")}
       </Typography>
 
       <Button

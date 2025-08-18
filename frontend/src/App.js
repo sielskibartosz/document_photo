@@ -4,9 +4,11 @@ import {
   Typography,
   CssBaseline,
   ThemeProvider,
+  Select,
+  MenuItem,
 } from "@mui/material";
-
-import { TABS } from "./constants/tabs";
+import { useTranslation } from "react-i18next";
+import { TABS} from "./constants/tabs";
 import { buttonBaseStyle } from "./styles/buttonStyles";
 import FrameBox from "./styles/imagesStyles";
 import { parseAspectRatio } from "./utils/cropImage";
@@ -21,11 +23,11 @@ import SheetMinature from "./components/SheetMinature";
 import RemoveBackgroundPanel from "./components/removeBackgroundPanel";
 import AddToSheetPanel from "./components/addToSheetPanel";
 
-
 function App() {
+  const { i18n } = useTranslation();
+
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
-
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1.9);
@@ -40,10 +42,6 @@ function App() {
   const [showSheetPreview, setShowSheetPreview] = useState(false);
   const [sheetCreatedAfterNewPhoto, setSheetCreatedAfterNewPhoto] = useState(false);
   const [bgColor, setBgColor] = useState("#ffffff");
-
-  // Kolor tła (tylko w trybie custom)
-//  const [bgColorCustom, setBgColorCustom] = useState("#ffffff");
-//  const bgColor = activeTab === "custom" ? bgColorCustom : "#ffffff";
 
   const aspectRatio = parseAspectRatio(aspectInput);
 
@@ -104,6 +102,10 @@ function App() {
     setShowSheetPreview(false);
   };
 
+  const handleLanguageChange = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
+
   // dynamiczna liczba kolumn w zależności od szerokości okna
   const [cols, setCols] = useState(3);
   useEffect(() => {
@@ -120,6 +122,8 @@ function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+
+
       <Box
         sx={(theme) => ({
           padding: 4,
@@ -140,20 +144,44 @@ function App() {
           },
         })}
       >
-        <Typography
-          variant="h4"
-          align="center"
-          fontWeight={700}
-          sx={{ mb: 4, textShadow: "0 1px 3px rgba(0,0,0,0.1)" }}
+      <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            mb: 4,
+          }}
         >
-          Zdjęcie do dowodu — szybko i za darmo
-        </Typography>
+          {/* Tytuł wyśrodkowany */}
+          <Typography
+            variant="h4"
+            fontWeight={700}
+            sx={{ textShadow: "0 1px 3px rgba(0,0,0,0.1)" }}
+          >
+            {i18n.t("title")}
+          </Typography>
+
+          {/* Dropdown języka po prawej */}
+          <Box sx={{ position: "absolute", right: 0 }}>
+            <Select
+              value={i18n.language}
+              onChange={handleLanguageChange}
+              size="small"
+              sx={{ ml: 2 }}
+            >
+              <MenuItem value="pl">PL</MenuItem>
+              <MenuItem value="en">EN</MenuItem>
+            </Select>
+          </Box>
+        </Box>
 
         <TabSelector
           tabs={TABS}
           activeTab={activeTab}
           onTabChange={handleTabChange}
         />
+
         <TabContent
           tabKey={activeTab}
           aspectInput={aspectInput}
@@ -161,8 +189,8 @@ function App() {
           selectedFormat={selectedFormat}
           setSelectedFormat={setSelectedFormat}
           onFileChange={onFileChange}
-          bgColor={bgColor}          // <-- przekazujesz kolor
-          setBgColor={setBgColor}    // <-- przekazujesz setter
+          bgColor={bgColor}
+          setBgColor={setBgColor}
         />
 
         {sheetHistory.length > 0 && sheetCreatedAfterNewPhoto && (
