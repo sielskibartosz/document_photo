@@ -5,18 +5,21 @@ from PIL import Image
 import io
 import base64
 from rembg import remove
-from .utils import hex_to_rgba
+from utils import hex_to_rgba  # <- usuń kropkę, bo Render traktuje to jako pakiet
 
 app = FastAPI(title="Background Remover API")
 
 # --- CORS ---
 origins = [
-    "https://sielskibartosz.github.io",   # GitHub Pages
-    "https://photoidcreator.com",             # Twoja domena (jak podepniesz)
+    "https://sielskibartosz.github.io",
+    "https://photoidcreator.com",
+    "http://localhost:3000",       # dev frontend
+    "http://127.0.0.1:3000",      # dev frontend
 ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # na produkcji lepiej podać listę frontendu
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
