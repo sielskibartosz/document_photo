@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ImagePreview from "./ImagePreview";
 import { Box, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { BACKEND_URL } from "../constants/backendConfig";
 
 function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColor = "#ffffff" }) {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
       formData.append("image", blob, "cropped.png");
       formData.append("bg_color", bgColor);
 
-      const response = await fetch("http://localhost:8000/remove-background/", {
+      const response = await fetch("${BACKEND_URL}/remove-background/", {
         method: "POST",
         body: formData,
       });
