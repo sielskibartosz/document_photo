@@ -143,7 +143,7 @@ const SheetManager = ({
         >
           {/* Nagłówek na środku */}
           <Typography variant="h6" fontWeight={600} color="text.primary" mb={2} textAlign="center">
-            {t("add_to_sheet")}: {sheetImages.length} ({selectedFormat})
+            {t("sheet_header")}: {sheetImages.length} ({selectedFormat})
           </Typography>
 
           {/* Przyciski w jednej linii */}

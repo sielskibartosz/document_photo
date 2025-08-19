@@ -1,5 +1,7 @@
 // src/constants/tabs.js
-import customFoto from '../assets/custom_foto.jpg';
+import IDsolo from "../images/IDsolo.png";
+import CustomFoto from "../images/custom_foto.jpg";
+
 export const TABS = [
     { key: "id", labelKey: "id_tab", aspect: "35/45" },
     { key: "custom", labelKey: "custom_tab", aspect: "50/50" },
@@ -10,10 +12,10 @@ export const TAB_DESCRIPTION = {
     title: "35/45 mm",
     description: "",
     link: "https://www.gov.pl/web/gov/zdjecie-do-dowodu-lub-paszportu",
-    image: customFoto,
+    image: IDsolo,  // imported from src/images
   },
   custom: {
     title: "",
-    image: customFoto,
+    image: CustomFoto,  // imported from src/images
   },
 };
