@@ -4,12 +4,12 @@ import { Box, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { BACKEND_URL } from "../constants/backendConfig";
 
-console.log("BACKEND_URL:", BACKEND_URL);
+
 
 function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColor = "#ffffff" }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-
+  console.log("BACKEND_URL:", BACKEND_URL);
   const dataURLtoBlob = (dataurl) => {
     const arr = dataurl.split(",");
     const mime = arr[0].match(/:(.*?);/)[1];
