@@ -2,21 +2,21 @@ import React, { useState } from "react";
 import ImagePreview from "./ImagePreview";
 import { Box, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { BACKEND_URL } from "../constants/backendConfig";
-
-
 
 function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColor = "#ffffff" }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  console.log("BACKEND_URL:", BACKEND_URL);
+
+  // Funkcja pomocnicza do konwersji data URL -> Blob
   const dataURLtoBlob = (dataurl) => {
     const arr = dataurl.split(",");
     const mime = arr[0].match(/:(.*?);/)[1];
     const bstr = atob(arr[1]);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
-    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
     return new Blob([u8arr], { type: mime });
   };
 
@@ -25,6 +25,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
     setLoading(true);
 
     try {
+      // Konwersja data URL na Blob lub pobranie z URL
       const blob = croppedImage.startsWith("data:")
         ? dataURLtoBlob(croppedImage)
         : await (await fetch(croppedImage)).blob();
@@ -33,18 +34,26 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
       formData.append("image", blob, "cropped.png");
       formData.append("bg_color", bgColor);
 
-      const response = await fetch(`${BACKEND_URL}/remove-background/`, { // <- poprawione
+      const response = await fetch("http://localhost:8000/remove-background/", {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        try {
+          const errData = await response.json();
+          throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        } catch {
+          throw new Error(t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        }
       }
 
-      const data = await response.json();
-      setNoBgImage("data:image/png;base64," + data.image_no_bg);
+      // 📌 odbiór jako BLOB zamiast base64
+      const resultBlob = await response.blob();
+      const objectUrl = URL.createObjectURL(resultBlob);
+
+      // ustawiamy Blob URL zamiast base64
+      setNoBgImage(objectUrl);
     } catch (error) {
       alert(error.message);
     } finally {
