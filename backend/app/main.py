@@ -5,7 +5,7 @@ from PIL import Image
 import io
 import base64
 from rembg import remove
-from utils import hex_to_rgba  # <- usuń kropkę, bo Render traktuje to jako pakiet
+from .utils import hex_to_rgba
 
 app = FastAPI(title="Background Remover API")
 
