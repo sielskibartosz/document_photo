@@ -32,13 +32,13 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
         : await (await fetch(croppedImage)).blob();
 
       const formData = new FormData();
-        formData.append("image", blob, "cropped.png"); // nazwa "image" pasuje do backend
-        formData.append("bg_color", bgColor);          // przekazujemy kolor
+      formData.append("image", blob, "cropped.png");
+      formData.append("bg_color", bgColor);
 
-        const response = await fetch(`${BACKEND_URL}/remove-background/`, {
-          method: "POST",
-          body: formData,
-        });
+      const response = await fetch(`${BACKEND_URL}/remove-background/`, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         try {
@@ -49,11 +49,17 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
         }
       }
 
-      // 📌 odbiór jako BLOB zamiast base64
-      const resultBlob = await response.blob();
-      const objectUrl = URL.createObjectURL(resultBlob);
+      // odbiór JSON i konwersja base64 -> Blob
+      const resultJson = await response.json();
+      const imageData = resultJson.image;
+      const byteCharacters = atob(imageData);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const objectUrl = URL.createObjectURL(new Blob([byteArray], { type: "image/png" }));
 
-      // ustawiamy Blob URL zamiast base64
       setNoBgImage(objectUrl);
     } catch (error) {
       alert(error.message);

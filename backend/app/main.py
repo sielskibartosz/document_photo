@@ -11,7 +11,7 @@ app = FastAPI(title="Remove Background API")
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # możesz tu dodać konkretny frontend
+    allow_origins=["*"],  # możesz podać listę frontendów np. ["https://photoidcreator.com"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -19,7 +19,7 @@ app.add_middleware(
 @app.post("/remove-background/")
 async def remove_background(
     image: UploadFile = File(...),
-    bg_color: str = Form("#ffffff")  # <- tu odbieramy kolor tła
+    bg_color: str = Form("#ffffff")  # odbieramy kolor tła
 ):
     try:
         image_bytes = await image.read()
@@ -28,7 +28,7 @@ async def remove_background(
         # usuwamy tło
         output_image = remove(input_image)
 
-        # jeśli chcesz wstawić jednolite tło zamiast przezroczystości:
+        # wstawienie jednolitego tła
         if bg_color:
             bg_image = Image.new("RGBA", output_image.size, bg_color)
             bg_image.paste(output_image, mask=output_image)
