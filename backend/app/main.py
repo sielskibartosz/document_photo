@@ -6,7 +6,7 @@ from PIL import Image
 import io
 import base64
 
-app = FastAPI(title="Remove Background API")
+app = FastAPI(title="Remove Background API1.0")
 
 # --- CORS ---
 app.add_middleware(
