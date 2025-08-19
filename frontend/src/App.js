@@ -119,31 +119,6 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
 
-      {/* Dropdown języka w prawym górnym rogu całej strony */}
-      <Box
-        sx={{
-          position: "fixed",
-          top: 8,
-          right: 8,
-          zIndex: 1000,
-        }}
-      >
-        <Select
-          value={i18n.language}
-          onChange={handleLanguageChange}
-          size="small"
-          sx={{
-            fontSize: "0.7rem",
-            minWidth: 40,
-            py: 0.2,
-            px: 0.4,
-          }}
-        >
-          <MenuItem value="pl">PL</MenuItem>
-          <MenuItem value="en">EN</MenuItem>
-        </Select>
-      </Box>
-
       <Box
         sx={(theme) => ({
           padding: 4,
@@ -157,6 +132,7 @@ function App() {
               : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
           borderRadius: 3,
           boxShadow: theme.shadows[4],
+          position: "relative", // dla dropdownu
           [theme.breakpoints.down("sm")]: {
             padding: 2,
             maxWidth: "90vw",
@@ -164,13 +140,14 @@ function App() {
           },
         })}
       >
+        {/* Header z tytułem i dropdownem */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative",
             mb: 4,
+            position: "relative",
           }}
         >
           <Typography
@@ -180,6 +157,30 @@ function App() {
           >
             {i18n.t("title")}
           </Typography>
+
+          {/* Dropdown języka */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+            }}
+          >
+            <Select
+              value={i18n.language}
+              onChange={handleLanguageChange}
+              size="small"
+              sx={{
+                fontSize: "0.75rem",
+                minWidth: 45,
+                py: 0.25,
+                px: 0.5,
+              }}
+            >
+              <MenuItem value="pl">PL</MenuItem>
+              <MenuItem value="en">EN</MenuItem>
+            </Select>
+          </Box>
         </Box>
 
         <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
