@@ -42,6 +42,6 @@ async def remove_background(
 
     return JSONResponse(content={"image_no_bg": img_str})
 
-@app.post("/ping/")
+@app.get("/ping/")
 async def ping():
     return JSONResponse(content={"Status": "okey"})
