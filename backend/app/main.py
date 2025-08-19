@@ -10,9 +10,13 @@ from .utils import hex_to_rgba
 app = FastAPI(title="Background Remover API")
 
 # --- CORS ---
+origins = [
+    "https://sielskibartosz.github.io",   # GitHub Pages
+    "https://photoidcreator.com",             # Twoja domena (jak podepniesz)
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # na produkcji lepiej podać listę frontendu
+    allow_origins=origins,  # na produkcji lepiej podać listę frontendu
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

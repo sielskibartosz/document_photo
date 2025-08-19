@@ -35,7 +35,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
       formData.append("image", blob, "cropped.png");
       formData.append("bg_color", bgColor);
 
-      const response = await fetch("${BACKEND_URL}/remove-background/", {
+      const response = await fetch("${BACKED_URL}/remove-background/", {
         method: "POST",
         body: formData,
       });
