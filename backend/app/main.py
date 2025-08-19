@@ -11,7 +11,7 @@ app = FastAPI(title="Background Remover API")
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # w produkcji wpisz konkretną domenę
+    allow_origins=["https://photoidcreator.com", "http://localhost:3000"],  # albo ["*"] dla testów
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
