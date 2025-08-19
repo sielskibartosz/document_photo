@@ -8,7 +8,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { TABS} from "./constants/tabs";
+import { TABS } from "./constants/tabs";
 import { buttonBaseStyle } from "./styles/buttonStyles";
 import FrameBox from "./styles/imagesStyles";
 import { parseAspectRatio } from "./utils/cropImage";
@@ -106,14 +106,10 @@ function App() {
     i18n.changeLanguage(e.target.value);
   };
 
-  // dynamiczna liczba kolumn w zależności od szerokości okna
   const [cols, setCols] = useState(3);
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) setCols(1);
-      else if (window.innerWidth < 900) setCols(2);
-      else setCols(3);
-    };
+    const handleResize = () =>
+      setCols(window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -123,6 +119,30 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
 
+      {/* Dropdown języka w prawym górnym rogu całej strony */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 8,
+          right: 8,
+          zIndex: 1000,
+        }}
+      >
+        <Select
+          value={i18n.language}
+          onChange={handleLanguageChange}
+          size="small"
+          sx={{
+            fontSize: "0.7rem",
+            minWidth: 40,
+            py: 0.2,
+            px: 0.4,
+          }}
+        >
+          <MenuItem value="pl">PL</MenuItem>
+          <MenuItem value="en">EN</MenuItem>
+        </Select>
+      </Box>
 
       <Box
         sx={(theme) => ({
@@ -144,7 +164,7 @@ function App() {
           },
         })}
       >
-      <Box
+        <Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -153,7 +173,6 @@ function App() {
             mb: 4,
           }}
         >
-          {/* Tytuł wyśrodkowany */}
           <Typography
             variant="h4"
             fontWeight={700}
@@ -161,38 +180,9 @@ function App() {
           >
             {i18n.t("title")}
           </Typography>
+        </Box>
 
-          {/* Dropdown języka po prawej */}
-          <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                mt: 1,
-                mr: 1,
-              }}
-            >
-              <Select
-                value={i18n.language}
-                onChange={handleLanguageChange}
-                size="small"
-                sx={{
-                  fontSize: "0.75rem",  // mniejszy font
-                  minWidth: 50,          // mniejsza szerokość
-                  py: 0.25,              // mniejszy padding w pionie
-                  px: 0.5,               // mniejszy padding w poziomie
-                }}
-              >
-                <MenuItem value="pl">PL</MenuItem>
-                <MenuItem value="en">EN</MenuItem>
-              </Select>
-            </Box>
-
-        <TabSelector
-          tabs={TABS}
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-        />
+        <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
 
         <TabContent
           tabKey={activeTab}
