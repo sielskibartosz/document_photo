@@ -25,7 +25,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
     setLoading(true);
 
     try {
-      // Konwersja data URL na Blob
+      // Konwersja data URL na Blob lub pobranie z URL
       const blob = croppedImage.startsWith("data:")
         ? dataURLtoBlob(croppedImage)
         : await (await fetch(croppedImage)).blob();
@@ -40,12 +40,20 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        try {
+          const errData = await response.json();
+          throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        } catch {
+          throw new Error(t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        }
       }
 
-      const data = await response.json();
-      setNoBgImage("data:image/png;base64," + data.image_no_bg);
+      // 📌 odbiór jako BLOB zamiast base64
+      const resultBlob = await response.blob();
+      const objectUrl = URL.createObjectURL(resultBlob);
+
+      // ustawiamy Blob URL zamiast base64
+      setNoBgImage(objectUrl);
     } catch (error) {
       alert(error.message);
     } finally {
