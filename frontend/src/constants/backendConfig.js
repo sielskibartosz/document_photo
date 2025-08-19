@@ -1,1 +1,1 @@
-const BACKEND_URL = "https://document-photo.onrender.com";
+import { BACKEND_URL } from "../constants/backendConfig";
