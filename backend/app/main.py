@@ -26,7 +26,7 @@ app = FastAPI(title="Remove Background API")
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://photoidcreator.com", "https://document-photo.onrender.com"],  # lub lista frontendów np. ["https://photoidcreator.com"]
+    allow_origins=["*"],  # lub lista frontendów np. ["https://photoidcreator.com"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -49,7 +49,7 @@ async def remove_background(file: UploadFile = File(...)):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 # --- Ping ---
-@app.get("/ping")
+@app.get("/ping", summary="Check server status", response_description="Server is alive")
 def ping():
     return {"message": "Server is running!"}
 
