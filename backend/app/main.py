@@ -10,7 +10,9 @@ from .utils import hex_to_rgba
 app = FastAPI(title="Background Remover API")
 
 # --- CORS ---
-origins = ["https://photoidcreator.com"            # Twoja domena (jak podepniesz)
+origins = [
+    "https://sielskibartosz.github.io",   # GitHub Pages
+    "https://photoidcreator.com",             # Twoja domena (jak podepniesz)
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -39,3 +41,7 @@ async def remove_background(
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
     return JSONResponse(content={"image_no_bg": img_str})
+
+@app.post("/ping/")
+async def ping():
+    return JSONResponse(content={"Status": "okey"})
