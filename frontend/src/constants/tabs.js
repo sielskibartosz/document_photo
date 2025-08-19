@@ -9,10 +9,10 @@ export const TAB_DESCRIPTION = {
     title: "35/45 mm",
     description: "",
     link: "https://www.gov.pl/web/gov/zdjecie-do-dowodu-lub-paszportu",
-    image: "/images/IDsolo.png",
+    image: `${process.env.PUBLIC_URL}/images/IDsolo.png`,
   },
   custom: {
     title: "",
-    image: "/images/custom_foto.jpg",
+    image: `${process.env.PUBLIC_URL}/images/custom_foto.jpg`
   },
 };

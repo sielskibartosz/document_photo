@@ -34,7 +34,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "homepage": "https://sielskibartosz.github.io/document_photo",
+  "homepage": "https://photoidcreator.com",
   "eslintConfig": {
     "extends": [
       "react-app",
