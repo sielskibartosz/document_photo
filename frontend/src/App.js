@@ -163,18 +163,30 @@ function App() {
           </Typography>
 
           {/* Dropdown języka po prawej */}
-          <Box sx={{ position: "absolute", right: 0 }}>
-            <Select
-              value={i18n.language}
-              onChange={handleLanguageChange}
-              size="small"
-              sx={{ ml: 2 }}
+          <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                mt: 1,
+                mr: 1,
+              }}
             >
-              <MenuItem value="pl">PL</MenuItem>
-              <MenuItem value="en">EN</MenuItem>
-            </Select>
-          </Box>
-        </Box>
+              <Select
+                value={i18n.language}
+                onChange={handleLanguageChange}
+                size="small"
+                sx={{
+                  fontSize: "0.75rem",  // mniejszy font
+                  minWidth: 50,          // mniejsza szerokość
+                  py: 0.25,              // mniejszy padding w pionie
+                  px: 0.5,               // mniejszy padding w poziomie
+                }}
+              >
+                <MenuItem value="pl">PL</MenuItem>
+                <MenuItem value="en">EN</MenuItem>
+              </Select>
+            </Box>
 
         <TabSelector
           tabs={TABS}
