@@ -1,1 +1,2 @@
-import { BACKEND_URL } from "../constants/backendConfig";
+// src/constants/backendConfig.js
+export const BACKEND_URL = "https://document-photo.onrender.com";
