@@ -1,20 +1,20 @@
-# Wybieramy lekkiego Pythona
+# Lekki Python
 FROM python:3.12-slim
 
-# Ustawiamy katalog roboczy
-WORKDIR /app
+# Ustawienia środowiska
+ENV PYTHONUNBUFFERED=1
+ENV APP_HOME=/app
 
-# Kopiujemy plik z wymaganiami
+WORKDIR $APP_HOME
+
+# Kopiujemy wymagania
 COPY requirements.txt .
 
-# Instalujemy zależności
+# Instalacja zależności
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Kopiujemy resztę projektu
-COPY app ./app
+# Kopiujemy cały projekt
+COPY . .
 
-# Eksponujemy port FastAPI
-EXPOSE 8080
-
-# Uruchamiamy serwer uvicorn
+# Uruchomienie FastAPI w pierwszym planie
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
