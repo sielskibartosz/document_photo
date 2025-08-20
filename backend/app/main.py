@@ -1,32 +1,35 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from rembg import remove
+from rembg import remove, new_session
 from PIL import Image
 import io
 import base64
 
-app = FastAPI(title="Remove Background API1.0")
+app = FastAPI(title="Remove Background API 1.1")
 
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # możesz podać listę frontendów np. ["https://photoidcreator.com"]
+    allow_origins=["*"],  # możesz ograniczyć do frontendów np. ["https://photoidcreator.com"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# --- Tworzymy lekką sesję z modelem u2netp ---
+session = new_session("u2netp")
+
 @app.post("/remove-background/")
 async def remove_background(
     image: UploadFile = File(...),
-    bg_color: str = Form("#ffffff")  # odbieramy kolor tła
+    bg_color: str = Form("#ffffff")
 ):
     try:
         image_bytes = await image.read()
         input_image = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
 
-        # usuwamy tło
-        output_image = remove(input_image)
+        # usuwamy tło używając lekkiego modelu u2netp
+        output_image = remove(input_image, session=session)
 
         # wstawienie jednolitego tła
         if bg_color:
