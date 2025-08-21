@@ -1,91 +1,71 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Box, Button, IconButton } from "@mui/material";
-import ImagePreview from "./ImagePreview";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
-import { BACKEND_URL } from "../constants/backendConfig";
+import CropperWrapper from "./CropperWrapper";
+import ImagePreview from "./ImagePreview";
+import { getCroppedImg } from "../utils/cropImage";
 
-function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColor = "#ffffff", onClear }) {
+function CropperActions({
+  imageSrc,
+  crop,
+  setCrop,
+  zoom,
+  setZoom,
+  aspectRatio,
+  onCropped,
+  onClear,
+}) {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [preview, setPreview] = useState(null);
 
-  const dataURLtoBlob = (dataurl) => {
-    const arr = dataurl.split(",");
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) u8arr[n] = bstr.charCodeAt(n);
-    return new Blob([u8arr], { type: mime });
-  };
+  const onCropComplete = useCallback((_, areaPixels) => {
+    setCroppedAreaPixels(areaPixels);
+  }, []);
 
-  const removeBackground = async () => {
-    if (!croppedImage) return;
-    setLoading(true);
-    try {
-      const blob = croppedImage.startsWith("data:")
-        ? dataURLtoBlob(croppedImage)
-        : await (await fetch(croppedImage)).blob();
-
-      const formData = new FormData();
-      formData.append("image", blob, "cropped.png");
-      formData.append("bg_color", bgColor);
-
-      const response = await fetch(`${BACKEND_URL}/remove-background/`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        try {
-          const errData = await response.json();
-          throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
-        } catch {
-          throw new Error(t("remove_bg_error", "Błąd przy usuwaniu tła"));
-        }
-      }
-
-      const resultJson = await response.json();
-      const imageData = resultJson.image;
-      const byteCharacters = atob(imageData);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-      const byteArray = new Uint8Array(byteNumbers);
-      const objectUrl = URL.createObjectURL(new Blob([byteArray], { type: "image/png" }));
-
-      setNoBgImage(objectUrl);
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleClear = () => {
-    setNoBgImage(null);
-    if (onClear) onClear();
+  const handleCrop = async () => {
+    if (!imageSrc || !croppedAreaPixels) return;
+    const width = 350;
+    const height = width / aspectRatio;
+    const cropped = await getCroppedImg(
+      imageSrc,
+      croppedAreaPixels,
+      width,
+      height
+    );
+    setPreview(cropped); // podgląd przyciętego zdjęcia
+    onCropped(cropped);
   };
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
-      <ImagePreview image={croppedImage} aspectRatio={aspectRatio} />
+      {/* Podgląd jeśli jest */}
+      <ImagePreview image={preview} aspectRatio={aspectRatio} />
 
-      <Box display="flex" justifyContent="center" alignItems="center" gap={1} position="relative">
+      {/* Sam cropper */}
+      <CropperWrapper
+        imageSrc={imageSrc}
+        crop={crop}
+        setCrop={setCrop}
+        zoom={zoom}
+        setZoom={setZoom}
+        aspectRatio={aspectRatio}
+        onCropComplete={onCropComplete}
+      />
+
+      {/* Przyciski */}
+      <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
         <Button
           variant="contained"
-          onClick={removeBackground}
-          disabled={loading}
+          onClick={handleCrop}
           sx={{ fontWeight: 600 }}
         >
-          {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
+          {t("crop_image", "Przytnij zdjęcie")}
         </Button>
 
         {onClear && (
-          <IconButton
-            color="primary"
-            onClick={handleClear}
-            sx={{ position: "absolute", right: -50 }} // ikonka po prawej na zewnątrz przycisku
-          >
+          <IconButton color="primary" onClick={onClear}>
             <DeleteIcon />
           </IconButton>
         )}
@@ -94,4 +74,4 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
   );
 }
 
-export default RemoveBackgroundPanel;
+export default CropperActions;
