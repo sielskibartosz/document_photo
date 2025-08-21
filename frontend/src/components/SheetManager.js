@@ -10,10 +10,10 @@ const SheetManager = ({
   selectedFormat,
   sheetUrl,
   setSheetUrl,
+  setThumbnailUrl,
   setSheetImages,
   duplicateImage,
   showSheetPreview,
-  setShowSheetPreview,
   clearSheet,
 }) => {
   const { t } = useTranslation();
@@ -40,14 +40,11 @@ const SheetManager = ({
     const maxPhotoHeightCm = 4.5;
 
     const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
-
     let currentY = margin;
     let currentRowHeight = 0;
     let colIndex = 0;
 
     for (let i = 0; i < sheetImages.length; i++) {
-      if (i >= cols * Math.floor(heightPx / (cmToPx(maxPhotoHeightCm, dpi) + margin))) break;
-
       const { image, aspectRatio } = sheetImages[i];
       const img = await createImage(image);
 
@@ -67,12 +64,9 @@ const SheetManager = ({
       ctx.strokeStyle = "black";
       ctx.strokeRect(x, y, imgWidth, imgHeight);
 
-      if (imgHeight > currentRowHeight) {
-        currentRowHeight = imgHeight;
-      }
+      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
 
       colIndex++;
-
       if (colIndex >= cols) {
         colIndex = 0;
         currentY += currentRowHeight + margin;
@@ -96,18 +90,18 @@ const SheetManager = ({
     const url = await generateSheet();
     if (url) {
       setSheetUrl(url);
-      setShowSheetPreview(true);
+      setThumbnailUrl(url); // miniatura aktualizowana od razu
     }
-  }, [sheetImages, selectedFormat, setSheetUrl, setShowSheetPreview]);
+  }, [sheetImages, selectedFormat, setSheetUrl, setThumbnailUrl]);
 
   useEffect(() => {
     if (sheetImages.length > 0) {
       createSheetImage();
     } else {
       setSheetUrl(null);
-      setShowSheetPreview(false);
+      setThumbnailUrl(null); // miniatura znika
     }
-  }, [sheetImages, createSheetImage, setSheetUrl, setShowSheetPreview]);
+  }, [sheetImages, createSheetImage]);
 
   const downloadSheet = () => {
     if (!sheetUrl) return;
@@ -120,72 +114,36 @@ const SheetManager = ({
   };
 
   const onClearSheetClick = () => {
-    if (clearSheet) {
-      clearSheet();
-    } else {
+    if (clearSheet) clearSheet();
+    else {
       setSheetImages([]);
       setSheetUrl(null);
-      setShowSheetPreview(false);
+      setThumbnailUrl(null);
     }
   };
 
   if (!showSheetPreview || !sheetUrl) return null;
 
   return (
-    <>
-      {sheetImages.length > 0 && sheetUrl && (
-        <FrameBox
-          sx={{
-            maxWidth: 'none',
-            width: { xs: '90%', md: '70%' },
-            mx: 'auto',
-          }}
-        >
-          {/* Nagłówek na środku */}
-          <Typography variant="h6" fontWeight={600} color="text.primary" mb={2} textAlign="center">
-            {t("sheet_header")}: {sheetImages.length} ({selectedFormat})
-          </Typography>
+    <FrameBox sx={{ maxWidth: "none", width: { xs: "90%", md: "70%" }, mx: "auto" }}>
+      <Typography variant="h6" fontWeight={600} color="text.primary" mb={2} textAlign="center">
+        {t("sheet_header")}: {sheetImages.length} ({selectedFormat})
+      </Typography>
 
-          {/* Przyciski w jednej linii */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 2,
-              flexWrap: "wrap",
-              mb: 3,
-              width: "100%",
-            }}
-          >
-            <Button variant="contained" onClick={duplicateImage} sx={{ fontWeight: 600 }}>
-              {t("duplicate_photo", "Duplicate Photo")}
-            </Button>
-            <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 600 }}>
-              {t("clear_sheet", "Clear Sheet")}
-            </Button>
-            <Button variant="contained" color="success" onClick={downloadSheet} sx={{ fontWeight: 600 }}>
-              {t("download_sheet", "Download Sheet")}
-            </Button>
-          </Box>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, flexWrap: "wrap", mb: 3, width: "100%" }}>
+        <Button variant="contained" onClick={duplicateImage} sx={{ fontWeight: 600 }}>
+          {t("duplicate_photo", "Duplicate Photo")}
+        </Button>
+        <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 600 }}>
+          {t("clear_sheet", "Clear Sheet")}
+        </Button>
+        <Button variant="contained" color="success" onClick={downloadSheet} sx={{ fontWeight: 600 }}>
+          {t("download_sheet", "Download Sheet")}
+        </Button>
+      </Box>
 
-          {/* Podgląd arkusza */}
-          <Box
-            component="img"
-            src={sheetUrl}
-            alt="sheet"
-            sx={{
-              maxWidth: "100%",
-              borderRadius: 2,
-              boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
-              border: "1px solid #ddd",
-              display: "block",
-              margin: "0 auto",
-            }}
-          />
-        </FrameBox>
-      )}
-    </>
+      <Box component="img" src={sheetUrl} alt="sheet" sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", margin: "0 auto" }} />
+    </FrameBox>
   );
 };
 

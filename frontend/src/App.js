@@ -8,7 +8,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { TABS} from "./constants/tabs";
+import { TABS } from "./constants/tabs";
 import { buttonBaseStyle } from "./styles/buttonStyles";
 import FrameBox from "./styles/imagesStyles";
 import { parseAspectRatio } from "./utils/cropImage";
@@ -25,22 +25,19 @@ import AddToSheetPanel from "./components/addToSheetPanel";
 
 function App() {
   const { i18n } = useTranslation();
-
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1.9);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [noBgImage, setNoBgImage] = useState(null);
 
   const [selectedFormat, setSelectedFormat] = useState("10/15 cm");
   const [sheetImages, setSheetImages] = useState([]);
-  const [sheetHistory, setSheetHistory] = useState([]);
   const [selectedSheetUrl, setSelectedSheetUrl] = useState(null);
-  const [showSheetPreview, setShowSheetPreview] = useState(false);
-  const [sheetCreatedAfterNewPhoto, setSheetCreatedAfterNewPhoto] = useState(false);
+  const [thumbnailUrl, setThumbnailUrl] = useState(null);
+  const [showFullSheet, setShowFullSheet] = useState(false);
   const [bgColor, setBgColor] = useState("#ffffff");
 
   const aspectRatio = parseAspectRatio(aspectInput);
@@ -51,8 +48,6 @@ function App() {
     setNoBgImage(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1.9);
-    setCroppedAreaPixels(null);
-    setShowSheetPreview(false);
   };
 
   const onFileChange = async (e) => {
@@ -63,29 +58,20 @@ function App() {
     setImageSrc(base64);
     setCroppedImage(null);
     setNoBgImage(null);
-    setShowSheetPreview(false);
-    setSheetCreatedAfterNewPhoto(true);
+    setShowFullSheet(false);
   };
 
   const addToSheet = () => {
     if (!noBgImage) return;
     setSheetImages((prev) => [...prev, { image: noBgImage, aspectRatio }]);
     resetImageStates();
-    setShowSheetPreview(true);
+    setShowFullSheet(true);
   };
 
   const duplicateLastImage = () => {
     if (!sheetImages.length) return;
     setSheetImages((prev) => [...prev, prev[prev.length - 1]]);
-    setShowSheetPreview(true);
-  };
-
-  const onSheetGenerated = (url) => {
-    setSelectedSheetUrl(url);
-    if (sheetCreatedAfterNewPhoto) {
-      setSheetHistory([url]);
-      setSheetCreatedAfterNewPhoto(false);
-    }
+    setShowFullSheet(true);
   };
 
   const handleTabChange = (tabKey) => {
@@ -93,20 +79,21 @@ function App() {
     const tab = TABS.find((t) => t.key === tabKey);
     setAspectInput(tab.aspect);
     resetImageStates();
+    setShowFullSheet(false);
   };
 
   const clearSheet = () => {
+    // wyczyszczenie arkusza i miniatury
     setSheetImages([]);
-    setSheetHistory([]);
     setSelectedSheetUrl(null);
-    setShowSheetPreview(false);
+    setThumbnailUrl(null);
+    setShowFullSheet(false);
   };
 
   const handleLanguageChange = (e) => {
     i18n.changeLanguage(e.target.value);
   };
 
-  // dynamiczna liczba kolumn w zależności od szerokości okna
   const [cols, setCols] = useState(3);
   useEffect(() => {
     const handleResize = () => {
@@ -119,11 +106,11 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const toggleSheet = () => setShowFullSheet((prev) => !prev);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-
-
       <Box
         sx={(theme) => ({
           padding: 4,
@@ -144,7 +131,8 @@ function App() {
           },
         })}
       >
-      <Box
+        {/* Nagłówek */}
+        <Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -153,7 +141,6 @@ function App() {
             mb: 4,
           }}
         >
-          {/* Tytuł wyśrodkowany */}
           <Typography
             variant="h4"
             fontWeight={700}
@@ -162,7 +149,6 @@ function App() {
             {i18n.t("title")}
           </Typography>
 
-          {/* Dropdown języka po prawej */}
           <Box sx={{ position: "absolute", right: 0 }}>
             <Select
               value={i18n.language}
@@ -182,40 +168,62 @@ function App() {
           onTabChange={handleTabChange}
         />
 
-        <TabContent
-          tabKey={activeTab}
-          aspectInput={aspectInput}
-          setAspectInput={setAspectInput}
-          selectedFormat={selectedFormat}
-          setSelectedFormat={setSelectedFormat}
-          onFileChange={onFileChange}
-          bgColor={bgColor}
-          setBgColor={setBgColor}
-        />
+        {/* TabContent + miniatura */}
+            <Box
+              sx={{
+                position: "relative", // kontener dla absolutnej miniatury
+                width: "100%",
+                mt: 2,
+              }}
+            >
+              <TabContent
+                tabKey={activeTab}
+                aspectInput={aspectInput}
+                setAspectInput={setAspectInput}
+                selectedFormat={selectedFormat}
+                setSelectedFormat={setSelectedFormat}
+                onFileChange={onFileChange}
+                bgColor={bgColor}
+                setBgColor={setBgColor}
+              />
 
-        {sheetHistory.length > 0 && sheetCreatedAfterNewPhoto && (
-          <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-            <SheetMinature
-              thumbnailUrl={sheetHistory[0]}
-              onClick={() => setShowSheetPreview(true)}
+              {thumbnailUrl && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 10, // 10px od dołu
+                    right: 0,
+                    width: 80,
+                    cursor: "pointer",
+                    zIndex: 10,
+                  }}
+                  onClick={toggleSheet}
+                >
+                  <SheetMinature thumbnailUrl={thumbnailUrl} />
+                </Box>
+              )}
+            </Box>
+
+        {/* Arkusz */}
+        {sheetImages.length > 0 && showFullSheet && (
+          <Box sx={{ mb: 4 }}>
+            <SheetManager
+              sheetImages={sheetImages}
+              setSheetImages={setSheetImages}
+              sheetUrl={selectedSheetUrl}
+              setSheetUrl={setSelectedSheetUrl}
+              setThumbnailUrl={setThumbnailUrl}
+              selectedFormat={selectedFormat}
+              duplicateImage={duplicateLastImage}
+              showSheetPreview={showFullSheet}
+              clearSheet={clearSheet}
+              cols={cols}
+              buttonBaseStyle={buttonBaseStyle}
             />
           </Box>
         )}
 
-        <SheetManager
-          sheetImages={sheetImages}
-          setSheetImages={setSheetImages}
-          sheetUrl={selectedSheetUrl}
-          setSheetUrl={onSheetGenerated}
-          selectedFormat={selectedFormat}
-          buttonBaseStyle={buttonBaseStyle}
-          duplicateImage={duplicateLastImage}
-          showSheetPreview={showSheetPreview}
-          setShowSheetPreview={setShowSheetPreview}
-          clearSheet={clearSheet}
-          cols={cols}
-        />
-
+        {/* Panele akcji obrazka */}
         {imageSrc && (
           <FrameBox>
             <CropperActions
