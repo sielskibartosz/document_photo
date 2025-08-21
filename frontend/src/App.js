@@ -249,12 +249,8 @@ function App() {
               aspectRatio={aspectRatio}
               bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
               setNoBgImage={(img) => {
-                if (!img) {
-                  setCroppedImage(null);
-                  setNoBgImage(null);
-                } else {
-                  setNoBgImage(img);
-                }
+                setNoBgImage(img);
+                if (!img) setCroppedImage(null);
               }}
               onClear={() => {
                 setCroppedImage(null);
