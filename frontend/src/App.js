@@ -225,7 +225,7 @@ function App() {
         {/* CropperActions */}
         {imageSrc && (
           <FrameBox>
-            <CropperActions
+            CropperActions
               imageSrc={imageSrc}
               crop={crop}
               setCrop={setCrop}
@@ -236,7 +236,7 @@ function App() {
                 setCroppedImage(cropped);
                 setNoBgImage(null);
               }}
-              onClear={resetImageStates} // <-- teraz kosz działa
+              onClear={imageSrc ? resetImageStates : null} // <-- ikona pojawi się tylko gdy imageSrc istnieje
             />
           </FrameBox>
         )}
