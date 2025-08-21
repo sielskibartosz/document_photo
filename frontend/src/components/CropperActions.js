@@ -34,7 +34,6 @@ const CropperActions = ({
   return (
     <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
       {/* 🔥 Dodaj podgląd zdjęcia */}
-      <ImagePreview image={imageSrc} aspectRatio={aspectRatio} />
 
       <CropperWrapper
         imageSrc={imageSrc}
