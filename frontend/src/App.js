@@ -248,18 +248,11 @@ function App() {
               croppedImage={croppedImage}
               aspectRatio={aspectRatio}
               bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
-              setNoBgImage={(img) => {
-                if (!img) {
-                  setCroppedImage(null);
-                  setNoBgImage(null);
-                } else {
-                  setNoBgImage(img);
-                }
-              }}
-              onClear={() => {
+              setNoBgImage={setNoBgImage}
+              onClear={croppedImage ? () => {
                 setCroppedImage(null);
                 setNoBgImage(null);
-              }}
+              } : null}
             />
           </FrameBox>
         )}

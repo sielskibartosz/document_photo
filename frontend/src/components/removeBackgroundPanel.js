@@ -82,7 +82,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
         </Button>
 
         {onClear && (
-          <IconButton color="primary" onClick={handleClear}>
+          <IconButton color="primary" onClick={handleClear} sx={{ ml: 1 }}>
             <DeleteIcon />
           </IconButton>
         )}
