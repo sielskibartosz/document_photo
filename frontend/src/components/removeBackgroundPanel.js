@@ -5,7 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import { BACKEND_URL } from "../constants/backendConfig";
 
-function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColor = "#ffffff" }) {
+function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColor = "#ffffff", onClear }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
@@ -67,36 +67,35 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
   };
 
   // Funkcja do czyszczenia obrazu
-  const clearImage = () => {
+  const handleClear = () => {
     setNoBgImage(null);
+    if (onClear) onClear();
   };
 
   return (
-      <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={0}>
-        <ImagePreview image={croppedImage} aspectRatio={aspectRatio} />
+    <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={0}>
+      <ImagePreview image={croppedImage} aspectRatio={aspectRatio} />
 
-        <Box display="flex" alignItems="center" gap={1}>
-          <Box flexGrow={1} display="flex" justifyContent="center">
-            <Button
-              variant="contained"
-              onClick={removeBackground}
-              disabled={loading}
-              sx={{ fontWeight: 600 }}
-            >
-              {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
-            </Button>
-          </Box>
-          {onClear && (
-          <Box position="absolute" right={-50}> {/* przesuwamy kosz w prawo od przycisku */}
-            <IconButton color="primary" onClick={onClear}>
+      <Box display="flex" alignItems="center" justifyContent="center" position="relative" width="fit-content" gap={1}>
+        <Button
+          variant="contained"
+          onClick={removeBackground}
+          disabled={loading}
+          sx={{ fontWeight: 600 }}
+        >
+          {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
+        </Button>
+
+        {onClear && (
+          <Box position="absolute" right={-50}>
+            <IconButton color="primary" onClick={handleClear}>
               <DeleteIcon />
             </IconButton>
           </Box>
         )}
-
-        </Box>
       </Box>
-    );
+    </Box>
+  );
 }
 
 export default RemoveBackgroundPanel;

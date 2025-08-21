@@ -34,7 +34,7 @@ const CropperActions = ({
     setCrop({ x: 0, y: 0 });
     setZoom(1.9);
     onCropped(null);
-    if (onClear) onClear(); // reset w rodzicu (imageSrc, noBgImage itp.)
+    if (onClear) onClear();
   };
 
   return (
@@ -48,7 +48,8 @@ const CropperActions = ({
         aspectRatio={aspectRatio}
         onCropComplete={onCropComplete}
       />
-      <Box display="flex" alignItems="center" gap={1} justifyContent="center" mt={2}>
+
+      <Box display="flex" justifyContent="center" alignItems="center" position="relative" mt={2}>
         <Button
           variant="contained"
           color="primary"
@@ -58,14 +59,14 @@ const CropperActions = ({
         >
           {t("crop_photo")}
         </Button>
+
         {onClear && (
-          <Box position="absolute" right={-50}> {/* przesuwamy kosz w prawo od przycisku */}
-            <IconButton color="primary" onClick={onClear}>
+          <Box position="absolute" right={-50}>
+            <IconButton color="primary" onClick={handleClear}>
               <DeleteIcon />
             </IconButton>
           </Box>
         )}
-
       </Box>
     </Box>
   );
