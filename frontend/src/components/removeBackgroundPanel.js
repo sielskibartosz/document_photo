@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ImagePreview from "./ImagePreview";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import { BACKEND_URL } from "../constants/backendConfig";
 
@@ -8,7 +9,6 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
-  // Funkcja pomocnicza do konwersji data URL -> Blob
   const dataURLtoBlob = (dataurl) => {
     const arr = dataurl.split(",");
     const mime = arr[0].match(/:(.*?);/)[1];
@@ -26,7 +26,6 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
     setLoading(true);
 
     try {
-      // Konwersja data URL na Blob lub pobranie z URL
       const blob = croppedImage.startsWith("data:")
         ? dataURLtoBlob(croppedImage)
         : await (await fetch(croppedImage)).blob();
@@ -49,7 +48,6 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
         }
       }
 
-      // odbiór JSON i konwersja base64 -> Blob
       const resultJson = await response.json();
       const imageData = resultJson.image;
       const byteCharacters = atob(imageData);
@@ -68,17 +66,27 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
     }
   };
 
+  // Funkcja do czyszczenia obrazu
+  const clearImage = () => {
+    setNoBgImage(null);
+  };
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={0}>
       <ImagePreview image={croppedImage} aspectRatio={aspectRatio} />
-      <Button
-        variant="contained"
-        onClick={removeBackground}
-        disabled={loading}
-        sx={{ fontWeight: 600 }}
-      >
-        {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
-      </Button>
+      <Box display="flex" gap={1}>
+        <Button
+          variant="contained"
+          onClick={removeBackground}
+          disabled={loading}
+          sx={{ fontWeight: 600 }}
+        >
+          {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
+        </Button>
+        <IconButton color="error" onClick={clearImage}>
+          <DeleteIcon />
+        </IconButton>
+      </Box>
     </Box>
   );
 }
