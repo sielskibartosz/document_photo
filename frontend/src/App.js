@@ -242,24 +242,34 @@ function App() {
         )}
 
         {croppedImage && (
-          <FrameBox>
-            <RemoveBackgroundPanel
-              croppedImage={croppedImage}
-              aspectRatio={aspectRatio}
-              bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
-              // teraz przekazujemy setter, który pozwala wyczyścić również croppedImage
-              setNoBgImage={(img) => {
-                if (!img) {
-                  // kliknięto kosz – resetujemy też croppedImage
-                  setCroppedImage(null);
-                  setNoBgImage(null);
-                } else {
-                  setNoBgImage(img);
-                }
-              }}
-            />
-          </FrameBox>
-        )}
+              <FrameBox>
+                <RemoveBackgroundPanel
+                  croppedImage={croppedImage}
+                  aspectRatio={aspectRatio}
+                  bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
+                  setNoBgImage={(img) => {
+                    if (!img) {
+                      // kliknięto kosz – resetujemy również croppedImage i noBgImage
+                      setCroppedImage(null);
+                      setNoBgImage(null);
+                    } else {
+                      setNoBgImage(img);
+                    }
+                  }}
+                />
+              </FrameBox>
+            )}
+
+            {noBgImage && (
+              <FrameBox>
+                <AddToSheetPanel
+                  image={noBgImage}
+                  aspectRatio={aspectRatio}
+                  onAddToSheet={addToSheet}
+                  onClear={() => setNoBgImage(null)} // tutaj dodany kosz do wyczyszczenia
+                />
+              </FrameBox>
+            )}
 
         {noBgImage && (
           <FrameBox>

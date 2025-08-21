@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import CropperWrapper from "./CropperWrapper";
-import { Button, Box } from "@mui/material";
+import { Button, Box, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { getCroppedImg } from "../utils/cropImage";
 import { useTranslation } from "react-i18next";
 
@@ -12,6 +13,7 @@ const CropperActions = ({
   setZoom,
   aspectRatio,
   onCropped,
+  onClear, // funkcja resetująca w rodzicu
 }) => {
   const { t } = useTranslation();
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -28,6 +30,13 @@ const CropperActions = ({
     onCropped(cropped);
   };
 
+  const handleClear = () => {
+    setCrop({ x: 0, y: 0 });
+    setZoom(1.9);
+    onCropped(null);
+    if (onClear) onClear(); // reset w rodzicu (imageSrc, noBgImage itp.)
+  };
+
   return (
     <Box gap={2} mt={0}>
       <CropperWrapper
@@ -39,7 +48,7 @@ const CropperActions = ({
         aspectRatio={aspectRatio}
         onCropComplete={onCropComplete}
       />
-      <Box display="flex" flexDirection="column" alignItems="center">
+      <Box display="flex" alignItems="center" gap={1} justifyContent="center" mt={2}>
         <Button
           variant="contained"
           color="primary"
@@ -49,6 +58,9 @@ const CropperActions = ({
         >
           {t("crop_photo")}
         </Button>
+        <IconButton color="error" onClick={handleClear}>
+          <DeleteIcon />
+        </IconButton>
       </Box>
     </Box>
   );
