@@ -11,7 +11,7 @@ function AddToSheetPanel({ image, aspectRatio, onAddToSheet, onClear }) {
     <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={0}>
       <ImagePreview image={image} aspectRatio={aspectRatio} />
 
-      <Box display="flex" alignItems="center" justifyContent="center" gap={1} position="relative">
+      <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
         <Button
           variant="contained"
           onClick={onAddToSheet}
@@ -21,13 +21,10 @@ function AddToSheetPanel({ image, aspectRatio, onAddToSheet, onClear }) {
         </Button>
 
         {onClear && (
-          <Box position="absolute" right={-50}> {/* przesuwamy kosz w prawo od przycisku */}
-            <IconButton color="primary" onClick={onClear}>
-              <DeleteIcon />
-            </IconButton>
-          </Box>
+          <IconButton color="primary" onClick={onClear}>
+            <DeleteIcon />
+          </IconButton>
         )}
-
       </Box>
     </Box>
   );

@@ -49,25 +49,23 @@ const CropperActions = ({
         onCropComplete={onCropComplete}
       />
 
-      <Box display="flex" justifyContent="center" alignItems="center" position="relative" mt={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCrop}
-          size="large"
-          sx={{ fontWeight: 600 }}
-        >
-          {t("crop_photo")}
-        </Button>
+      <Box display="flex" justifyContent="center" alignItems="center" gap={1} mt={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCrop}
+            size="large"
+            sx={{ fontWeight: 600 }}
+          >
+            {t("crop_photo")}
+          </Button>
 
-        {onClear && (
-          <Box position="absolute" right={-50}>
+          {onClear && (
             <IconButton color="primary" onClick={handleClear}>
               <DeleteIcon />
             </IconButton>
-          </Box>
-        )}
-      </Box>
+          )}
+        </Box>
     </Box>
   );
 };

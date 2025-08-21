@@ -76,24 +76,22 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
     <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={0}>
       <ImagePreview image={croppedImage} aspectRatio={aspectRatio} />
 
-      <Box display="flex" alignItems="center" justifyContent="center" position="relative" width="fit-content" gap={1}>
-        <Button
-          variant="contained"
-          onClick={removeBackground}
-          disabled={loading}
-          sx={{ fontWeight: 600 }}
-        >
-          {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
-        </Button>
+          <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+          <Button
+            variant="contained"
+            onClick={removeBackground}
+            disabled={loading}
+            sx={{ fontWeight: 600 }}
+          >
+            {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
+          </Button>
 
-        {onClear && (
-          <Box position="absolute" right={-50}>
+          {onClear && (
             <IconButton color="primary" onClick={handleClear}>
               <DeleteIcon />
             </IconButton>
-          </Box>
-        )}
-      </Box>
+          )}
+        </Box>
     </Box>
   );
 }
