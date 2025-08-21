@@ -32,37 +32,35 @@ const CropperActions = ({
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
-      {/* 🔥 Dodaj podgląd zdjęcia */}
+  <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+    <CropperWrapper
+      imageSrc={imageSrc}
+      crop={crop}
+      setCrop={setCrop}
+      zoom={zoom}
+      setZoom={setZoom}
+      aspectRatio={aspectRatio}
+      onCropComplete={onCropComplete}
+    />
 
-      <CropperWrapper
-        imageSrc={imageSrc}
-        crop={crop}
-        setCrop={setCrop}
-        zoom={zoom}
-        setZoom={setZoom}
-        aspectRatio={aspectRatio}
-        onCropComplete={onCropComplete}
-      />
+    <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleCrop}
+        sx={{ fontWeight: 600 }}
+      >
+        {t("crop_image", "Przytnij zdjęcie")}
+      </Button>
 
-      <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCrop}
-          sx={{ fontWeight: 600 }}
-        >
-          {t("crop_image", "Przytnij zdjęcie")}
-        </Button>
-
-        {onClear && (
-          <IconButton color="primary" onClick={onClear}>
-            <DeleteIcon />
-          </IconButton>
-        )}
-      </Box>
+      {onClear && (
+        <IconButton color="primary" onClick={onClear}>
+          <DeleteIcon />
+        </IconButton>
+      )}
     </Box>
-  );
-};
+  </Box>
+);
+
 
 export default CropperActions;
