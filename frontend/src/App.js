@@ -83,7 +83,6 @@ function App() {
   };
 
   const clearSheet = () => {
-    // wyczyszczenie arkusza i miniatury
     setSheetImages([]);
     setSelectedSheetUrl(null);
     setThumbnailUrl(null);
@@ -169,40 +168,40 @@ function App() {
         />
 
         {/* TabContent + miniatura */}
+        <Box
+          sx={{
+            position: "relative",
+            width: "100%",
+            mt: 2,
+          }}
+        >
+          <TabContent
+            tabKey={activeTab}
+            aspectInput={aspectInput}
+            setAspectInput={setAspectInput}
+            selectedFormat={selectedFormat}
+            setSelectedFormat={setSelectedFormat}
+            onFileChange={onFileChange}
+            bgColor={bgColor}
+            setBgColor={setBgColor}
+          />
+
+          {thumbnailUrl && (
             <Box
               sx={{
-                position: "relative", // kontener dla absolutnej miniatury
-                width: "100%",
-                mt: 2,
+                position: "absolute",
+                bottom: 10,
+                right: 0,
+                width: 80,
+                cursor: "pointer",
+                zIndex: 10,
               }}
+              onClick={toggleSheet}
             >
-              <TabContent
-                tabKey={activeTab}
-                aspectInput={aspectInput}
-                setAspectInput={setAspectInput}
-                selectedFormat={selectedFormat}
-                setSelectedFormat={setSelectedFormat}
-                onFileChange={onFileChange}
-                bgColor={bgColor}
-                setBgColor={setBgColor}
-              />
-
-              {thumbnailUrl && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    bottom: 10, // 10px od dołu
-                    right: 0,
-                    width: 80,
-                    cursor: "pointer",
-                    zIndex: 10,
-                  }}
-                  onClick={toggleSheet}
-                >
-                  <SheetMinature thumbnailUrl={thumbnailUrl} />
-                </Box>
-              )}
+              <SheetMinature thumbnailUrl={thumbnailUrl} />
             </Box>
+          )}
+        </Box>
 
         {/* Arkusz */}
         {sheetImages.length > 0 && showFullSheet && (
@@ -223,7 +222,7 @@ function App() {
           </Box>
         )}
 
-        {/* Panele akcji obrazka */}
+        {/* CropperActions */}
         {imageSrc && (
           <FrameBox>
             <CropperActions
@@ -237,39 +236,45 @@ function App() {
                 setCroppedImage(cropped);
                 setNoBgImage(null);
               }}
+              onClear={resetImageStates} // <-- teraz kosz działa
             />
           </FrameBox>
         )}
 
+        {/* RemoveBackgroundPanel */}
         {croppedImage && (
-              <FrameBox>
-                <RemoveBackgroundPanel
-                  croppedImage={croppedImage}
-                  aspectRatio={aspectRatio}
-                  bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
-                  setNoBgImage={(img) => {
-                    if (!img) {
-                      // kliknięto kosz – resetujemy również croppedImage i noBgImage
-                      setCroppedImage(null);
-                      setNoBgImage(null);
-                    } else {
-                      setNoBgImage(img);
-                    }
-                  }}
-                />
-              </FrameBox>
-            )}
+          <FrameBox>
+            <RemoveBackgroundPanel
+              croppedImage={croppedImage}
+              aspectRatio={aspectRatio}
+              bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
+              setNoBgImage={(img) => {
+                if (!img) {
+                  setCroppedImage(null);
+                  setNoBgImage(null);
+                } else {
+                  setNoBgImage(img);
+                }
+              }}
+              onClear={() => {
+                setCroppedImage(null);
+                setNoBgImage(null);
+              }}
+            />
+          </FrameBox>
+        )}
 
-            {noBgImage && (
-              <FrameBox>
-                <AddToSheetPanel
-                  image={noBgImage}
-                  aspectRatio={aspectRatio}
-                  onAddToSheet={addToSheet}
-                  onClear={() => setNoBgImage(null)} // tutaj dodany kosz do wyczyszczenia
-                />
-              </FrameBox>
-            )}
+        {/* AddToSheetPanel */}
+        {noBgImage && (
+          <FrameBox>
+            <AddToSheetPanel
+              image={noBgImage}
+              aspectRatio={aspectRatio}
+              onAddToSheet={addToSheet}
+              onClear={() => setNoBgImage(null)}
+            />
+          </FrameBox>
+        )}
       </Box>
     </ThemeProvider>
   );
