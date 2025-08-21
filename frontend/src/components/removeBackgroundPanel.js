@@ -86,9 +86,14 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
               {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
             </Button>
           </Box>
-          <IconButton color="primary" onClick={clearImage}>
-            <DeleteIcon />
-          </IconButton>
+          {onClear && (
+          <Box position="absolute" right={-50}> {/* przesuwamy kosz w prawo od przycisku */}
+            <IconButton color="primary" onClick={onClear}>
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        )}
+
         </Box>
       </Box>
     );

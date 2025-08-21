@@ -270,16 +270,6 @@ function App() {
                 />
               </FrameBox>
             )}
-
-        {noBgImage && (
-          <FrameBox>
-            <AddToSheetPanel
-              image={noBgImage}
-              aspectRatio={aspectRatio}
-              onAddToSheet={addToSheet}
-            />
-          </FrameBox>
-        )}
       </Box>
     </ThemeProvider>
   );

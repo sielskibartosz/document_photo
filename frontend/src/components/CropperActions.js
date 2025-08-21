@@ -58,9 +58,14 @@ const CropperActions = ({
         >
           {t("crop_photo")}
         </Button>
-        <IconButton color="error" onClick={handleClear}>
-          <DeleteIcon />
-        </IconButton>
+        {onClear && (
+          <Box position="absolute" right={-50}> {/* przesuwamy kosz w prawo od przycisku */}
+            <IconButton color="primary" onClick={onClear}>
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        )}
+
       </Box>
     </Box>
   );
