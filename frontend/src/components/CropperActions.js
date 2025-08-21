@@ -38,18 +38,14 @@ const CropperActions = ({
   };
 
   return (
-    <Box gap={2} mt={0}>
-      <CropperWrapper
-        imageSrc={imageSrc}
-        crop={crop}
-        setCrop={setCrop}
-        zoom={zoom}
-        setZoom={setZoom}
-        aspectRatio={aspectRatio}
-        onCropComplete={onCropComplete}
-      />
-
-      <Box display="flex" justifyContent="center" alignItems="center" gap={1} mt={2}>
+    <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={1}
+          position="relative"
+          width="fit-content"
+        >
           <Button
             variant="contained"
             color="primary"
@@ -61,12 +57,14 @@ const CropperActions = ({
           </Button>
 
           {onClear && (
-            <IconButton color="primary" onClick={handleClear}>
-              <DeleteIcon />
-            </IconButton>
+            <Box position="absolute" right={-50}>
+              <IconButton color="primary" onClick={handleClear}>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           )}
         </Box>
-    </Box>
+
   );
 };
 
