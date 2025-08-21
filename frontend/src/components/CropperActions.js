@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from "react";
-import CropperWrapper from "./CropperWrapper";
-import { Button, Box } from "@mui/material";
-import { getCroppedImg } from "../utils/cropImage";
+import { Box, Button, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
+import CropperWrapper from "./CropperWrapper";
+import { getCroppedImg } from "../utils/cropImage";
+import ImagePreview from "./ImagePreview";
 
 const CropperActions = ({
   imageSrc,
@@ -12,6 +14,7 @@ const CropperActions = ({
   setZoom,
   aspectRatio,
   onCropped,
+  onClear,
 }) => {
   const { t } = useTranslation();
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -29,29 +32,40 @@ const CropperActions = ({
   };
 
   return (
-    <Box gap={2} mt={0}>
-      <CropperWrapper
-        imageSrc={imageSrc}
-        crop={crop}
-        setCrop={setCrop}
-        zoom={zoom}
-        setZoom={setZoom}
-        aspectRatio={aspectRatio}
-        onCropComplete={onCropComplete}
-      />
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCrop}
-          size="large"
-          sx={{ fontWeight: 600 }}
-        >
-          {t("crop_photo")}
-        </Button>
-      </Box>
-    </Box>
-  );
+  <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+    <CropperWrapper
+      imageSrc={imageSrc}
+      crop={crop}
+      setCrop={setCrop}
+      zoom={zoom}
+      setZoom={setZoom}
+      aspectRatio={aspectRatio}
+      onCropComplete={onCropComplete}
+    />
+
+    <Box position="relative" width="100%" maxWidth={300} display="flex" justifyContent="center" alignItems="center" gap={1}>
+  <Button
+    variant="contained"
+    color="primary"
+    onClick={handleCrop}
+    sx={{ fontWeight: 600 }}
+  >
+    {t("crop_image", "Przytnij zdjęcie")}
+  </Button>
+
+  {onClear && (
+    <IconButton
+      color="primary"
+      onClick={onClear}
+      sx={{ position: "absolute", right: 0 }}
+    >
+      <DeleteIcon />
+    </IconButton>
+  )}
+</Box>
+
+  </Box>
+);
 };
 
 export default CropperActions;
