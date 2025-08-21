@@ -225,20 +225,20 @@ function App() {
         {/* CropperActions */}
         {imageSrc && (
           <FrameBox>
-            CropperActions
-              imageSrc={imageSrc}
-              crop={crop}
-              setCrop={setCrop}
-              zoom={zoom}
-              setZoom={setZoom}
-              aspectRatio={aspectRatio}
-              onCropped={(cropped) => {
-                setCroppedImage(cropped);
-                setNoBgImage(null);
-              }}
-              onClear={imageSrc ? resetImageStates : null} // <-- ikona pojawi się tylko gdy imageSrc istnieje
-            />
-          </FrameBox>
+              <CropperActions
+                imageSrc={imageSrc}
+                crop={crop}
+                setCrop={setCrop}
+                zoom={zoom}
+                setZoom={setZoom}
+                aspectRatio={aspectRatio}
+                onCropped={(cropped) => {
+                  setCroppedImage(cropped);
+                  setNoBgImage(null);
+                }}
+                onClear={imageSrc ? resetImageStates : null}
+              />
+            </FrameBox>
         )}
 
         {/* RemoveBackgroundPanel */}
