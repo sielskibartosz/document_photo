@@ -246,8 +246,17 @@ function App() {
             <RemoveBackgroundPanel
               croppedImage={croppedImage}
               aspectRatio={aspectRatio}
-              setNoBgImage={setNoBgImage}
               bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
+              // teraz przekazujemy setter, który pozwala wyczyścić również croppedImage
+              setNoBgImage={(img) => {
+                if (!img) {
+                  // kliknięto kosz – resetujemy też croppedImage
+                  setCroppedImage(null);
+                  setNoBgImage(null);
+                } else {
+                  setNoBgImage(img);
+                }
+              }}
             />
           </FrameBox>
         )}
