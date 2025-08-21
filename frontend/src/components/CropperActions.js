@@ -3,10 +3,10 @@ import { Box, Button, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import CropperWrapper from "./CropperWrapper";
-import ImagePreview from "./ImagePreview";
 import { getCroppedImg } from "../utils/cropImage";
+import ImagePreview from "./ImagePreview";
 
-function CropperActions({
+const CropperActions = ({
   imageSrc,
   crop,
   setCrop,
@@ -15,10 +15,9 @@ function CropperActions({
   aspectRatio,
   onCropped,
   onClear,
-}) {
+}) => {
   const { t } = useTranslation();
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [preview, setPreview] = useState(null);
 
   const onCropComplete = useCallback((_, areaPixels) => {
     setCroppedAreaPixels(areaPixels);
@@ -28,22 +27,15 @@ function CropperActions({
     if (!imageSrc || !croppedAreaPixels) return;
     const width = 350;
     const height = width / aspectRatio;
-    const cropped = await getCroppedImg(
-      imageSrc,
-      croppedAreaPixels,
-      width,
-      height
-    );
-    setPreview(cropped); // podgląd przyciętego zdjęcia
+    const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
     onCropped(cropped);
   };
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
-      {/* Podgląd jeśli jest */}
-      <ImagePreview image={preview} aspectRatio={aspectRatio} />
+      {/* 🔥 Dodaj podgląd zdjęcia */}
+      <ImagePreview image={imageSrc} aspectRatio={aspectRatio} />
 
-      {/* Sam cropper */}
       <CropperWrapper
         imageSrc={imageSrc}
         crop={crop}
@@ -54,10 +46,10 @@ function CropperActions({
         onCropComplete={onCropComplete}
       />
 
-      {/* Przyciski */}
       <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
         <Button
           variant="contained"
+          color="primary"
           onClick={handleCrop}
           sx={{ fontWeight: 600 }}
         >
@@ -72,6 +64,6 @@ function CropperActions({
       </Box>
     </Box>
   );
-}
+};
 
 export default CropperActions;
