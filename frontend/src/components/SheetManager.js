@@ -44,13 +44,12 @@ const SheetManager = ({
     let currentRowHeight = 0;
     let colIndex = 0;
 
-    for (let i = 0; i < sheetImages.length; i++) {
+        for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio } = sheetImages[i];
       const img = await createImage(image);
 
       let imgHeight = Math.round(imgWidth / aspectRatio);
       const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
-
       if (imgHeight > maxHeightPx) {
         imgHeight = maxHeightPx;
         imgWidth = Math.round(imgHeight * aspectRatio);
@@ -59,13 +58,15 @@ const SheetManager = ({
       const x = margin + colIndex * (imgWidth + margin);
       const y = currentY;
 
+      // Sprawdzenie, czy zdjęcie zmieści się w arkuszu
+      if (y + imgHeight + margin > heightPx) break;
+
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
       ctx.lineWidth = 2;
       ctx.strokeStyle = "black";
       ctx.strokeRect(x, y, imgWidth, imgHeight);
 
       if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
-
       colIndex++;
       if (colIndex >= cols) {
         colIndex = 0;
