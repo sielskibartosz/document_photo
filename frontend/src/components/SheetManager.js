@@ -10,13 +10,11 @@ const SheetManager = ({
   selectedFormat,
   sheetUrl,
   setSheetUrl,
-  setThumbnailUrl,
   setSheetImages,
   showSheetPreview,
   clearSheet,
 }) => {
   const { t } = useTranslation();
-
   const [visibleCount, setVisibleCount] = useState(0);
 
   const dpi = 300;
@@ -25,7 +23,7 @@ const SheetManager = ({
   const maxPhotoHeightCm = 4.5;
 
   const generateSheet = async () => {
-    if (sheetImages.length === 0) return { url: null, visibleCount: 0 };
+    if (!sheetImages.length) return { url: null, visibleCount: 0 };
 
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
@@ -44,13 +42,11 @@ const SheetManager = ({
     let currentY = margin;
     let currentRowHeight = 0;
     let colIndex = 0;
-
     let actualCount = 0;
 
     for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio } = sheetImages[i];
       const img = await createImage(image);
-
       let imgHeight = Math.round(imgWidth / aspectRatio);
       const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
       if (imgHeight > maxHeightPx) {
@@ -69,8 +65,7 @@ const SheetManager = ({
       ctx.strokeRect(x, y, imgWidth, imgHeight);
 
       actualCount++;
-
-      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
+      currentRowHeight = Math.max(currentRowHeight, imgHeight);
       colIndex++;
       if (colIndex >= cols) {
         colIndex = 0;
@@ -91,21 +86,18 @@ const SheetManager = ({
     const result = await generateSheet();
     if (result && result.url) {
       setSheetUrl(result.url);
-      setThumbnailUrl(result.url);
       setVisibleCount(result.visibleCount);
     } else {
       setSheetUrl(null);
-      setThumbnailUrl(null);
       setVisibleCount(0);
     }
-  }, [sheetImages, selectedFormat, setSheetUrl, setThumbnailUrl]);
+  }, [sheetImages, selectedFormat, setSheetUrl]);
 
   useEffect(() => {
     if (sheetImages.length > 0) {
       createSheetImage();
     } else {
       setSheetUrl(null);
-      setThumbnailUrl(null);
       setVisibleCount(0);
     }
   }, [sheetImages, createSheetImage]);
@@ -125,19 +117,17 @@ const SheetManager = ({
     else {
       setSheetImages([]);
       setSheetUrl(null);
-      setThumbnailUrl(null);
       setVisibleCount(0);
     }
   };
 
-  // Duplicate Photo z ograniczeniem miejsca
   const duplicateImage = () => {
-    if (sheetImages.length === 0) return;
+    if (!sheetImages.length) return;
 
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
     const heightPx = Math.round(cmToPx(format.height, dpi));
-    let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
+    const imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
     const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
 
     let currentY = margin;
@@ -145,12 +135,8 @@ const SheetManager = ({
     let colIndex = 0;
 
     for (let i = 0; i < sheetImages.length; i++) {
-      const { aspectRatio } = sheetImages[i];
-      let imgHeight = Math.round(imgWidth / aspectRatio);
-      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
-      if (imgHeight > maxHeightPx) imgHeight = maxHeightPx;
-
-      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
+      const imgHeight = Math.min(Math.round(imgWidth / sheetImages[i].aspectRatio), Math.round(cmToPx(maxPhotoHeightCm, dpi)));
+      currentRowHeight = Math.max(currentRowHeight, imgHeight);
       colIndex++;
       if (colIndex >= cols) {
         colIndex = 0;
@@ -159,16 +145,10 @@ const SheetManager = ({
       }
     }
 
-    // Pobieramy wysokość duplikowanego zdjęcia
-    const { aspectRatio } = sheetImages[0];
-    let nextHeight = Math.round(imgWidth / aspectRatio);
-    const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
-    if (nextHeight > maxHeightPx) nextHeight = maxHeightPx;
-
-    // Sprawdzamy, czy zmieści się na arkuszu
-    if (currentY + nextHeight + margin > heightPx) return;
-
-    setSheetImages(prev => [...prev, prev[0]]);
+    const nextHeight = Math.min(Math.round(imgWidth / sheetImages[0].aspectRatio), Math.round(cmToPx(maxPhotoHeightCm, dpi)));
+    if (currentY + nextHeight + margin <= heightPx) {
+      setSheetImages(prev => [...prev, prev[0]]);
+    }
   };
 
   if (!showSheetPreview || !sheetUrl) return null;
@@ -195,7 +175,7 @@ const SheetManager = ({
         component="img"
         src={sheetUrl}
         alt="sheet"
-        sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", margin: "0 auto" }}
+        sx={{ maxWidth: "100%", width: { xs: "100%", md: "auto" }, borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", mx: "auto" }}
       />
     </FrameBox>
   );

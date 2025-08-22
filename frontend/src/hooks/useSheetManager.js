@@ -17,6 +17,8 @@ export default function useSheetManager(initialAspectRatio) {
     setSheetImages((prev) => [...prev, prev[prev.length - 1]]);
     setShowFullSheet(true);
   };
+  const hideSheet = () => setShowFullSheet(false);
+
 
   const clearSheet = () => {
     setSheetImages([]);
