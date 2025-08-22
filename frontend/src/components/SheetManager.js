@@ -12,16 +12,19 @@ const SheetManager = ({
   setSheetUrl,
   setThumbnailUrl,
   setSheetImages,
-  duplicateImage,
   showSheetPreview,
   clearSheet,
 }) => {
   const { t } = useTranslation();
 
+  const dpi = 300;
+  const margin = 20;
+  const photoWidthCm = 3.5;
+  const maxPhotoHeightCm = 4.5;
+
   const generateSheet = async () => {
     if (sheetImages.length === 0) return null;
 
-    const dpi = 300;
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
     const heightPx = Math.round(cmToPx(format.height, dpi));
@@ -34,17 +37,13 @@ const SheetManager = ({
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, widthPx, heightPx);
 
-    const margin = 20;
-    const photoWidthCm = 3.5;
     let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
-    const maxPhotoHeightCm = 4.5;
-
     const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
     let currentY = margin;
     let currentRowHeight = 0;
     let colIndex = 0;
 
-        for (let i = 0; i < sheetImages.length; i++) {
+    for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio } = sheetImages[i];
       const img = await createImage(image);
 
@@ -58,7 +57,7 @@ const SheetManager = ({
       const x = margin + colIndex * (imgWidth + margin);
       const y = currentY;
 
-      // Sprawdzenie, czy zdjęcie zmieści się w arkuszu
+      // Jeśli zdjęcie wykracza poza arkusz, przerywamy
       if (y + imgHeight + margin > heightPx) break;
 
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
@@ -100,7 +99,7 @@ const SheetManager = ({
       createSheetImage();
     } else {
       setSheetUrl(null);
-      setThumbnailUrl(null); // miniatura znika
+      setThumbnailUrl(null);
     }
   }, [sheetImages, createSheetImage]);
 
@@ -123,6 +122,45 @@ const SheetManager = ({
     }
   };
 
+  // ---------------- Duplicate Photo z ograniczeniem miejsca ----------------
+  const duplicateImage = () => {
+    if (sheetImages.length === 0) return;
+
+    const format = PAPER_FORMATS[selectedFormat];
+    const widthPx = Math.round(cmToPx(format.width, dpi));
+    const heightPx = Math.round(cmToPx(format.height, dpi));
+
+    let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
+    const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
+
+    let currentY = margin;
+    let currentRowHeight = 0;
+    let colIndex = 0;
+
+    for (let i = 0; i < sheetImages.length; i++) {
+      const { aspectRatio } = sheetImages[i];
+      let imgHeight = Math.round(imgWidth / aspectRatio);
+      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
+      if (imgHeight > maxHeightPx) imgHeight = maxHeightPx;
+
+      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
+      colIndex++;
+      if (colIndex >= cols) {
+        colIndex = 0;
+        currentY += currentRowHeight + margin;
+        currentRowHeight = 0;
+      }
+    }
+
+    // Obliczamy wysokość nowego zdjęcia
+    const nextHeight = Math.round(imgWidth / sheetImages[0].aspectRatio);
+    if (currentY + nextHeight + margin > heightPx) return; // brak miejsca
+
+    // Dodajemy duplikat tylko jeśli zmieści się na arkuszu
+    setSheetImages((prev) => [...prev, prev[0]]);
+  };
+  // ---------------------------------------------------------------------------
+
   if (!showSheetPreview || !sheetUrl) return null;
 
   return (
@@ -143,7 +181,12 @@ const SheetManager = ({
         </Button>
       </Box>
 
-      <Box component="img" src={sheetUrl} alt="sheet" sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", margin: "0 auto" }} />
+      <Box
+        component="img"
+        src={sheetUrl}
+        alt="sheet"
+        sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", margin: "0 auto" }}
+      />
     </FrameBox>
   );
 };
