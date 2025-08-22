@@ -224,7 +224,7 @@ function App() {
                   sx={{
                     position: "absolute",
                     bottom: 10,
-                    right: 0,
+                    right: 650,
                     width: 80,
                     cursor: "pointer",
                     zIndex: 10,

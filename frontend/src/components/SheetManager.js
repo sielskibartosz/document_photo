@@ -180,13 +180,13 @@ const SheetManager = ({
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, flexWrap: "wrap", mb: 3, width: "100%" }}>
-        <Button variant="contained" onClick={duplicateImage} sx={{ fontWeight: 600 }}>
+        <Button variant="contained" onClick={duplicateImage} sx={{ fontWeight: 500 }}>
           {t("duplicate_photo", "Duplicate Photo")}
         </Button>
-        <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 600 }}>
+        <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 500 }}>
           {t("clear_sheet", "Clear Sheet")}
         </Button>
-        <Button variant="contained" color="success" onClick={downloadSheet} sx={{ fontWeight: 600 }}>
+        <Button variant="contained" color="success" onClick={downloadSheet} sx={{ fontWeight: 500 }}>
           {t("download_sheet", "Download Sheet")}
         </Button>
       </Box>

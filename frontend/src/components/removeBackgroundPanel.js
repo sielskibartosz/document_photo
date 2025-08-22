@@ -85,7 +85,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, onAddT
         <Button
           variant="contained"
           onClick={handleAddToSheet}
-          sx={{ fontWeight: 600 }}
+          sx={{ fontWeight: 500 }}
           disabled={!croppedImage}
         >
           {t("add_to_sheet", "Dodaj do arkusza")}
@@ -95,7 +95,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, onAddT
           variant="contained"
           onClick={removeBackground}
           disabled={loading}
-          sx={{ fontWeight: 600 }}
+          sx={{ fontWeight: 500 }}
         >
           {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
         </Button>

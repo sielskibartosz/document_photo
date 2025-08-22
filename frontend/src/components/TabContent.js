@@ -78,7 +78,7 @@ const TabContent = ({
           variant="body1"
           sx={{
             mb: 1,
-            fontWeight: 600,
+            fontWeight: 500,
             color: "text.primary",
             maxWidth: 600,
             mx: "auto",
@@ -96,7 +96,7 @@ const TabContent = ({
           variant="body1"
           sx={{
             mb: 2,
-            fontWeight: 600,
+            fontWeight: 500,
             color: "text.primary",
             maxWidth: 600,
             mx: "auto",

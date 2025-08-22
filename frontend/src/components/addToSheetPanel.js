@@ -15,7 +15,7 @@ function AddToSheetPanel({ image, aspectRatio, onAddToSheet, onClear }) {
         <Button
           variant="contained"
           onClick={onAddToSheet}
-          sx={{ fontWeight: 600 }}
+          sx={{ fontWeight: 500 }}
         >
           {t("add_to_sheet", "Dodaj do arkusza")}
         </Button>

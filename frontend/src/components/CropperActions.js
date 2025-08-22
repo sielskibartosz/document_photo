@@ -48,7 +48,7 @@ const CropperActions = ({
     variant="contained"
     color="primary"
     onClick={handleCrop}
-    sx={{ fontWeight: 600 }}
+    sx={{ fontWeight: 500 }}
   >
     {t("crop_image", "Przytnij zdjęcie")}
   </Button>
