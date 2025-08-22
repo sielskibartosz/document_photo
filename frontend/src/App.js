@@ -14,7 +14,9 @@ import FrameBox from "./styles/imagesStyles";
 import { parseAspectRatio } from "./utils/cropImage";
 import { readFile } from "./utils/imageHelpers";
 import { darkTheme } from "./styles/theme";
+import { useMediaQuery } from "@mui/material";
 
+import PrivacyPolicy from "./components/PrivacyPolicy";
 import TabSelector from "./components/TabSelector";
 import TabContent from "./components/TabContent";
 import SheetManager from "./components/SheetManager";
@@ -49,6 +51,8 @@ function App() {
     setCrop({ x: 0, y: 0 });
     setZoom(1.9);
   };
+
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const onFileChange = async (e) => {
     const file = e.target.files?.[0];
@@ -110,11 +114,38 @@ function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+
+      {/* 🔹 Header nad całą aplikacją */}
+      <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: 1,
+            px: 1,        // minimalny padding poziomy
+            py: 0.5,      // minimalny padding pionowy
+            mb: 0.25,
+            backgroundColor: "background.paper",
+            fontSize: "0.875rem", // mniejszy font jeśli trzeba
+          }}
+        >
+          <PrivacyPolicy sx={{ cursor: "pointer", fontSize: "0.875rem" }} />
+          <Select
+            value={i18n.language}
+            onChange={handleLanguageChange}
+            size="small"
+            sx={{ fontSize: "0.875rem", height: 28 }} // zmniejszamy rozmiar selecta
+          >
+            <MenuItem value="pl">PL</MenuItem>
+            <MenuItem value="en">EN</MenuItem>
+          </Select>
+        </Box>
+
       <Box
         sx={(theme) => ({
           padding: 4,
           width: "80vw",
-          margin: "40px auto",
+          margin: "10px auto 40px auto",
           fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
           color: theme.palette.text.primary,
           background:
@@ -130,13 +161,12 @@ function App() {
           },
         })}
       >
-        {/* Nagłówek */}
+        {/* Nagłówek z tytułem */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative",
             mb: 4,
           }}
         >
@@ -147,18 +177,6 @@ function App() {
           >
             {i18n.t("title")}
           </Typography>
-
-          <Box sx={{ position: "absolute", right: 0 }}>
-            <Select
-              value={i18n.language}
-              onChange={handleLanguageChange}
-              size="small"
-              sx={{ ml: 2 }}
-            >
-              <MenuItem value="pl">PL</MenuItem>
-              <MenuItem value="en">EN</MenuItem>
-            </Select>
-          </Box>
         </Box>
 
         <TabSelector
@@ -187,19 +205,35 @@ function App() {
           />
 
           {thumbnailUrl && (
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 10,
-                right: 0,
-                width: 80,
-                cursor: "pointer",
-                zIndex: 10,
-              }}
-              onClick={toggleSheet}
-            >
-              <SheetMinature thumbnailUrl={thumbnailUrl} />
-            </Box>
+            <>
+              {isSmallScreen ? (
+                <Box
+                  sx={{
+                    mt: 0,
+                    mb: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                  onClick={toggleSheet}
+                >
+                  <SheetMinature thumbnailUrl={thumbnailUrl} />
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 10,
+                    right: 0,
+                    width: 80,
+                    cursor: "pointer",
+                    zIndex: 10,
+                  }}
+                  onClick={toggleSheet}
+                >
+                  <SheetMinature thumbnailUrl={thumbnailUrl} />
+                </Box>
+              )}
+            </>
           )}
         </Box>
 
@@ -250,7 +284,10 @@ function App() {
               bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
               setNoBgImage={setNoBgImage}
               onAddToSheet={(img) => {
-                setSheetImages((prev) => [...prev, { image: img, aspectRatio }]);
+                setSheetImages((prev) => [
+                  ...prev,
+                  { image: img, aspectRatio },
+                ]);
                 resetImageStates();
                 setShowFullSheet(true);
               }}
@@ -261,8 +298,6 @@ function App() {
             />
           </FrameBox>
         )}
-
-
       </Box>
     </ThemeProvider>
   );

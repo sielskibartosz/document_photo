@@ -18,5 +18,16 @@
   "sheet_header": "Photos added to sheet",
   "duplicate_photo": "Duplicate Photo",
   "clear_sheet": "Clear Sheet",
-  "download_sheet": "Download Sheet"
+  "download_sheet": "Download Sheet",
+  "sheetThumbnail": "Sheet thumbnail",
+  "privacyPolicy_title": "Privacy Policy",
+  "privacyPolicy_content": [
+  "Your privacy is important to us. We want to explain how we handle the photos uploaded to our application:",
+  "All operations performed in the browser do not save photos or any personal data.",
+  "Photos uploaded to the application are processed solely for the purpose of background removal using the Rembg tool.",
+  "Photos are not stored or shared with third parties.",
+  "We do not sell or disclose photos or any other personal data to any external entities.",
+  "Photos are processed temporarily and deleted immediately after the background removal operation is completed.",
+  "Contact: barteksdepot@gmail.com"
+]
 }
