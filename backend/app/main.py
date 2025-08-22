@@ -1,52 +1,53 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from rembg import remove, new_session
-from PIL import Image
-import io
+import requests
 import base64
 
-app = FastAPI(title="Remove Background API 1.1")
+# --- Load .env ---
+load_dotenv()
+REMBG_API_KEY = os.getenv("REMBG_API_KEY")
+
+app = FastAPI(title="Remove Background API via Rembg API")
 
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # możesz ograniczyć do frontendów np. ["https://photoidcreator.com"]
+    allow_origins=["*"],  # lub ogranicz do frontend np. ["http://localhost:3000"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- Tworzymy lekką sesję z modelem u2netp ---
-session = new_session("u2netp")
+REMBG_API_URL = "https://api.rembg.com/rmbg"
 
-@app.post("/remove-background/")
-async def remove_background(
+@app.post("/remove-background")
+async def remove_background_api(
     image: UploadFile = File(...),
     bg_color: str = Form("#ffffff")
 ):
     try:
         image_bytes = await image.read()
-        input_image = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
+        files = {"image": (image.filename, image_bytes)}
+        data = {"bg_color": bg_color}
+        headers = {"x-api-key": REMBG_API_KEY}
 
-        # usuwamy tło używając lekkiego modelu u2netp
-        output_image = remove(input_image, session=session)
+        response = requests.post(REMBG_API_URL, files=files, data=data, headers=headers)
 
-        # wstawienie jednolitego tła
-        if bg_color:
-            bg_image = Image.new("RGBA", output_image.size, bg_color)
-            bg_image.paste(output_image, mask=output_image)
-            output_image = bg_image
+        if response.status_code != 200:
+            return JSONResponse(
+                content={"error": f"Rembg API error: {response.text}"},
+                status_code=response.status_code
+            )
 
-        # konwersja do base64
-        buf = io.BytesIO()
-        output_image.save(buf, format="PNG")
-        base64_image = base64.b64encode(buf.getvalue()).decode("utf-8")
-
+        img_bytes = response.content
+        base64_image = base64.b64encode(img_bytes).decode("utf-8")
         return JSONResponse(content={"image": base64_image})
+
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-# --- Ping ---
 @app.get("/ping")
 def ping():
     return {"message": "Server is running!"}

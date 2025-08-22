@@ -32,18 +32,15 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, onAddT
       formData.append("image", blob, "cropped.png");
       formData.append("bg_color", bgColor);
 
-      const response = await fetch(`${BACKEND_URL}/remove-background/`, {
+      // 🔹 Fetch POST do backend
+      const response = await fetch(`${BACKEND_URL}/remove-background`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        try {
-          const errData = await response.json();
-          throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
-        } catch {
-          throw new Error(t("remove_bg_error", "Błąd przy usuwaniu tła"));
-        }
+        const errData = await response.json();
+        throw new Error(errData.error || t("remove_bg_error", "Błąd przy usuwaniu tła"));
       }
 
       const resultJson = await response.json();
@@ -56,7 +53,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, onAddT
 
       setNoBgImage(objectUrl);
 
-      // 🔥 Automatycznie dodaj do sheet po usunięciu tła
+      // Automatycznie dodaj do sheet po usunięciu tła
       if (onAddToSheet) onAddToSheet(objectUrl);
 
     } catch (error) {
@@ -67,9 +64,7 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, onAddT
   };
 
   const handleAddToSheet = () => {
-    if (croppedImage && onAddToSheet) {
-      onAddToSheet(croppedImage); // dodaje aktualne przycięte zdjęcie
-    }
+    if (croppedImage && onAddToSheet) onAddToSheet(croppedImage);
   };
 
   const handleClear = () => {
@@ -80,28 +75,25 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, onAddT
   return (
     <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
       <ImagePreview image={croppedImage} aspectRatio={aspectRatio} />
-
       <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
         <Button
           variant="contained"
           onClick={handleAddToSheet}
-          sx={{ fontWeight: 600 }}
           disabled={!croppedImage}
+          sx={{ fontWeight: 600 }}
         >
           {t("add_to_sheet", "Dodaj do arkusza")}
         </Button>
-
         <Button
           variant="contained"
           onClick={removeBackground}
-          disabled={loading}
+          disabled={loading || !croppedImage}
           sx={{ fontWeight: 600 }}
         >
           {loading ? t("removing_bg", "Usuwanie...") : t("remove_bg", "Usuń tło")}
         </Button>
-
         {onClear && (
-          <IconButton color="primary" onClick={handleClear} sx={{ ml: 1 }}>
+          <IconButton color="primary" onClick={handleClear}>
             <DeleteIcon />
           </IconButton>
         )}
