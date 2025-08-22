@@ -6,15 +6,14 @@ import {
   ThemeProvider,
   Select,
   MenuItem,
+  useMediaQuery,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { TABS } from "./constants/tabs";
 import { buttonBaseStyle } from "./styles/buttonStyles";
 import FrameBox from "./styles/imagesStyles";
 import { parseAspectRatio } from "./utils/cropImage";
-import { readFile } from "./utils/imageHelpers";
 import { darkTheme } from "./styles/theme";
-import { useMediaQuery } from "@mui/material";
 
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import TabSelector from "./components/TabSelector";
@@ -23,80 +22,61 @@ import SheetManager from "./components/SheetManager";
 import CropperActions from "./components/CropperActions";
 import SheetMinature from "./components/SheetMinature";
 import RemoveBackgroundPanel from "./components/removeBackgroundPanel";
-import AddToSheetPanel from "./components/addToSheetPanel";
+import useSheetManager from "./hooks/useSheetManager";
+import useImageCrop from "./hooks/useImageCrop";
 
 function App() {
   const { i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
-  const [imageSrc, setImageSrc] = useState(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1.9);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [noBgImage, setNoBgImage] = useState(null);
-
   const [selectedFormat, setSelectedFormat] = useState("10/15 cm Rossmann");
-  const [sheetImages, setSheetImages] = useState([]);
-  const [selectedSheetUrl, setSelectedSheetUrl] = useState(null);
-  const [thumbnailUrl, setThumbnailUrl] = useState(null);
-  const [showFullSheet, setShowFullSheet] = useState(false);
   const [bgColor, setBgColor] = useState("#ffffff");
 
   const aspectRatio = parseAspectRatio(aspectInput);
-
-  const resetImageStates = () => {
-    setImageSrc(null);
-    setCroppedImage(null);
-    setNoBgImage(null);
-    setCrop({ x: 0, y: 0 });
-    setZoom(1.9);
-  };
-
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
-  const onFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const base64 = await readFile(file);
+  // Hook do obsługi obrazu
+  const {
+    imageSrc,
+    crop,
+    setCrop,
+    zoom,
+    setZoom,
+    croppedImage,
+    setCroppedImage,
+    noBgImage,
+    setNoBgImage,
+    onFileChange,
+    reset
+  } = useImageCrop();
 
-    setImageSrc(base64);
-    setCroppedImage(null);
-    setNoBgImage(null);
-    setShowFullSheet(false);
-  };
-
-  const addToSheet = () => {
-    if (!noBgImage) return;
-    setSheetImages((prev) => [...prev, { image: noBgImage, aspectRatio }]);
-    resetImageStates();
-    setShowFullSheet(true);
-  };
-
-  const duplicateLastImage = () => {
-    if (!sheetImages.length) return;
-    setSheetImages((prev) => [...prev, prev[prev.length - 1]]);
-    setShowFullSheet(true);
-  };
+  // Hook do arkusza
+  const {
+    sheetImages,
+    setSheetImages,
+    selectedSheetUrl,
+    setSelectedSheetUrl,
+    thumbnailUrl,
+    setThumbnailUrl,
+    showFullSheet,
+    addToSheet,
+    duplicateLastImage,
+    clearSheet,
+    toggleSheet
+  } = useSheetManager();
 
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
     const tab = TABS.find((t) => t.key === tabKey);
     setAspectInput(tab.aspect);
-    resetImageStates();
-    setShowFullSheet(false);
-  };
-
-  const clearSheet = () => {
-    setSheetImages([]);
-    setSelectedSheetUrl(null);
-    setThumbnailUrl(null);
-    setShowFullSheet(false);
+    reset(); // resetuje crop, zoom, obraz itp.
   };
 
   const handleLanguageChange = (e) => {
     i18n.changeLanguage(e.target.value);
   };
 
+  // Responsive kolumn
   const [cols, setCols] = useState(3);
   useEffect(() => {
     const handleResize = () => {
@@ -109,91 +89,31 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const toggleSheet = () => setShowFullSheet((prev) => !prev);
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
 
-      {/* 🔹 Header nad całą aplikacją */}
-      <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            gap: 1,
-            px: 1,        // minimalny padding poziomy
-            py: 0.5,      // minimalny padding pionowy
-            mb: 0.25,
-            backgroundColor: "background.paper",
-            fontSize: "0.875rem", // mniejszy font jeśli trzeba
-          }}
-        >
-          <PrivacyPolicy sx={{ cursor: "pointer", fontSize: "0.875rem" }} />
-          <Select
-            value={i18n.language}
-            onChange={handleLanguageChange}
-            size="small"
-            sx={{ fontSize: "0.875rem", height: 28 }} // zmniejszamy rozmiar selecta
-          >
-            <MenuItem value="pl">PL</MenuItem>
-            <MenuItem value="en">EN</MenuItem>
-            <MenuItem value="de">DE</MenuItem>
-          </Select>
-        </Box>
+      {/* Header */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 1, px: 1, py: 0.5, mb: 0.25, backgroundColor: "background.paper", fontSize: "0.875rem" }}>
+        <PrivacyPolicy sx={{ cursor: "pointer", fontSize: "0.875rem" }} />
+        <Select value={i18n.language} onChange={handleLanguageChange} size="small" sx={{ fontSize: "0.875rem", height: 28 }}>
+          <MenuItem value="pl">PL</MenuItem>
+          <MenuItem value="en">EN</MenuItem>
+          <MenuItem value="de">DE</MenuItem>
+        </Select>
+      </Box>
 
-      <Box
-        sx={(theme) => ({
-          padding: 4,
-          width: "80vw",
-          margin: "10px auto 40px auto",
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-          color: theme.palette.text.primary,
-          background:
-            theme.palette.mode === "dark"
-              ? "linear-gradient(135deg, #1f2937 0%, #374151 100%)"
-              : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-          borderRadius: 3,
-          boxShadow: theme.shadows[4],
-          [theme.breakpoints.down("sm")]: {
-            padding: 2,
-            maxWidth: "90vw",
-            margin: "20px auto",
-          },
-        })}
-      >
-        {/* Nagłówek z tytułem */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            mb: 4,
-          }}
-        >
-          <Typography
-            variant="h4"
-            fontWeight={700}
-            sx={{ textShadow: "0 1px 3px rgba(0,0,0,0.1)" }}
-          >
+      <Box sx={{ padding: 4, width: "80vw", margin: "10px auto 40px auto", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", color: darkTheme.palette.text.primary, background: darkTheme.palette.mode === "dark" ? "linear-gradient(135deg, #1f2937 0%, #374151 100%)" : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)", borderRadius: 3, boxShadow: darkTheme.shadows[4] }}>
+
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", mb: 4 }}>
+          <Typography variant="h4" fontWeight={700} sx={{ textShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
             {i18n.t("title")}
           </Typography>
         </Box>
 
-        <TabSelector
-          tabs={TABS}
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-        />
+        <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
 
-        {/* TabContent + miniatura */}
-        <Box
-          sx={{
-            position: "relative",
-            width: "100%",
-            mt: 2,
-          }}
-        >
+        <Box sx={{ position: "relative", width: "100%", mt: 2 }}>
           <TabContent
             tabKey={activeTab}
             aspectInput={aspectInput}
@@ -206,39 +126,12 @@ function App() {
           />
 
           {thumbnailUrl && (
-            <>
-              {isSmallScreen ? (
-                <Box
-                  sx={{
-                    mt: 0,
-                    mb: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                  onClick={toggleSheet}
-                >
-                  <SheetMinature thumbnailUrl={thumbnailUrl} />
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    bottom: 10,
-                    right: 650,
-                    width: 80,
-                    cursor: "pointer",
-                    zIndex: 10,
-                  }}
-                  onClick={toggleSheet}
-                >
-                  <SheetMinature thumbnailUrl={thumbnailUrl} />
-                </Box>
-              )}
-            </>
+            <Box onClick={toggleSheet} sx={{ position: isSmallScreen ? "static" : "absolute", bottom: isSmallScreen ? "auto" : 10, right: isSmallScreen ? "auto" : 650, width: 80, cursor: "pointer", display: "flex", justifyContent: "center", mt: 0, mb: 2 }}>
+              <SheetMinature thumbnailUrl={thumbnailUrl} />
+            </Box>
           )}
         </Box>
 
-        {/* Arkusz */}
         {sheetImages.length > 0 && showFullSheet && (
           <Box sx={{ mb: 4 }}>
             <SheetManager
@@ -257,7 +150,6 @@ function App() {
           </Box>
         )}
 
-        {/* CropperActions */}
         {imageSrc && (
           <FrameBox>
             <CropperActions
@@ -267,16 +159,12 @@ function App() {
               zoom={zoom}
               setZoom={setZoom}
               aspectRatio={aspectRatio}
-              onCropped={(cropped) => {
-                setCroppedImage(cropped);
-                setNoBgImage(null);
-              }}
-              onClear={resetImageStates}
+              onCropped={(cropped) => { setCroppedImage(cropped); setNoBgImage(null); }}
+              onClear={reset}
             />
           </FrameBox>
         )}
 
-        {/* RemoveBackgroundPanel */}
         {croppedImage && (
           <FrameBox>
             <RemoveBackgroundPanel
@@ -284,18 +172,8 @@ function App() {
               aspectRatio={aspectRatio}
               bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
               setNoBgImage={setNoBgImage}
-              onAddToSheet={(img) => {
-                setSheetImages((prev) => [
-                  ...prev,
-                  { image: img, aspectRatio },
-                ]);
-                resetImageStates();
-                setShowFullSheet(true);
-              }}
-              onClear={() => {
-                setCroppedImage(null);
-                setNoBgImage(null);
-              }}
+              onAddToSheet={(img) => { addToSheet(img, aspectRatio); reset(); }}
+              onClear={() => { setCroppedImage(null); setNoBgImage(null); }}
             />
           </FrameBox>
         )}
