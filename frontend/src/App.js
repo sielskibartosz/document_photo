@@ -138,6 +138,7 @@ function App() {
           >
             <MenuItem value="pl">PL</MenuItem>
             <MenuItem value="en">EN</MenuItem>
+            <MenuItem value="de">DE</MenuItem>
           </Select>
         </Box>
 

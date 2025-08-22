@@ -1,0 +1,33 @@
+{
+  "language": "Sprache",
+  "title": "Passfoto — Schnell & Kostenlos",
+  "id_tab": "Personalausweis / Führerschein",
+  "custom_tab": "Benutzerdefiniert",
+  "id_link": "Offizielle Anforderungen gov.pl",
+  "format": "Papiergröße",
+  "format_info": "Wählen Sie die Papiergröße für den Ausdruck des Fotos",
+  "foto_selection": "Foto auswählen",
+  "foto_size": "Fotogröße",
+  "color_choice": "Hintergrundfarbe",
+  "aspect_tooltip": "Breite/Höhe [mm]",
+  "crop_photo": "Foto zuschneiden",
+  "removing_bg": "Hintergrund wird entfernt...",
+  "remove_bg": "Ohne Hintergrund speichern",
+  "add_to_sheet": "Mit Hintergrund speichern",
+  "zoom": "Zoom",
+  "sheet_header": "Fotos zum Blatt hinzugefügt",
+  "duplicate_photo": "Foto duplizieren",
+  "clear_sheet": "Blatt löschen",
+  "download_sheet": "Blatt herunterladen",
+  "sheetThumbnail": "Blatt-Vorschau",
+  "privacyPolicy_title": "Datenschutzerklärung",
+  "privacyPolicy_content": [
+    "Ihre Privatsphäre ist uns wichtig. Wir möchten erklären, wie wir die in unserer Anwendung hochgeladenen Fotos behandeln:",
+    "Alle Vorgänge, die im Browser durchgeführt werden, speichern keine Fotos oder persönliche Daten.",
+    "Hochgeladene Fotos werden ausschließlich zum Zweck der Hintergrundentfernung mit dem Rembg-Tool verarbeitet.",
+    "Fotos werden nicht gespeichert oder an Dritte weitergegeben.",
+    "Wir verkaufen oder geben Fotos oder andere persönliche Daten nicht an externe Stellen weiter.",
+    "Fotos werden nur vorübergehend verarbeitet und sofort nach Abschluss der Hintergrundentfernung gelöscht.",
+    "Kontakt: barteksdepot@gmail.com"
+  ]
+}
