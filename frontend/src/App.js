@@ -35,7 +35,7 @@ function App() {
   const [croppedImage, setCroppedImage] = useState(null);
   const [noBgImage, setNoBgImage] = useState(null);
 
-  const [selectedFormat, setSelectedFormat] = useState("10/15 cm");
+  const [selectedFormat, setSelectedFormat] = useState("10/15 cm Rossmann");
   const [sheetImages, setSheetImages] = useState([]);
   const [selectedSheetUrl, setSelectedSheetUrl] = useState(null);
   const [thumbnailUrl, setThumbnailUrl] = useState(null);
