@@ -5,7 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import { BACKEND_URL } from "../constants/backendConfig";
 
-function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColor = "#ffffff", onClear }) {
+function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, onAddToSheet, bgColor = "#ffffff", onClear }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
@@ -55,10 +55,20 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
       const objectUrl = URL.createObjectURL(new Blob([byteArray], { type: "image/png" }));
 
       setNoBgImage(objectUrl);
+
+      // 🔥 Automatycznie dodaj do sheet po usunięciu tła
+      if (onAddToSheet) onAddToSheet(objectUrl);
+
     } catch (error) {
       alert(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddToSheet = () => {
+    if (croppedImage && onAddToSheet) {
+      onAddToSheet(croppedImage); // dodaje aktualne przycięte zdjęcie
     }
   };
 
@@ -72,6 +82,15 @@ function RemoveBackgroundPanel({ croppedImage, aspectRatio, setNoBgImage, bgColo
       <ImagePreview image={croppedImage} aspectRatio={aspectRatio} />
 
       <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+        <Button
+          variant="contained"
+          onClick={handleAddToSheet}
+          sx={{ fontWeight: 600 }}
+          disabled={!croppedImage}
+        >
+          {t("add_to_sheet", "Dodaj do arkusza")}
+        </Button>
+
         <Button
           variant="contained"
           onClick={removeBackground}
