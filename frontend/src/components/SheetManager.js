@@ -123,42 +123,46 @@ const SheetManager = ({
   };
 
   // ---------------- Duplicate Photo z ograniczeniem miejsca ----------------
-  const duplicateImage = () => {
-    if (sheetImages.length === 0) return;
+     const duplicateImage = () => {
+      if (sheetImages.length === 0) return;
 
-    const format = PAPER_FORMATS[selectedFormat];
-    const widthPx = Math.round(cmToPx(format.width, dpi));
-    const heightPx = Math.round(cmToPx(format.height, dpi));
+      const format = PAPER_FORMATS[selectedFormat];
+      const widthPx = Math.round(cmToPx(format.width, dpi));
+      const heightPx = Math.round(cmToPx(format.height, dpi));
+      let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
+      const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
 
-    let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
-    const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
+      let currentY = margin;
+      let currentRowHeight = 0;
+      let colIndex = 0;
 
-    let currentY = margin;
-    let currentRowHeight = 0;
-    let colIndex = 0;
+      for (let i = 0; i < sheetImages.length; i++) {
+        const { aspectRatio } = sheetImages[i];
+        let imgHeight = Math.round(imgWidth / aspectRatio);
+        const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
+        if (imgHeight > maxHeightPx) imgHeight = maxHeightPx;
 
-    for (let i = 0; i < sheetImages.length; i++) {
-      const { aspectRatio } = sheetImages[i];
-      let imgHeight = Math.round(imgWidth / aspectRatio);
-      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
-      if (imgHeight > maxHeightPx) imgHeight = maxHeightPx;
-
-      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
-      colIndex++;
-      if (colIndex >= cols) {
-        colIndex = 0;
-        currentY += currentRowHeight + margin;
-        currentRowHeight = 0;
+        if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
+        colIndex++;
+        if (colIndex >= cols) {
+          colIndex = 0;
+          currentY += currentRowHeight + margin;
+          currentRowHeight = 0;
+        }
       }
-    }
 
-    // Obliczamy wysokość nowego zdjęcia
-    const nextHeight = Math.round(imgWidth / sheetImages[0].aspectRatio);
-    if (currentY + nextHeight + margin > heightPx) return; // brak miejsca
+      // Pobieramy wysokość duplikowanego zdjęcia
+      const { aspectRatio } = sheetImages[0];
+      let nextHeight = Math.round(imgWidth / aspectRatio);
+      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
+      if (nextHeight > maxHeightPx) nextHeight = maxHeightPx;
 
-    // Dodajemy duplikat tylko jeśli zmieści się na arkuszu
-    setSheetImages((prev) => [...prev, prev[0]]);
-  };
+      // Sprawdzamy, czy zmieści się na arkuszu
+      if (currentY + nextHeight + margin > heightPx) return;
+
+      // Dodajemy duplikat
+      setSheetImages(prev => [...prev, prev[0]]);
+    };
   // ---------------------------------------------------------------------------
 
   if (!showSheetPreview || !sheetUrl) return null;
