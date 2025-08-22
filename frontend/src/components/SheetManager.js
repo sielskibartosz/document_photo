@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { cmToPx, createImage } from "../utils/cropImage.js";
 import { PAPER_FORMATS } from "../constants/paperFormats";
 import FrameBox from "../styles/imagesStyles";
@@ -12,16 +12,21 @@ const SheetManager = ({
   setSheetUrl,
   setThumbnailUrl,
   setSheetImages,
-  duplicateImage,
   showSheetPreview,
   clearSheet,
 }) => {
   const { t } = useTranslation();
 
-  const generateSheet = async () => {
-    if (sheetImages.length === 0) return null;
+  const [visibleCount, setVisibleCount] = useState(0);
 
-    const dpi = 300;
+  const dpi = 300;
+  const margin = 20;
+  const photoWidthCm = 3.5;
+  const maxPhotoHeightCm = 4.5;
+
+  const generateSheet = async () => {
+    if (sheetImages.length === 0) return { url: null, visibleCount: 0 };
+
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
     const heightPx = Math.round(cmToPx(format.height, dpi));
@@ -34,15 +39,13 @@ const SheetManager = ({
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, widthPx, heightPx);
 
-    const margin = 20;
-    const photoWidthCm = 3.5;
     let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
-    const maxPhotoHeightCm = 4.5;
-
     const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
     let currentY = margin;
     let currentRowHeight = 0;
     let colIndex = 0;
+
+    let actualCount = 0;
 
     for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio } = sheetImages[i];
@@ -50,7 +53,6 @@ const SheetManager = ({
 
       let imgHeight = Math.round(imgWidth / aspectRatio);
       const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
-
       if (imgHeight > maxHeightPx) {
         imgHeight = maxHeightPx;
         imgWidth = Math.round(imgHeight * aspectRatio);
@@ -59,13 +61,16 @@ const SheetManager = ({
       const x = margin + colIndex * (imgWidth + margin);
       const y = currentY;
 
+      if (y + imgHeight + margin > heightPx) break;
+
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
       ctx.lineWidth = 2;
       ctx.strokeStyle = "black";
       ctx.strokeRect(x, y, imgWidth, imgHeight);
 
-      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
+      actualCount++;
 
+      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
       colIndex++;
       if (colIndex >= cols) {
         colIndex = 0;
@@ -75,22 +80,23 @@ const SheetManager = ({
     }
 
     return new Promise((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          const url = URL.createObjectURL(blob);
-          resolve(url);
-        },
-        "image/jpeg",
-        0.92
-      );
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        resolve({ url, visibleCount: actualCount });
+      }, "image/jpeg", 0.92);
     });
   };
 
   const createSheetImage = useCallback(async () => {
-    const url = await generateSheet();
-    if (url) {
-      setSheetUrl(url);
-      setThumbnailUrl(url); // miniatura aktualizowana od razu
+    const result = await generateSheet();
+    if (result && result.url) {
+      setSheetUrl(result.url);
+      setThumbnailUrl(result.url);
+      setVisibleCount(result.visibleCount);
+    } else {
+      setSheetUrl(null);
+      setThumbnailUrl(null);
+      setVisibleCount(0);
     }
   }, [sheetImages, selectedFormat, setSheetUrl, setThumbnailUrl]);
 
@@ -99,7 +105,8 @@ const SheetManager = ({
       createSheetImage();
     } else {
       setSheetUrl(null);
-      setThumbnailUrl(null); // miniatura znika
+      setThumbnailUrl(null);
+      setVisibleCount(0);
     }
   }, [sheetImages, createSheetImage]);
 
@@ -119,7 +126,49 @@ const SheetManager = ({
       setSheetImages([]);
       setSheetUrl(null);
       setThumbnailUrl(null);
+      setVisibleCount(0);
     }
+  };
+
+  // Duplicate Photo z ograniczeniem miejsca
+  const duplicateImage = () => {
+    if (sheetImages.length === 0) return;
+
+    const format = PAPER_FORMATS[selectedFormat];
+    const widthPx = Math.round(cmToPx(format.width, dpi));
+    const heightPx = Math.round(cmToPx(format.height, dpi));
+    let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
+    const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
+
+    let currentY = margin;
+    let currentRowHeight = 0;
+    let colIndex = 0;
+
+    for (let i = 0; i < sheetImages.length; i++) {
+      const { aspectRatio } = sheetImages[i];
+      let imgHeight = Math.round(imgWidth / aspectRatio);
+      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
+      if (imgHeight > maxHeightPx) imgHeight = maxHeightPx;
+
+      if (imgHeight > currentRowHeight) currentRowHeight = imgHeight;
+      colIndex++;
+      if (colIndex >= cols) {
+        colIndex = 0;
+        currentY += currentRowHeight + margin;
+        currentRowHeight = 0;
+      }
+    }
+
+    // Pobieramy wysokość duplikowanego zdjęcia
+    const { aspectRatio } = sheetImages[0];
+    let nextHeight = Math.round(imgWidth / aspectRatio);
+    const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
+    if (nextHeight > maxHeightPx) nextHeight = maxHeightPx;
+
+    // Sprawdzamy, czy zmieści się na arkuszu
+    if (currentY + nextHeight + margin > heightPx) return;
+
+    setSheetImages(prev => [...prev, prev[0]]);
   };
 
   if (!showSheetPreview || !sheetUrl) return null;
@@ -127,7 +176,7 @@ const SheetManager = ({
   return (
     <FrameBox sx={{ maxWidth: "none", width: { xs: "90%", md: "70%" }, mx: "auto" }}>
       <Typography variant="h6" fontWeight={600} color="text.primary" mb={2} textAlign="center">
-        {t("sheet_header")}: {sheetImages.length} ({selectedFormat})
+        {t("sheet_header")}: {visibleCount} ({selectedFormat})
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, flexWrap: "wrap", mb: 3, width: "100%" }}>
@@ -142,7 +191,12 @@ const SheetManager = ({
         </Button>
       </Box>
 
-      <Box component="img" src={sheetUrl} alt="sheet" sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", margin: "0 auto" }} />
+      <Box
+        component="img"
+        src={sheetUrl}
+        alt="sheet"
+        sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", margin: "0 auto" }}
+      />
     </FrameBox>
   );
 };
