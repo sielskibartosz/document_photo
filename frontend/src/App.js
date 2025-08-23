@@ -12,13 +12,12 @@ import FrameBox from "./styles/imagesStyles";
 import { parseAspectRatio } from "./utils/cropImage";
 import { darkTheme } from "./styles/theme";
 
+import CropperPanel from "./components/CropperPanel";
 import AppTitle from "./components/AppTitle";
 import AppHeader from "./components/AppHeader";
 import TabSelector from "./components/TabSelector";
 import TabContent from "./components/TabContent";
 import SheetManager from "./components/SheetManager";
-import CropperActions from "./components/CropperActions";
-import RemoveBackgroundPanel from "./components/removeBackgroundPanel";
 import useSheetManager from "./hooks/useSheetManager";
 import useImageCrop from "./hooks/useImageCrop";
 
@@ -102,6 +101,7 @@ function App() {
         <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
 
         <Box sx={{ position: "relative", width: "100%", mt: 2 }}>
+
           <TabContent
             tabKey={activeTab}
             aspectInput={aspectInput}
@@ -137,28 +137,17 @@ function App() {
 
         {imageSrc && (
           <FrameBox>
-            <CropperActions
+            <CropperPanel
               imageSrc={imageSrc}
               crop={crop}
               setCrop={setCrop}
               zoom={zoom}
               setZoom={setZoom}
               aspectRatio={aspectRatio}
-              onCropped={(cropped) => { setCroppedImage(cropped); setNoBgImage(null); }}
-              onClear={reset}
-            />
-          </FrameBox>
-        )}
-
-        {croppedImage && (
-          <FrameBox>
-            <RemoveBackgroundPanel
-              croppedImage={croppedImage}
-              aspectRatio={aspectRatio}
-              bgColor={activeTab === "custom" ? bgColor : "#ffffff"}
               setNoBgImage={setNoBgImage}
               onAddToSheet={(img) => { addToSheet(img, aspectRatio); reset(); }}
-              onClear={() => { setCroppedImage(null); setNoBgImage(null); }}
+              onClear={reset}
+              activeTab={activeTab}
             />
           </FrameBox>
         )}
