@@ -1,6 +1,6 @@
 export const textStyles={
             marginBottom: 6,
-            fontWeight: 600,
+            fontWeight: 500,
             color: "#34495e",
             fontSize: 15,
           };

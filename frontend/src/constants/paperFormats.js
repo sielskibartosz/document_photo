@@ -1,5 +1,5 @@
 export const PAPER_FORMATS = {
-    "10/15 cm": {width: 10, height: 15},
+    "10/15 cm Rossmann": {width: 10, height: 15},
     "13/18 cm": {width: 13, height: 18},
     "15/21 cm": {width: 15, height: 21},
     "20/30 cm": {width: 20, height: 30},

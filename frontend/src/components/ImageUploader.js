@@ -28,7 +28,7 @@ function ImageUploader({ onChange }) {
           component="span"
           color="primary"
           startIcon={<CloudUploadIcon />}
-          sx={{ fontWeight: 600, width: "100%" }}
+          sx={{ fontWeight: 500, width: "100%" }}
         >
           {t("foto_selection")}
         </Button>
