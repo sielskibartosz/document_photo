@@ -1,52 +1,73 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from rembg import remove, new_session
 from PIL import Image
-import io
-import base64
+from transparent_background import Remover
+import io, base64
+import numpy as np
+import json
 
-app = FastAPI(title="Remove Background API 1.1")
+app = FastAPI(title="Remove Background API")
 
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # możesz ograniczyć do frontendów np. ["https://photoidcreator.com"]
+    allow_origins=["*"],  # lub podaj frontend np. ["http://localhost:3000"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- Tworzymy lekką sesję z modelem u2netp ---
-session = new_session("u2netp")
+# --- model ---
+remover = Remover()  # domyślnie U2Net
+
 
 @app.post("/remove-background/")
 async def remove_background(
-    image: UploadFile = File(...),
-    bg_color: str = Form("#ffffff")
+        image: UploadFile = File(...),
+        bg_color: str = Form("[255,255,255]")  # domyślnie białe tło
 ):
+    print("bg_color raw:", bg_color)
+
     try:
-        image_bytes = await image.read()
-        input_image = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
+        # 1. Wczytaj obraz
+        contents = await image.read()
+        img = Image.open(io.BytesIO(contents)).convert("RGB")
 
-        # usuwamy tło używając lekkiego modelu u2netp
-        output_image = remove(input_image, session=session)
+        # 2. Usuń tło
+        result = remover.process(img, type="rgba").convert("RGBA")
 
-        # wstawienie jednolitego tła
-        if bg_color:
-            bg_image = Image.new("RGBA", output_image.size, bg_color)
-            bg_image.paste(output_image, mask=output_image)
-            output_image = bg_image
+        # 4. Sparsuj kolor tła
+        try:
+            if bg_color.startswith("[") and bg_color.endswith("]"):
+                bg_list = json.loads(bg_color)
+            else:
+                bg_list = [int(x) for x in bg_color.split(",")]
+            if len(bg_list) == 3:
+                bg_list.append(255)
+            bg_tuple = tuple(bg_list)
+            print("bg_color raw:", bg_color)
 
-        # konwersja do base64
+        except Exception as e:
+            print("bg_color parse error:", e)
+            bg_tuple = (255, 255, 255, 255)
+
+        # 5. Stwórz tło i nałóż wycięty obraz
+        background = Image.new("RGBA", result.size, bg_tuple)
+        background.paste(result, mask=result.getchannel("A"))
+
+        # 6. Konwersja do base64
         buf = io.BytesIO()
-        output_image.save(buf, format="PNG")
-        base64_image = base64.b64encode(buf.getvalue()).decode("utf-8")
+        background.save(buf, format="PNG")
+        buf.seek(0)
+        b64 = base64.b64encode(buf.read()).decode("utf-8")
 
-        return JSONResponse(content={"image": base64_image})
+        return JSONResponse(content={"image": b64})
+
+
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-# --- Ping ---
+
 @app.get("/ping")
 def ping():
     return {"message": "Server is running!"}

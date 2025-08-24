@@ -18,7 +18,7 @@ export default function CropperPanel({
   setNoBgImage,
   onAddToSheet,
   onClear,
-  bgColor = "#ffffff",
+  bgColor,
   activeTab,
 }) {
   const { t } = useTranslation();
@@ -40,6 +40,22 @@ export default function CropperPanel({
     return new Blob([u8arr], { type: mime });
   };
 
+  const hexToRGBA = (hex) => {
+  if (!hex.startsWith("#") || (hex.length !== 7 && hex.length !== 4)) return [255,255,255,255];
+  let r, g, b;
+  if (hex.length === 7) {
+    r = parseInt(hex.slice(1,3),16);
+    g = parseInt(hex.slice(3,5),16);
+    b = parseInt(hex.slice(5,7),16);
+  } else { // "#fff" format
+    r = parseInt(hex[1]+hex[1],16);
+    g = parseInt(hex[2]+hex[2],16);
+    b = parseInt(hex[3]+hex[3],16);
+  }
+  return [r,g,b,255];
+};
+
+
   const handleCropAndRemoveBg = async () => {
   if (!imageSrc || !croppedAreaPixels) return;
   setLoading(true);
@@ -55,7 +71,9 @@ export default function CropperPanel({
 
     const formData = new FormData();
     formData.append("image", blob, "cropped.png");
-    formData.append("bg_color", bgColor);
+    formData.append("bg_color", JSON.stringify(hexToRGBA(bgColor)));
+    console.log("bg_color send:", JSON.stringify(hexToRGBA(bgColor)));
+
 
     const response = await fetch(`${BACKEND_URL}/remove-background/`, {
       method: "POST",
