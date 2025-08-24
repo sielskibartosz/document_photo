@@ -26,7 +26,13 @@ function App() {
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
   const [selectedFormat, setSelectedFormat] = useState("10/15 cm Rossmann");
-  const [bgColor, setBgColor] = useState("#ffffff");
+
+  // ✅ osobny kolor dla każdej zakładki
+  const [bgColors, setBgColors] = useState({
+    id: "#ffffff",        // zawsze biały
+    custom: "#ffffff",    // startowo biały, można zmieniać
+    selfie: "#ffffff",    // startowo biały
+  });
 
   const aspectRatio = parseAspectRatio(aspectInput);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -56,6 +62,18 @@ function App() {
     clearSheet,
     toggleSheet
   } = useSheetManager();
+
+  // aktualny kolor dla aktywnej zakładki
+  const currentBgColor = bgColors[activeTab];
+
+  // zmiana koloru tylko w zakładce nie-ID
+  const handleBgColorChange = (color) => {
+    if (activeTab === "id") return; // blokada zmiany w ID
+    setBgColors((prev) => ({
+      ...prev,
+      [activeTab]: color,
+    }));
+  };
 
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
@@ -101,7 +119,6 @@ function App() {
         <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
 
         <Box sx={{ position: "relative", width: "100%", mt: 2 }}>
-
           <TabContent
             tabKey={activeTab}
             aspectInput={aspectInput}
@@ -109,12 +126,11 @@ function App() {
             selectedFormat={selectedFormat}
             setSelectedFormat={setSelectedFormat}
             onFileChange={(file) => {
-                onFileChange(file);        // obsługa croppera
-                // Ukryj podgląd arkusza
-                toggleSheet(false);        // zakładam, że toggleSheet może przyjmować boolean
+                onFileChange(file);
+                toggleSheet(false);
               }}
-            bgColor={bgColor}
-            setBgColor={setBgColor}
+            bgColor={currentBgColor}                   // aktywny kolor dla zakładki
+            setBgColor={handleBgColorChange}           // zmiana tylko jeśli nie ID
           />
         </Box>
 
@@ -148,6 +164,7 @@ function App() {
               onAddToSheet={(img) => { addToSheet(img, aspectRatio); reset(); }}
               onClear={reset}
               activeTab={activeTab}
+              bgColor={currentBgColor}  // zawsze kolor zakładki
             />
           </FrameBox>
         )}

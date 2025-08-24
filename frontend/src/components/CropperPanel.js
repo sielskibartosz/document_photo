@@ -18,7 +18,7 @@ export default function CropperPanel({
   setNoBgImage,
   onAddToSheet,
   onClear,
-  bgColor = "#ffffff",
+  bgColor,
   activeTab,
 }) {
   const { t } = useTranslation();
@@ -72,6 +72,8 @@ export default function CropperPanel({
     const formData = new FormData();
     formData.append("image", blob, "cropped.png");
     formData.append("bg_color", JSON.stringify(hexToRGBA(bgColor)));
+    console.log("bg_color send:", JSON.stringify(hexToRGBA(bgColor)));
+
 
     const response = await fetch(`${BACKEND_URL}/remove-background/`, {
       method: "POST",

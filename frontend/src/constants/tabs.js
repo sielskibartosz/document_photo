@@ -1,5 +1,5 @@
 // src/constants/tabs.js
-import IDsolo from "../images/IDsolo.png";
+import IDsolo from "../images/ai_ID.png";
 import CustomFoto from "../images/custom_foto.jpg";
 
 export const TABS = [

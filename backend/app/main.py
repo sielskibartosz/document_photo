@@ -20,41 +20,40 @@ app.add_middleware(
 # --- model ---
 remover = Remover()  # domyślnie U2Net
 
+
 @app.post("/remove-background/")
 async def remove_background(
-    image: UploadFile = File(...),
-    bg_color: str = Form("[255,255,255]")  # domyślnie białe tło
+        image: UploadFile = File(...),
+        bg_color: str = Form("[255,255,255]")  # domyślnie białe tło
 ):
+    print("bg_color raw:", bg_color)
+
     try:
         # 1. Wczytaj obraz
         contents = await image.read()
         img = Image.open(io.BytesIO(contents)).convert("RGB")
 
         # 2. Usuń tło
-        out = remover.process(img, type="rgba")
-
-        # 3. Upewnij się, że mamy RGBA
-        if isinstance(out, Image.Image):
-            result = out.convert("RGBA")
-        else:
-            out = np.array(out, dtype=np.uint8)
-            if out.shape[2] == 3:
-                alpha = np.full((out.shape[0], out.shape[1], 1), 255, dtype=np.uint8)
-                out = np.concatenate([out, alpha], axis=2)
-            result = Image.fromarray(out, "RGBA")
+        result = remover.process(img, type="rgba").convert("RGBA")
 
         # 4. Sparsuj kolor tła
         try:
-            bg_list = json.loads(bg_color)
+            if bg_color.startswith("[") and bg_color.endswith("]"):
+                bg_list = json.loads(bg_color)
+            else:
+                bg_list = [int(x) for x in bg_color.split(",")]
             if len(bg_list) == 3:
                 bg_list.append(255)
             bg_tuple = tuple(bg_list)
-        except:
+            print("bg_color raw:", bg_color)
+
+        except Exception as e:
+            print("bg_color parse error:", e)
             bg_tuple = (255, 255, 255, 255)
 
         # 5. Stwórz tło i nałóż wycięty obraz
         background = Image.new("RGBA", result.size, bg_tuple)
-        background.paste(result, mask=result.split()[3])
+        background.paste(result, mask=result.getchannel("A"))
 
         # 6. Konwersja do base64
         buf = io.BytesIO()
@@ -64,8 +63,10 @@ async def remove_background(
 
         return JSONResponse(content={"image": b64})
 
+
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
 
 @app.get("/ping")
 def ping():
