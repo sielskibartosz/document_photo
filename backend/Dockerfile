@@ -6,37 +6,39 @@ WORKDIR /app
 # Kopiujemy plik z zależnościami
 COPY requirements.txt .
 
-# Instalacja minimalnych zależności systemowych
+# Zainstaluj zależności systemowe potrzebne do OpenCV
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
  && rm -rf /var/lib/apt/lists/*
 
-# Instalacja pakietów Python z CPU-only PyTorch
-RUN pip install --prefix=/install --no-cache-dir -r requirements.txt \
-    --index-url https://download.pytorch.org/whl/cpu
+# Instalacja pakietów Python z PyPI
+RUN pip install --prefix=/install --no-cache-dir fastapi uvicorn[standard] pillow numpy opencv-python-headless transparent-background
+
+# Instalacja PyTorch CPU-only
+RUN pip install --prefix=/install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
 # --- Etap 2: finalny obraz ---
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Zainstaluj minimalne biblioteki systemowe
+# Zainstaluj wymagane biblioteki systemowe
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
  && rm -rf /var/lib/apt/lists/*
 
-# Skopiuj zbudowane pakiety
+# Skopiuj zbudowane pakiety z etapu builder
 COPY --from=builder /install /usr/local
 
 # Skopiuj aplikację
 COPY . /app
 
-# FastAPI logi bez buforowania
+# Ustaw zmienną środowiskową, aby FastAPI nie buforowało logów
 ENV PYTHONUNBUFFERED=1
 
-# Port dla Fly.io
+# Wystaw port dla Fly.io
 EXPOSE 8080
 
 # Uruchom aplikację
