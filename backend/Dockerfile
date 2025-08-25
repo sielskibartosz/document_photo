@@ -7,6 +7,12 @@ ENV APP_HOME=/app
 
 WORKDIR $APP_HOME
 
+# systemowe zależności wymagane przez pillow, cv2 i transparent-background
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Kopiujemy wymagania
 COPY requirements.txt .
 
