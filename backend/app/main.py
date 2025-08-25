@@ -1,74 +1,62 @@
-from fastapi import FastAPI, UploadFile, File, Form
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+# app/main.py
+import os
+import tempfile
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import FileResponse, JSONResponse
 from PIL import Image
-from transparent_background import Remover
-import io, base64, json, gc
-from tempfile import NamedTemporaryFile
+from transparent_background import remove
+import torch
 
-app = FastAPI(title="Remove Background API")
+app = FastAPI(title="Document Photo API")
 
-# --- CORS ---
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # zmień na frontend np. ["http://localhost:3000"]
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Maksymalny rozmiar uploadu w bajtach (2 MB)
+MAX_UPLOAD_SIZE = 2 * 1024 * 1024
+# Maksymalna rozdzielczość obrazu
+MAX_SIZE = (512, 512)
 
-# --- model ---
-remover = Remover(model="u2netp")  # lżejszy model
+# Ustawienia PyTorch (CPU only)
+device = torch.device("cpu")
 
-MAX_SIZE = (1024, 1024)  # max rozmiar obrazu
+
+def resize_image(image: Image.Image) -> Image.Image:
+    """Zmniejsza obraz do maksymalnego rozmiaru."""
+    image.thumbnail(MAX_SIZE)
+    return image
+
 
 @app.post("/remove-background/")
-async def remove_background(
-        image: UploadFile = File(...),
-        bg_color: str = Form("[255,255,255]")  # domyślnie białe tło
-):
+async def remove_background(file: UploadFile = File(...)):
+    # Sprawdzenie rozmiaru pliku
+    contents = await file.read()
+    if len(contents) > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="File too large")
+
+    # Wczytanie obrazu
     try:
-        # 1. Wczytaj obraz
-        contents = await image.read()
-        img = Image.open(io.BytesIO(contents)).convert("RGB")
+        image = Image.open(tempfile.NamedTemporaryFile(delete=False, suffix=".png"))
+        image = Image.open(tempfile.SpooledTemporaryFile())
+        image.file.write(contents)
+        image.file.seek(0)
+        image = Image.open(image.file).convert("RGBA")
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid image file")
 
-        # 2. Zmniejsz obraz jeśli jest duży
-        img.thumbnail(MAX_SIZE, Image.ANTIALIAS)
+    # Resize dla oszczędności pamięci
+    image = resize_image(image)
 
-        # 3. Usuń tło
-        result = remover.process(img, type="rgba").convert("RGBA")
-
-        # 4. Sparsuj kolor tła
-        try:
-            if bg_color.startswith("[") and bg_color.endswith("]"):
-                bg_list = json.loads(bg_color)
-            else:
-                bg_list = [int(x) for x in bg_color.split(",")]
-            if len(bg_list) == 3:
-                bg_list.append(255)
-            bg_tuple = tuple(bg_list)
-        except Exception:
-            bg_tuple = (255, 255, 255, 255)
-
-        # 5. Stwórz tło i nałóż wycięty obraz
-        background = Image.new("RGBA", result.size, bg_tuple)
-        background.paste(result, mask=result.getchannel("A"))
-
-        # 6. Konwersja do base64 przez tymczasowy plik
-        with NamedTemporaryFile(suffix=".png") as tmp:
-            background.save(tmp.name, format="PNG")
-            tmp.seek(0)
-            b64 = base64.b64encode(tmp.read()).decode("utf-8")
-
-        # 7. Zwolnij pamięć
-        del img, result, background
-        gc.collect()
-
-        return JSONResponse(content={"image": b64})
-
+    # Usunięcie tła (transparent_background)
+    try:
+        result = remove(image, device=device)
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        raise HTTPException(status_code=500, detail=f"Background removal failed: {str(e)}")
+
+    # Zapis do pliku tymczasowego
+    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    result.save(tmp_file.name, format="PNG")
+
+    return FileResponse(tmp_file.name, media_type="image/png", filename="no_bg.png")
 
 
-@app.get("/ping")
-def ping():
-    return {"message": "Server is running!"}
+@app.get("/")
+def root():
+    return JSONResponse(content={"message": "Document Photo API is running."})
