@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 # --- model ---
-remover = Remover(model="u2netp")  # lżejszy model, bez GUI
+remover = Remover()  # lżejszy model, bez GUI
 
 MAX_SIZE = (1024, 1024)  # maksymalny rozmiar obrazu
 
