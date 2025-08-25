@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --prefix=/install --no-cache-dir fastapi uvicorn[standard] pillow numpy opencv-python-headless transparent-background
 
 # Instalacja PyTorch CPU-only
-RUN pip install --prefix=/install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --prefix=/install --no-cache-dir torch torchvision
+
 
 # --- Etap 2: finalny obraz ---
 FROM python:3.12-slim
