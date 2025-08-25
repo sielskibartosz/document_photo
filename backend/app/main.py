@@ -11,15 +11,15 @@ app = FastAPI(title="Remove Background API")
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # zmień na frontend np. ["http://localhost:3000"]
+    allow_origins=["*"],  # tutaj możesz podać frontend np. ["http://localhost:3000"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # --- model ---
-remover = Remover(model="u2netp")  # lżejszy model
+remover = Remover(model="u2netp")  # lżejszy model, bez GUI
 
-MAX_SIZE = (1024, 1024)  # max rozmiar obrazu
+MAX_SIZE = (1024, 1024)  # maksymalny rozmiar obrazu
 
 @app.post("/remove-background/")
 async def remove_background(
@@ -31,7 +31,7 @@ async def remove_background(
         contents = await image.read()
         img = Image.open(io.BytesIO(contents)).convert("RGB")
 
-        # 2. Zmniejsz obraz jeśli jest duży
+        # 2. Zmniejsz obraz jeśli jest zbyt duży
         img.thumbnail(MAX_SIZE, Image.ANTIALIAS)
 
         # 3. Usuń tło
