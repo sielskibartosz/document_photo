@@ -3,23 +3,21 @@ FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
-# Kopiujemy plik z zależnościami
 COPY requirements.txt .
 
-# Zainstaluj zależności systemowe potrzebne do OpenCV
+# System deps
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
  && rm -rf /var/lib/apt/lists/*
 
-# Instalacja pakietów Python z PyPI (bez torch/torchvision)
-RUN pip install --prefix=/install --no-cache-dir -r requirements.txt
-
-# Instalacja PyTorch CPU-only (z właściwego indexu)
+# Najpierw CPU-only Torch
 RUN pip install --prefix=/install --no-cache-dir \
     torch==2.3.0+cpu torchvision==0.18.0+cpu \
     --index-url https://download.pytorch.org/whl/cpu
 
+# Potem reszta (transparent-background i inne)
+RUN pip install --prefix=/install --no-cache-dir -r requirements.txt
 
 # --- Etap 2: finalny obraz ---
 FROM python:3.12-slim
