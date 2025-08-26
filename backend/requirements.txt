@@ -3,6 +3,5 @@ uvicorn[standard]==0.30.0
 pillow==10.3.0
 numpy==1.26.4
 opencv-python-headless==4.10.0.84
-flet==0.28.3
-transparent-background==1.1.2
+transparent-background==1.3.4
 python-multipart==0.0.20
