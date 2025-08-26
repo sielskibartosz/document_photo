@@ -12,11 +12,13 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
  && rm -rf /var/lib/apt/lists/*
 
-# Instalacja pakietów Python z PyPI
-RUN pip install --prefix=/install --no-cache-dir fastapi uvicorn[standard] pillow numpy opencv-python-headless transparent-background
+# Instalacja pakietów Python z PyPI (bez torch/torchvision)
+RUN pip install --prefix=/install --no-cache-dir -r requirements.txt
 
-# Instalacja PyTorch CPU-only
-RUN pip install --prefix=/install --no-cache-dir torch torchvision
+# Instalacja PyTorch CPU-only (z właściwego indexu)
+RUN pip install --prefix=/install --no-cache-dir \
+    torch==2.3.0+cpu torchvision==0.18.0+cpu \
+    --index-url https://download.pytorch.org/whl/cpu
 
 
 # --- Etap 2: finalny obraz ---
