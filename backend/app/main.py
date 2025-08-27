@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -8,10 +10,12 @@ import json
 
 app = FastAPI(title="Remove Background API")
 
+allowed_origin = os.getenv("ALLOWED_ORIGIN")
+
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # lub podaj frontend np. ["http://localhost:3000"]
+    allow_origins=[allowed_origin],
     allow_methods=["*"],
     allow_headers=["*"],
 )
