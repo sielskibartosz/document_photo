@@ -1,20 +1,16 @@
-# Wybieramy lekkiego Pythona
 FROM python:3.12-slim
 
-# Ustawiamy katalog roboczy
 WORKDIR /app
 
-# Kopiujemy plik z wymaganiami
-COPY requirements.txt .
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libglib2.0-0 \
+ && rm -rf /var/lib/apt/lists/*
 
-# Instalujemy zależności
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Kopiujemy resztę projektu
-COPY app .
+COPY . /app
 
-# Eksponujemy port FastAPI
-EXPOSE 8000
-
-# Uruchamiamy serwer uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8080
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 from PIL import Image
 from transparent_background import Remover
 import io, base64
-import numpy as np
 import json
 
 app = FastAPI(title="Remove Background API")
