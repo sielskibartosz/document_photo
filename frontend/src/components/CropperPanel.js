@@ -41,7 +41,7 @@ export default function CropperPanel({
   };
 
   const hexToRGBA = (hex) => {
-  if (!hex.startsWith("#") || (hex.length !== 7 && hex.length !== 4)) return [255,255,255,255];
+  if (!hex.startsWith("#") || (hex.length !== 7 && hex.length !== 4)) return [255,255,255];
   let r, g, b;
   if (hex.length === 7) {
     r = parseInt(hex.slice(1,3),16);
@@ -52,7 +52,7 @@ export default function CropperPanel({
     g = parseInt(hex[2]+hex[2],16);
     b = parseInt(hex[3]+hex[3],16);
   }
-  return [r,g,b,255];
+  return [r,g,b];
 };
 
 
