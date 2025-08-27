@@ -25,32 +25,25 @@ app.add_middleware(
 remover = Remover()  # domyślnie U2Net
 @app.post("/remove-background/")
 async def remove_background(
-        image: UploadFile = File(...),
-        bg_color: str = Form('[255,255,255]')  # string w formacie '[R,G,B]'
-
+    image: UploadFile = File(...),
+    bg_color: str = Form('[255,255,255]')
 ):
-    print(bg_color)
-    print(type(bg_color))
     try:
-        # 1. Wczytaj obraz
-        contents = await image.read()
-        img = Image.open(io.BytesIO(contents)).convert("RGB")
+        # Wczytaj obraz
+        img = Image.open(io.BytesIO(await image.read())).convert("RGB")
 
-        # 2. Usuń tło z podanym kolorem (string '[R,G,B]')
+        # Usuń tło
         result = remover.process(img, type=bg_color)
 
-        # 3. Konwersja obrazu na base64
+        # Konwersja do base64
         buf = io.BytesIO()
         result.save(buf, format="PNG")
-        buf.seek(0)
-        b64 = base64.b64encode(buf.read()).decode("utf-8")
+        b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
 
-        # 4. Zwróć base64 do frontendu
         return JSONResponse(content={"image": b64})
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
-
 
 @app.get("/ping")
 def ping():
