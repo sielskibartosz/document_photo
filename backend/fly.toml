@@ -14,5 +14,5 @@ primary_region = "ams"
 
 [[vm]]
   memory = '4gb'
-  cpu_kind = 'shared-cpu-2x'
+  cpu_kind = 'shared'
   cpus = 2
