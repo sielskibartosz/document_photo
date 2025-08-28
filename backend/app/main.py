@@ -1,5 +1,5 @@
 import os
-
+import stripe
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -13,6 +13,7 @@ app = FastAPI(title="Remove Background API")
 
 load_dotenv()
 allowed_origin = os.getenv("ALLOWED_ORIGIN").split(",")
+stripe_key = os.getenv("STRIPE")
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
@@ -70,6 +71,27 @@ async def remove_background(
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
+@app.post("/create-checkout-session")
+async def create_checkout_session():
+    stripe.api_key = stripe_key
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {
+                    "name": "Donation",
+                },
+                "unit_amount": 500,  # kwota w centach (np. 500 = $5)
+            },
+            "quantity": 1,
+        }],
+        mode="payment",
+        success_url="http://localhost:3000/success",
+        cancel_url="http://localhost:3000/cancel",
+    )
+    return JSONResponse({"id": session.id})
 
 
 @app.get("/ping")
