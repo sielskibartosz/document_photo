@@ -22,7 +22,11 @@
   "clear_sheet": "Wyczyść arkusz",
   "download_sheet": "Pobierz arkusz",
   "sheetThumbnail": "Miniatura arkusza",
-  "donate": "Wesprzyj projekt",
+  "donateHeader": "Wesprzyj projekt",
+  "donateTitle": "Wesprzyj rozwój aplikacji",
+  "donateDescription": "Twoja darowizna wspiera rozwój aplikacji i pokrywa koszty jej utrzymania. Dziękujemy za każde wsparcie!",
+  "cancel": "Anuluj",
+  "donate": "Wspieram",
   "privacyPolicy_title": "Polityka prywatności",
   "privacyPolicy_content": [
     "Twoja prywatność jest dla nas ważna. Chcemy wyjaśnić, w jaki sposób obsługujemy zdjęcia przesyłane do naszej aplikacji:",
