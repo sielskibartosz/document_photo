@@ -11,7 +11,7 @@ export default function Donate() {
   const handleClose = () => setOpen(false);
 
   const handleDonate = () => {
-    window.open("https://buy.stripe.com/test_fZu28qdDZ5Si78rboB63K00", "_blank");
+    window.open("https://buy.stripe.com/fZu28qdDZ5Si78rboB63K00", "_blank");
     handleClose();
   };
 
