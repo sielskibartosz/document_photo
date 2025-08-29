@@ -1,6 +1,6 @@
 // CropperPanel.js
-import React, { useCallback, useState } from "react";
-import { Box, Button, IconButton } from "@mui/material";
+import React, { useCallback, useState, useEffect } from "react";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import CropperWrapper from "./CropperWrapper";
@@ -24,11 +24,27 @@ export default function CropperPanel({
   const { t } = useTranslation();
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [preview, setPreview] = useState(null);
 
   const onCropComplete = useCallback((_, areaPixels) => {
     setCroppedAreaPixels(areaPixels);
   }, []);
+
+  // Symulowany licznik podczas loadingu
+  useEffect(() => {
+    if (!loading) {
+      setLoadingProgress(0);
+      return;
+    }
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 3;
+      if (progress >= 100) progress = 99;
+      setLoadingProgress(Math.floor(progress));
+    }, 300);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const dataURLtoBlob = (dataurl) => {
     const arr = dataurl.split(",");
@@ -41,70 +57,63 @@ export default function CropperPanel({
   };
 
   const hexToRGBA = (hex) => {
-  if (!hex.startsWith("#") || (hex.length !== 7 && hex.length !== 4)) return [255,255,255,255];
-  let r, g, b;
-  if (hex.length === 7) {
-    r = parseInt(hex.slice(1,3),16);
-    g = parseInt(hex.slice(3,5),16);
-    b = parseInt(hex.slice(5,7),16);
-  } else { // "#fff" format
-    r = parseInt(hex[1]+hex[1],16);
-    g = parseInt(hex[2]+hex[2],16);
-    b = parseInt(hex[3]+hex[3],16);
-  }
-  return [r,g,b,255];
-};
-
+    if (!hex.startsWith("#") || (hex.length !== 7 && hex.length !== 4)) return [255,255,255,255];
+    let r, g, b;
+    if (hex.length === 7) {
+      r = parseInt(hex.slice(1,3),16);
+      g = parseInt(hex.slice(3,5),16);
+      b = parseInt(hex.slice(5,7),16);
+    } else {
+      r = parseInt(hex[1]+hex[1],16);
+      g = parseInt(hex[2]+hex[2],16);
+      b = parseInt(hex[3]+hex[3],16);
+    }
+    return [r,g,b,255];
+  };
 
   const handleCropAndRemoveBg = async () => {
-  if (!imageSrc || !croppedAreaPixels) return;
-  setLoading(true);
-  try {
-    const width = 350;
-    const height = width / aspectRatio;
-    const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
+    if (!imageSrc || !croppedAreaPixels) return;
+    setLoading(true);
+    try {
+      const width = 350;
+      const height = width / aspectRatio;
+      const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
 
-    // Usuń tło
-    const blob = cropped.startsWith("data:")
-      ? dataURLtoBlob(cropped)
-      : await (await fetch(cropped)).blob();
+      const blob = cropped.startsWith("data:")
+        ? dataURLtoBlob(cropped)
+        : await (await fetch(cropped)).blob();
 
-    const formData = new FormData();
-    formData.append("image", blob, "cropped.png");
-    formData.append("bg_color", JSON.stringify(hexToRGBA(bgColor)));
-    console.log("bg_color send:", JSON.stringify(hexToRGBA(bgColor)));
+      const formData = new FormData();
+      formData.append("image", blob, "cropped.png");
+      formData.append("bg_color", JSON.stringify(hexToRGBA(bgColor)));
 
+      const response = await fetch(`${BACKEND_URL}/remove-background/`, {
+        method: "POST",
+        body: formData,
+      });
 
-    const response = await fetch(`${BACKEND_URL}/remove-background/`, {
-      method: "POST",
-      body: formData,
-    });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+      }
 
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+      const resultJson = await response.json();
+      const imageData = resultJson.image;
+      const byteCharacters = atob(imageData);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+      const byteArray = new Uint8Array(byteNumbers);
+      const objectUrl = URL.createObjectURL(new Blob([byteArray], { type: "image/png" }));
+
+      setNoBgImage(objectUrl);
+      if (onAddToSheet) onAddToSheet(objectUrl);
+
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
     }
-
-    const resultJson = await response.json();
-    const imageData = resultJson.image;
-    const byteCharacters = atob(imageData);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-    const byteArray = new Uint8Array(byteNumbers);
-    const objectUrl = URL.createObjectURL(new Blob([byteArray], { type: "image/png" }));
-
-    setNoBgImage(objectUrl);
-
-    if (onAddToSheet) onAddToSheet(objectUrl);
-
-    // 👇 nie ustawiamy preview – nie pokazujemy podglądu przed arkuszem
-    // setPreview(objectUrl);
-  } catch (error) {
-    alert(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleClear = () => {
     setPreview(null);
@@ -119,7 +128,7 @@ export default function CropperPanel({
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          margin: "0 auto", // centrowanie przycisków
+          margin: "0 auto",
           gap: 1,
         }}
       >
@@ -131,7 +140,7 @@ export default function CropperPanel({
               disabled={loading}
               sx={{ fontWeight: 500, width: 220 }}
             >
-              {loading ? t("removing_bg") : t("crop_and_remove")}
+              {loading ? `${t("removing_bg")}... ${loadingProgress}%` : t("crop_and_remove")}
             </Button>
 
             {activeTab === "custom" && (

@@ -17,19 +17,26 @@
   "remove_bg": "Remove Background",
   "add_to_sheet": "Save",
   "zoom": "Zoom",
-  "sheet_header": "Photos added to sheet",
+  "sheet_header": "Photos on Sheet",
   "duplicate_photo": "Duplicate Photo",
   "clear_sheet": "Clear Sheet",
   "download_sheet": "Download Sheet",
   "sheetThumbnail": "Sheet Thumbnail",
+
+  "donateHeader": "Donate",
+  "donateTitle": "Support the Development",
+  "donateDescription": "Your donation helps cover server costs and supports further development of the application. Thank you for your support!",
+  "cancel": "Cancel",
+  "donate": "I'm Donating",
+
   "privacyPolicy_title": "Privacy Policy",
   "privacyPolicy_content": [
-    "Your privacy is important to us. We want to explain how we handle photos uploaded to our application:",
+    "Your privacy is important to us. We would like to explain how we handle the photos uploaded to our application:",
     "All operations performed in the browser do not store photos or any personal data.",
-    "Photos uploaded to the application are processed solely for the purpose of background removal using the Rembg tool.",
+    "Photos uploaded to the application are processed solely for background removal using the Rembg tool.",
     "Photos are not stored or shared with third parties.",
-    "We do not sell or share photos or other personal data with any external entities.",
-    "Photos are processed temporarily and deleted immediately after the background removal operation is completed.",
+    "We do not sell or share photos or other personal data with external entities.",
+    "Photos are only processed temporarily and are immediately deleted after the background removal operation is completed.",
     "Contact: barteksdepot@gmail.com"
   ]
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { cmToPx, createImage } from "../utils/cropImage.js";
 import { PAPER_FORMATS } from "../constants/paperFormats";
 import FrameBox from "../styles/imagesStyles";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 const SheetManager = ({
@@ -16,24 +16,23 @@ const SheetManager = ({
 }) => {
   const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(0);
+  const [donateOpen, setDonateOpen] = useState(false);
 
   const dpi = 300;
   const margin = 20;
   const photoWidthCm = 3.5;
   const maxPhotoHeightCm = 4.5;
 
+  // --- Generowanie arkusza ---
   const generateSheet = async () => {
     if (!sheetImages.length) return { url: null, visibleCount: 0 };
-
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
     const heightPx = Math.round(cmToPx(format.height, dpi));
-
     const canvas = document.createElement("canvas");
     canvas.width = widthPx;
     canvas.height = heightPx;
     const ctx = canvas.getContext("2d");
-
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, widthPx, heightPx);
 
@@ -53,17 +52,13 @@ const SheetManager = ({
         imgHeight = maxHeightPx;
         imgWidth = Math.round(imgHeight * aspectRatio);
       }
-
       const x = margin + colIndex * (imgWidth + margin);
       const y = currentY;
-
       if (y + imgHeight + margin > heightPx) break;
-
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
       ctx.lineWidth = 2;
       ctx.strokeStyle = "black";
       ctx.strokeRect(x, y, imgWidth, imgHeight);
-
       actualCount++;
       currentRowHeight = Math.max(currentRowHeight, imgHeight);
       colIndex++;
@@ -102,6 +97,7 @@ const SheetManager = ({
     }
   }, [sheetImages, createSheetImage]);
 
+  // --- Pobieranie arkusza ---
   const downloadSheet = () => {
     if (!sheetUrl) return;
     const link = document.createElement("a");
@@ -112,6 +108,7 @@ const SheetManager = ({
     document.body.removeChild(link);
   };
 
+  // --- Czyszczenie arkusza ---
   const onClearSheetClick = () => {
     if (clearSheet) clearSheet();
     else {
@@ -121,34 +118,16 @@ const SheetManager = ({
     }
   };
 
+  // --- Duplikowanie pierwszego zdjęcia ---
   const duplicateImage = () => {
     if (!sheetImages.length) return;
+    setSheetImages(prev => [...prev, prev[0]]);
+  };
 
-    const format = PAPER_FORMATS[selectedFormat];
-    const widthPx = Math.round(cmToPx(format.width, dpi));
-    const heightPx = Math.round(cmToPx(format.height, dpi));
-    const imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
-    const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
-
-    let currentY = margin;
-    let currentRowHeight = 0;
-    let colIndex = 0;
-
-    for (let i = 0; i < sheetImages.length; i++) {
-      const imgHeight = Math.min(Math.round(imgWidth / sheetImages[i].aspectRatio), Math.round(cmToPx(maxPhotoHeightCm, dpi)));
-      currentRowHeight = Math.max(currentRowHeight, imgHeight);
-      colIndex++;
-      if (colIndex >= cols) {
-        colIndex = 0;
-        currentY += currentRowHeight + margin;
-        currentRowHeight = 0;
-      }
-    }
-
-    const nextHeight = Math.min(Math.round(imgWidth / sheetImages[0].aspectRatio), Math.round(cmToPx(maxPhotoHeightCm, dpi)));
-    if (currentY + nextHeight + margin <= heightPx) {
-      setSheetImages(prev => [...prev, prev[0]]);
-    }
+  // --- Otwórz popup Donate przy pobieraniu ---
+  const handleDownloadClick = () => {
+    downloadSheet();
+    setDonateOpen(true);
   };
 
   if (!showSheetPreview || !sheetUrl) return null;
@@ -166,7 +145,7 @@ const SheetManager = ({
         <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 500 }}>
           {t("clear_sheet", "Clear Sheet")}
         </Button>
-        <Button variant="contained" color="success" onClick={downloadSheet} sx={{ fontWeight: 500 }}>
+        <Button variant="contained" color="success" onClick={handleDownloadClick} sx={{ fontWeight: 500 }}>
           {t("download_sheet", "Download Sheet")}
         </Button>
       </Box>
@@ -175,8 +154,39 @@ const SheetManager = ({
         component="img"
         src={sheetUrl}
         alt="sheet"
-        sx={{ maxWidth: "100%", width: { xs: "100%", md: "auto" }, borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", mx: "auto" }}
+        sx={{
+          maxWidth: "100%",
+          width: { xs: "100%", md: "auto" },
+          borderRadius: 2,
+          boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+          border: "1px solid #ddd",
+          display: "block",
+          mx: "auto"
+        }}
       />
+
+      {/* --- Popup Donate --- */}
+      <Dialog open={donateOpen} onClose={() => setDonateOpen(false)}>
+        <DialogTitle>{t("donateTitle")}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            {t("donateDescription")}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDonateOpen(false)} color="inherit">{t("cancel")}</Button>
+          <Button
+            onClick={() => {
+              window.open("https://buy.stripe.com/test_fZu28qdDZ5Si78rboB63K00", "_blank");
+              setDonateOpen(false);
+            }}
+            variant="contained"
+            sx={{ backgroundColor: "#d97706", "&:hover": { backgroundColor: "#e07b12" } }}
+          >
+            {t("donate")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </FrameBox>
   );
 };
