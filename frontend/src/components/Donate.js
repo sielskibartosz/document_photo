@@ -23,9 +23,9 @@ export default function Donate() {
         onClick={handleOpen}
         sx={{
           ml: 2,
-          backgroundColor: "#d97706",
+          backgroundColor: "#f7b077",
           color: "#fff",
-          "&:hover": { backgroundColor: "#b85c00" },
+          "&:hover": { backgroundColor: "#f59e0b" },
           fontSize: "0.875rem"
         }}
       >
@@ -48,9 +48,9 @@ export default function Donate() {
             onClick={handleDonate}
             variant="contained"
             sx={{
-              backgroundColor: "#d97706",
+              backgroundColor: "#f7b077",
               color: "#fff",
-              "&:hover": { backgroundColor: "#b85c00" }
+              "&:hover": { backgroundColor: "#f59e0b" }
             }}
           >
             {t("donate")}

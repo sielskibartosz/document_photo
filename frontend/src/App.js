@@ -25,7 +25,7 @@ function App() {
   const { i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
-  const [selectedFormat, setSelectedFormat] = useState("10/15 cm Rossmann");
+  const [selectedFormat, setSelectedFormat] = useState("10x15 cm Rossmann");
 
   // ✅ osobny kolor dla każdej zakładki
   const [bgColors, setBgColors] = useState({

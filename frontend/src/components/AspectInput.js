@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, TextField, Tooltip, IconButton, Typography } from "@mui/material";
+import { Box, TextField, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "react-i18next";
 
@@ -7,9 +7,10 @@ const AspectInput = ({ value, onChange, placeholder }) => {
   const { t } = useTranslation();
   const ASPECT_TOOLTIP = t("aspect_tooltip", "Szerokość/Wysokość [mm]");
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false); // stan Dialogu
 
   const handleChange = (e) => {
-    const val = e?.target?.value ?? ""; // <- zabezpieczenie przed undefined
+    const val = e?.target?.value ?? "";
 
     // Pozwól tylko cyfry i jeden separator '/'
     if (/^\d{0,3}(\/\d{0,3})?$/.test(val)) {
@@ -37,13 +38,30 @@ const AspectInput = ({ value, onChange, placeholder }) => {
           error={!!error}
           fullWidth
         />
-        <Tooltip title={ASPECT_TOOLTIP} arrow placement="top">
-          <IconButton size="small" aria-label="info" sx={{ p: 0, color: 'primary.main' }}>
-            <InfoOutlinedIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
+
+        {/* Ikona info otwierająca Dialog */}
+        <IconButton
+          size="small"
+          aria-label="info"
+          sx={{ p: 0, color: 'primary.main' }}
+          onClick={() => setOpen(true)}
+        >
+          <InfoOutlinedIcon fontSize="small" />
+        </IconButton>
       </Box>
+
       {error && <Typography variant="caption" color="error">{error}</Typography>}
+
+      {/* Dialog z informacją */}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>{t("foto_size", "Wymiary zdjęcia [mm]")}</DialogTitle>
+        <DialogContent>
+          <Typography>{ASPECT_TOOLTIP}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>{t("close", "Zamknij")}</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

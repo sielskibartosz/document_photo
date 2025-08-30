@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PAPER_FORMATS } from "../constants/paperFormats";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,26 +7,33 @@ import {
   Select,
   MenuItem,
   Box,
-  Tooltip,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
-  const { t } = useTranslation(); // <- musi być wewnątrz komponentu
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
 
-  const FORMAT_TOOLTIP = t("format_info"); // tłumaczenie tooltipa
+  const FORMAT_TOOLTIP = t("format_info");
 
   return (
-    <Box sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: 1,
-      width: '100%',
-      maxWidth: 300,
-      mx: "auto",
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 1,
+        width: "100%",
+        maxWidth: 300,
+        mx: "auto",
+      }}
+    >
       <FormControl size="small" sx={{ flexGrow: 1 }}>
         <InputLabel id="format-select-label" shrink>
           {t("format")}
@@ -36,19 +43,6 @@ const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
           value={selectedFormat}
           label={t("format")}
           onChange={(e) => setSelectedFormat(e.target.value)}
-          sx={{
-            textAlign: "left",
-            "& .MuiSelect-select": {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
-            },
-          }}
-          MenuProps={{
-            PaperProps: {
-              sx: { textAlign: "left" },
-            },
-          }}
         >
           {Object.keys(PAPER_FORMATS).map((key) => (
             <MenuItem key={key} value={key}>
@@ -58,15 +52,23 @@ const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
         </Select>
       </FormControl>
 
-      <Tooltip title={FORMAT_TOOLTIP} arrow placement="top">
-        <IconButton
-          size="small"
-          aria-label="info"
-          sx={{ p: 0, color: 'primary.main', zIndex: 10 }}
-        >
-          <InfoOutlinedIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      {/* Ikona info zawsze działa po kliknięciu */}
+      <IconButton
+        size="small"
+        aria-label="info"
+        sx={{ p: 0, color: "primary.main" }}
+        onClick={() => setOpen(true)}
+      >
+        <InfoOutlinedIcon fontSize="small" />
+      </IconButton>
+
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>{t("format")}</DialogTitle>
+        <DialogContent>{FORMAT_TOOLTIP}</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>{t("close")}</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
