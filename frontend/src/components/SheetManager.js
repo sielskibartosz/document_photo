@@ -177,7 +177,7 @@ const SheetManager = ({
           <Button onClick={() => setDonateOpen(false)} color="inherit">{t("cancel")}</Button>
           <Button
             onClick={() => {
-              window.open("https://buy.stripe.com/test_fZu28qdDZ5Si78rboB63K00", "_blank");
+              window.open("https://buy.stripe.com/fZu28qdDZ5Si78rboB63K00", "_blank");
               setDonateOpen(false);
             }}
             variant="contained"
