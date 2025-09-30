@@ -22,6 +22,8 @@
   "clear_sheet": "Wyczyść arkusz",
   "download_sheet": "Pobierz arkusz",
   "sheetThumbnail": "Miniatura arkusza",
+  "foto_upload_info": "Aby uzyskać najlepsze rezultaty, użyj zdjęcia zrobionego na jednolitym tle. Unikaj zdjęć z cieniami, odblaskami lub innymi obiektami w tle. Jeżeli przycięte zdjęcie nie spełnia wymagań, spróbuj ponownie z innym zdjęciem.",
+
   "donateHeader": "Postaw mi kawę",
   "donateTitle": "Wesprzyj rozwój aplikacji",
   "donateDescription": "Twoja darowizna wspiera rozwój aplikacji i pokrywa koszty jej utrzymania. Dziękujemy za każde wsparcie!",

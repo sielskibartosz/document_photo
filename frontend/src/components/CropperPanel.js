@@ -140,7 +140,7 @@ export default function CropperPanel({
               disabled={loading}
               sx={{ fontWeight: 500, width: 220 }}
             >
-              {loading ? `${t("removing_bg")}... ${loadingProgress}%` : t("crop_and_remove")}
+              {loading ? `${t("removing_bg")}${loadingProgress}%` : t("crop_and_remove")}
             </Button>
 
             {activeTab === "custom" && (

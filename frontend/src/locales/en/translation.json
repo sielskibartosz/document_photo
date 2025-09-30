@@ -13,7 +13,7 @@
   "crop_photo": "Crop Photo",
   "add_with_bg": "Crop",
   "crop_and_remove": "Crop & Change Background",
-  "removing_bg": "Processing",
+  "removing_bg": "Processing...",
   "remove_bg": "Remove Background",
   "add_to_sheet": "Save",
   "zoom": "Zoom",
@@ -22,6 +22,7 @@
   "clear_sheet": "Clear Sheet",
   "download_sheet": "Download Sheet",
   "sheetThumbnail": "Sheet Thumbnail",
+  "foto_upload_info": "To achieve the best results, use a photo taken against a uniform background. Avoid photos with shadows, reflections, or other objects in the background. If the cropped photo does not meet the requirements, try again with a different one.",
 
   "donateHeader": "Buy Me a Coffee",
   "donateTitle": "Support the Development",
