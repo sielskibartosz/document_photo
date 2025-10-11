@@ -12,7 +12,7 @@ export default function AppTitle() {
     <Box sx={{ textAlign: "center", mb: 4 }}>
       <Typography
         variant="h3" // większy nagłówek
-        fontWeight={600} // mocniejsza czcionka
+        fontWeight={500} // mocniejsza czcionka
         sx={{
           fontFamily: "'Montserrat', 'Roboto', sans-serif", // nowa czcionka
           textShadow: "2px 2px 4px rgba(0,0,0,0.2)", // mocniejszy cień
