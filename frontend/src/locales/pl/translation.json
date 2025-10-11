@@ -30,8 +30,8 @@
   "cancel": "Anuluj",
   "donate": "Wspieram",
   "privacyPolicy_title": "Polityka prywatności",
+  "privacyPolicy_content_header": "Twoja prywatność jest dla nas ważna. Chcemy wyjaśnić, w jaki sposób obsługujemy zdjęcia przesyłane do naszej aplikacji:",
   "privacyPolicy_content": [
-    "Twoja prywatność jest dla nas ważna. Chcemy wyjaśnić, w jaki sposób obsługujemy zdjęcia przesyłane do naszej aplikacji:",
     "Wszystkie operacje wykonywane w przeglądarce nie zapisują zdjęć ani żadnych danych osobowych.",
     "Zdjęcia przesyłane do aplikacji są przetwarzane wyłącznie w celu usunięcia tła przy użyciu narzędzia Rembg.",
     "Zdjęcia nie są przechowywane ani udostępniane osobom trzecim.",

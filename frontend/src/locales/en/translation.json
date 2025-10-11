@@ -31,8 +31,8 @@
   "donate": "I'm Donating",
 
   "privacyPolicy_title": "Privacy Policy",
+  "privacyPolicy_content_header": "Your privacy is important to us. We would like to explain how we handle the photos uploaded to our application:",
   "privacyPolicy_content": [
-    "Your privacy is important to us. We would like to explain how we handle the photos uploaded to our application:",
     "All operations performed in the browser do not store photos or any personal data.",
     "Photos uploaded to the application are processed solely for background removal using the Rembg tool.",
     "Photos are not stored or shared with third parties.",

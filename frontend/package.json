@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "homepage": "https://sielskibartosz.github.io/document_photo",
+  "homepage": "https://photoidcreator.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -23,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-easy-crop": "^5.5.0",
     "react-i18next": "^15.6.1",
+    "react-router-dom": "^7.9.4",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -37,7 +38,6 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "homepage": "https://photoidcreator.com",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -55,8 +55,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "gh-pages": "^6.3.0"
   }
 }

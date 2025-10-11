@@ -29,8 +29,8 @@
   "donate": "Unterstützen",
   "sheetThumbnail": "Bogen-Miniaturansicht",
   "privacyPolicy_title": "Datenschutzerklärung",
+  "privacyPolicy_content_header": "Ihre Privatsphäre ist uns wichtig. Wir möchten erklären, wie wir die in unsere Anwendung hochgeladenen Fotos verarbeiten:",
   "privacyPolicy_content": [
-    "Ihre Privatsphäre ist uns wichtig. Wir möchten erklären, wie wir die in unsere Anwendung hochgeladenen Fotos verarbeiten:",
     "Alle Vorgänge, die im Browser durchgeführt werden, speichern weder Fotos noch persönliche Daten.",
     "Fotos, die in die Anwendung hochgeladen werden, werden ausschließlich zum Entfernen des Hintergrunds mit dem Tool Rembg verarbeitet.",
     "Fotos werden weder gespeichert noch an Dritte weitergegeben.",
