@@ -1,9 +1,10 @@
 {
   "language": "Język",
-  "title": "Zdjęcie do dowodu — szybko i bezpłatnie",
+  "title": "PhotoIDCreator",
+  "sub_title": "Darmowe zdjęcia do dokumentów",
   "id_tab": "Dowód osobisty / Prawo jazdy",
   "custom_tab": "Własne",
-  "id_link": "Oficjalne wymagania gov.pl",
+  "id_link": "Wymogi zdjęcia",
   "format": "Format papieru",
   "format_info": "Wybierz format papieru do wydruku zdjęcia",
   "foto_selection": "Wybierz zdjęcie",
@@ -30,6 +31,7 @@
   "cancel": "Anuluj",
   "donate": "Wspieram",
   "privacyPolicy_title": "Polityka prywatności",
+
   "privacyPolicy_content_header": "Twoja prywatność jest dla nas ważna. Chcemy wyjaśnić, w jaki sposób obsługujemy zdjęcia przesyłane do naszej aplikacji:",
   "privacyPolicy_content": [
     "Wszystkie operacje wykonywane w przeglądarce nie zapisują zdjęć ani żadnych danych osobowych.",
@@ -38,8 +40,28 @@
     "Nie sprzedajemy ani nie udostępniamy zdjęć ani innych danych osobowych żadnym podmiotom zewnętrznym.",
     "Zdjęcia są przetwarzane tymczasowo i usuwane natychmiast po zakończeniu operacji usuwania tła.",
     "Kontakt: barteksdepot@gmail.com"
-  ]
+  ],
+
+
+  "idRequirements": {
+    "title": "Wymagania dotyczące zdjęcia do dowodu lub paszportu",
+    "header": "Aby Twoje zdjęcie zostało zaakceptowane przy składaniu wniosku o dowód osobisty lub paszport, musi spełniać następujące wymagania:",
+    "list": [
+      { "primary": "Aktualność zdjęcia", "secondary": "Zdjęcie powinno być wykonane nie wcześniej niż 6 miesięcy przed złożeniem wniosku." },
+      { "primary": "Wymiary zdjęcia", "secondary": "35 mm (szerokość) × 45 mm (wysokość)." },
+      { "primary": "Tło zdjęcia", "secondary": "Jednolite, jasne tło (np. białe lub jasnobłękitne), bez cieni i elementów ozdobnych." },
+      { "primary": "Oświetlenie", "secondary": "Równomierne oświetlenie, bez cieni na twarzy." },
+      { "primary": "Postawa osoby", "secondary": "Osoba powinna patrzeć na wprost z otwartymi oczami i zamkniętymi ustami, z naturalnym wyrazem twarzy." },
+      { "primary": "Widoczność twarzy", "secondary": "Twarz powinna zajmować 70-80% zdjęcia, obejmując całą głowę oraz górną część barków." },
+      { "primary": "Nakrycie głowy", "secondary": "Nie można mieć nakrycia głowy, chyba że jest to wymagane ze względów religijnych. W takim przypadku cała twarz musi być widoczna." },
+      { "primary": "Okulary", "secondary": "Okulary korekcyjne są dozwolone, pod warunkiem, że oczy są dobrze widoczne, oprawki nie zasłaniają brwi, a w szkłach nie odbija się światło." },
+      { "primary": "Soczewki kontaktowe", "secondary": "Soczewki kontaktowe są dozwolone, o ile nie zmieniają naturalnego koloru oczu." }
+    ],
+    "footer": "Pamiętaj, że zdjęcie musi być wykonane na papierze fotograficznym w wysokiej jakości. Jeśli zdjęcie nie spełnia powyższych wymagań, może zostać odrzucone przez urzędnika."
+  }
 }
+
+
 
 
 

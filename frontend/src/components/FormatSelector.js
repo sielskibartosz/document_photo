@@ -19,22 +19,22 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-
   const FORMAT_TOOLTIP = t("format_info");
 
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "center",
+        display: "inline-flex",   // inline-flex pozwala wyśrodkować cały kontener
         alignItems: "center",
         gap: 1,
+        justifyContent: "center",
         width: "100%",
         maxWidth: 300,
-        mx: "auto",
+        mx: "auto",               // wyśrodkowanie względem rodzica
       }}
     >
-      <FormControl size="small" sx={{ flexGrow: 1 }}>
+      {/* Pole wyboru */}
+      <FormControl size="small" sx={{ width: 200 }}>
         <InputLabel id="format-select-label" shrink>
           {t("format")}
         </InputLabel>
@@ -52,7 +52,7 @@ const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
         </Select>
       </FormControl>
 
-      {/* Ikona info zawsze działa po kliknięciu */}
+      {/* Ikona info obok pola */}
       <IconButton
         size="small"
         aria-label="info"
@@ -62,6 +62,7 @@ const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
         <InfoOutlinedIcon fontSize="small" />
       </IconButton>
 
+      {/* Dialog */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>{t("format")}</DialogTitle>
         <DialogContent>{FORMAT_TOOLTIP}</DialogContent>

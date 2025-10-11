@@ -1,0 +1,61 @@
+{
+  "language": "Idioma",
+  "title": "PhotoIDCreator",
+  "sub_title": "Fotos de identificación gratis",
+  "id_tab": "DNI / Licencia de conducir",
+  "custom_tab": "Personalizado",
+  "id_link": "Requisitos de la foto",
+  "format": "Tamaño de papel",
+  "format_info": "Seleccione el tamaño de papel para imprimir la foto",
+  "foto_selection": "Elegir foto",
+  "foto_size": "Dimensiones de la foto",
+  "color_choice": "Color de fondo",
+  "aspect_tooltip": "Ancho / Alto [mm]",
+  "crop_photo": "Recortar foto",
+  "add_with_bg": "Recortar",
+  "crop_and_remove": "Recortar y cambiar fondo",
+  "removing_bg": "Procesando...",
+  "remove_bg": "Eliminar fondo",
+  "add_to_sheet": "Guardar",
+  "zoom": "Zoom",
+  "sheet_header": "Fotos en la hoja",
+  "duplicate_photo": "Duplicar foto",
+  "clear_sheet": "Limpiar hoja",
+  "download_sheet": "Descargar hoja",
+  "sheetThumbnail": "Miniatura de hoja",
+  "foto_upload_info": "Para obtener los mejores resultados, use una foto tomada sobre un fondo uniforme. Evite fotos con sombras, reflejos u otros objetos en el fondo. Si la foto recortada no cumple con los requisitos, intente nuevamente con otra foto.",
+
+  "donateHeader": "Invítame un café",
+  "donateTitle": "Apoya el desarrollo",
+  "donateDescription": "Su donación ayuda a cubrir los costos del servidor y respalda el desarrollo continuo de la aplicación. ¡Gracias por su apoyo!",
+  "cancel": "Cancelar",
+  "donate": "Estoy donando",
+
+  "privacyPolicy_title": "Política de privacidad",
+  "privacyPolicy_content_header": "Su privacidad es importante para nosotros. Queremos explicar cómo manejamos las fotos cargadas en nuestra aplicación:",
+  "privacyPolicy_content": [
+    "Todas las operaciones realizadas en el navegador no almacenan fotos ni datos personales.",
+    "Las fotos cargadas en la aplicación se procesan únicamente para eliminar el fondo mediante la herramienta Rembg.",
+    "Las fotos no se almacenan ni se comparten con terceros.",
+    "No vendemos ni compartimos fotos u otros datos personales con entidades externas.",
+    "Las fotos se procesan temporalmente y se eliminan inmediatamente después de completar la operación de eliminación del fondo.",
+    "Contacto: barteksdepot@gmail.com"
+  ],
+
+  "idRequirements": {
+    "title": "Requisitos para fotos de DNI / Pasaporte",
+    "header": "Para que su foto sea aceptada al solicitar un DNI o pasaporte, debe cumplir con los siguientes requisitos:",
+    "list": [
+      { "primary": "Actualidad de la foto", "secondary": "La foto debe haber sido tomada no más de 6 meses antes de la solicitud." },
+      { "primary": "Dimensiones de la foto", "secondary": "35 mm (ancho) × 45 mm (alto)." },
+      { "primary": "Fondo de la foto", "secondary": "Fondo uniforme y claro (por ejemplo, blanco o azul claro), sin sombras ni elementos decorativos." },
+      { "primary": "Iluminación", "secondary": "Iluminación uniforme, sin sombras en el rostro." },
+      { "primary": "Postura de la persona", "secondary": "Mirar hacia adelante con los ojos abiertos y la boca cerrada, con expresión natural." },
+      { "primary": "Visibilidad del rostro", "secondary": "El rostro debe ocupar entre el 70 % y 80 % de la foto, incluyendo toda la cabeza y la parte superior de los hombros." },
+      { "primary": "Cobertura de la cabeza", "secondary": "No se permite cubrir la cabeza, salvo por motivos religiosos. En ese caso, el rostro completo debe ser visible." },
+      { "primary": "Gafas", "secondary": "Se permiten gafas correctivas siempre que los ojos sean claramente visibles, los marcos no cubran las cejas y no haya reflejos visibles." },
+      { "primary": "Lentes de contacto", "secondary": "Se permiten lentes de contacto siempre que no alteren el color natural de los ojos." }
+    ],
+    "footer": "Recuerde que la foto debe imprimirse en papel fotográfico de alta calidad. Si la foto no cumple con los requisitos, puede ser rechazada por el funcionario."
+  }
+}

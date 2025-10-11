@@ -1,9 +1,10 @@
 {
   "language": "Language",
-  "title": "ID Photo — Quick & Free",
+  "title": "PhotoIDCreator",
+  "sub_title": "Free ID Photos",
   "id_tab": "ID Card / Driving License",
   "custom_tab": "Custom",
-  "id_link": "Official requirements gov.pl",
+  "id_link": "Photo requirements",
   "format": "Paper Size",
   "format_info": "Select the paper size for printing the photo",
   "foto_selection": "Select a Photo",
@@ -39,5 +40,25 @@
     "We do not sell or share photos or other personal data with external entities.",
     "Photos are only processed temporarily and are immediately deleted after the background removal operation is completed.",
     "Contact: barteksdepot@gmail.com"
-  ]
+  ],
+
+  "idRequirements": {
+  "title": "ID / Passport Photo Requirements",
+  "header": "To be accepted, your photo must meet the following requirements when applying for an ID card or passport:",
+  "list": [
+    { "primary": "Photo recency", "secondary": "Photo must have been taken no earlier than 6 months before application." },
+    { "primary": "Photo dimensions", "secondary": "35 mm (width) × 45 mm (height)." },
+    { "primary": "Photo background", "secondary": "Uniform, light background (e.g., white or light blue), without shadows or decorative elements." },
+    { "primary": "Lighting", "secondary": "Even lighting, no shadows on the face." },
+    { "primary": "Subject's posture", "secondary": "Look straight ahead with open eyes and closed mouth, with a natural expression." },
+    { "primary": "Face visibility", "secondary": "The face should occupy 70-80% of the photo, including the entire head and upper shoulders." },
+    { "primary": "Headwear", "secondary": "No headwear unless required for religious reasons. In that case, the full face must be visible." },
+    { "primary": "Glasses", "secondary": "Corrective glasses are allowed as long as eyes are clearly visible, frames do not cover eyebrows, and no glare is visible." },
+    { "primary": "Contact lenses", "secondary": "Contact lenses are allowed if they do not change the natural eye color." }
+  ],
+  "footer": "Remember, the photo must be printed on high-quality photo paper. If the photo does not meet the requirements, it may be rejected by the officer."
 }
+
+}
+
+
