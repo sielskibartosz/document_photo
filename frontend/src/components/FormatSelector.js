@@ -64,7 +64,6 @@ const FormatSelector = ({ selectedFormat, setSelectedFormat }) => {
 
       {/* Dialog */}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{t("format")}</DialogTitle>
         <DialogContent>{FORMAT_TOOLTIP}</DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>{t("close")}</Button>

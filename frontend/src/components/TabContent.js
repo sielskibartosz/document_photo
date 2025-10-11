@@ -124,7 +124,7 @@ const TabContent = ({
             width: "100%",
             maxWidth: 220, // wspólna szerokość dla wszystkich pól
             position: "relative",
-            left: 16, // przesunięcie w prawo o 16px, możesz zmienić wartość
+            left: 13, // przesunięcie w prawo o 16px, możesz zmienić wartość
           }}
         >
           {/* Format selector */}
