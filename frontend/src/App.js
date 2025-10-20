@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  CssBaseline,
-  ThemeProvider,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, CssBaseline, ThemeProvider, useMediaQuery } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import { TABS } from "./constants/tabs";
 import { buttonBaseStyle } from "./styles/buttonStyles";
 import FrameBox from "./styles/imagesStyles";
@@ -24,6 +20,7 @@ import useImageCrop from "./hooks/useImageCrop";
 
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import IdRequirementsPage from "./pages/IdRequirementsPage";
+import CookiesBanner from "./components/CookiesBanner"; // baner cookies
 
 function App() {
   const { i18n } = useTranslation();
@@ -108,7 +105,7 @@ function App() {
         boxShadow: darkTheme.shadows[4],
       }}
     >
-      <AppTitle/>
+      <AppTitle />
       <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
 
       <Box sx={{ position: "relative", width: "100%", mt: 2 }}>
@@ -174,6 +171,9 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/id-requirements" element={<IdRequirementsPage />} />
         </Routes>
+
+        {/* Baner cookies – ładuje Google Ads/GA dopiero po akceptacji */}
+        <CookiesBanner />
       </Router>
     </ThemeProvider>
   );
