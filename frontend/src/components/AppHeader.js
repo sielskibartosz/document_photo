@@ -21,7 +21,7 @@ export default function AppHeader({ i18n }) {
       }}
     >
       <PrivacyPolicy sx={{ cursor: "pointer", fontSize: "0.875rem" }} />
-      <Donate /> {/* ✅ przycisk */}
+      {/*<Donate />*/} {/* ✅ przycisk */}
       <Select
         value={i18n.language}
         onChange={handleLanguageChange}

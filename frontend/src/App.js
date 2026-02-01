@@ -20,6 +20,7 @@ import useImageCrop from "./hooks/useImageCrop";
 
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import IdRequirementsPage from "./pages/IdRequirementsPage";
+import DownloadSuccessPage from "./pages/DownloadSuccessPage";
 import CookiesBanner from "./components/CookiesBanner"; // baner cookies
 
 function App() {
@@ -170,6 +171,7 @@ function App() {
           <Route path="/" element={MainPage} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/id-requirements" element={<IdRequirementsPage />} />
+          <Route path="/download-success" element={<DownloadSuccessPage />} />
         </Routes>
 
         {/* Baner cookies – ładuje Google Ads/GA dopiero po akceptacji */}

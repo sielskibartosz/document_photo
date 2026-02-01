@@ -7,6 +7,9 @@ from transparent_background import Remover
 import io, base64
 import json
 from dotenv import load_dotenv
+from fastapi import FastAPI, UploadFile, File
+import shutil
+from fastapi.responses import FileResponse
 
 app = FastAPI(title="Remove Background API")
 
@@ -70,6 +73,22 @@ async def remove_background(
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+@app.post("/save-sheet")
+async def save_sheet(sheet: UploadFile = File(...)):
+    with open("sheet.jpg", "wb") as f:
+        shutil.copyfileobj(sheet.file, f)
+    return {"status": "ok"}
+
+
+@app.get("/download-sheet")
+def download_sheet():
+    return FileResponse(
+        path="sheet.jpg",  # plik wcześniej zapisany
+        media_type="image/jpeg",
+        filename="photo.jpg"
+    )
 
 
 @app.get("/ping")

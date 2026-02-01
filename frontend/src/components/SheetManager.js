@@ -2,8 +2,9 @@ import React, { useEffect, useCallback, useState } from "react";
 import { cmToPx, createImage } from "../utils/cropImage.js";
 import { PAPER_FORMATS } from "../constants/paperFormats";
 import FrameBox from "../styles/imagesStyles";
-import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { BACKEND_URL } from "../constants/backendConfig";
 
 const SheetManager = ({
   sheetImages,
@@ -16,7 +17,7 @@ const SheetManager = ({
 }) => {
   const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(0);
-  const [donateOpen, setDonateOpen] = useState(false);
+  const [sheetBlob, setSheetBlob] = useState(null);
 
   const dpi = 300;
   const margin = 20;
@@ -25,7 +26,7 @@ const SheetManager = ({
 
   // --- Generowanie arkusza ---
   const generateSheet = async () => {
-    if (!sheetImages.length) return { url: null, visibleCount: 0 };
+    if (!sheetImages.length) return { url: null, visibleCount: 0, blob: null };
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
     const heightPx = Math.round(cmToPx(format.height, dpi));
@@ -72,7 +73,7 @@ const SheetManager = ({
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
-        resolve({ url, visibleCount: actualCount });
+        resolve({ url, visibleCount: actualCount, blob });
       }, "image/jpeg", 0.92);
     });
   };
@@ -82,9 +83,11 @@ const SheetManager = ({
     if (result && result.url) {
       setSheetUrl(result.url);
       setVisibleCount(result.visibleCount);
+      setSheetBlob(result.blob);
     } else {
       setSheetUrl(null);
       setVisibleCount(0);
+      setSheetBlob(null);
     }
   }, [sheetImages, selectedFormat, setSheetUrl]);
 
@@ -94,19 +97,9 @@ const SheetManager = ({
     } else {
       setSheetUrl(null);
       setVisibleCount(0);
+      setSheetBlob(null);
     }
   }, [sheetImages, createSheetImage]);
-
-  // --- Pobieranie arkusza ---
-  const downloadSheet = () => {
-    if (!sheetUrl) return;
-    const link = document.createElement("a");
-    link.href = sheetUrl;
-    link.download = `sheet_${selectedFormat}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   // --- Czyszczenie arkusza ---
   const onClearSheetClick = () => {
@@ -115,20 +108,46 @@ const SheetManager = ({
       setSheetImages([]);
       setSheetUrl(null);
       setVisibleCount(0);
+      setSheetBlob(null);
     }
   };
 
   // --- Duplikowanie pierwszego zdjęcia ---
   const duplicateImage = () => {
     if (!sheetImages.length) return;
-    setSheetImages(prev => [...prev, prev[0]]);
+    setSheetImages((prev) => [...prev, prev[0]]);
   };
 
-  // --- Otwórz popup Donate przy pobieraniu ---
-  const handleDownloadClick = () => {
-    downloadSheet();
-    setDonateOpen(true);
+  // --- Wyślij arkusz do backendu i otwórz Stripe ---
+  const handleDownloadClick = async () => {
+      if (!sheetUrl) return;
+
+      const result = await generateSheet();
+      if (!result || !result.blob) return;
+
+      // Wyślij blob do backendu
+      const formData = new FormData();
+        formData.append("sheet", result.blob, `sheet_${selectedFormat}.jpg`);
+
+        try {
+          const response = await fetch(`${BACKEND_URL}/save-sheet`, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to save sheet on backend");
+          }
+
+          // Wszystko OK → przekieruj do Stripe w tej samej karcie
+          const stripeLink = "https://buy.stripe.com/fZu28qdDZ5Si78rboB63K00";
+          window.location.href = stripeLink;
+
+        } catch (err) {
+          console.error("Error:", err);
+        }
   };
+
 
   if (!showSheetPreview || !sheetUrl) return null;
 
@@ -138,7 +157,17 @@ const SheetManager = ({
         {t("sheet_header")}: {visibleCount} ({selectedFormat})
       </Typography>
 
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, flexWrap: "wrap", mb: 3, width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 2,
+          flexWrap: "wrap",
+          mb: 3,
+          width: "100%",
+        }}
+      >
         <Button variant="contained" onClick={duplicateImage} sx={{ fontWeight: 500 }}>
           {t("duplicate_photo", "Duplicate Photo")}
         </Button>
@@ -161,32 +190,9 @@ const SheetManager = ({
           boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
           border: "1px solid #ddd",
           display: "block",
-          mx: "auto"
+          mx: "auto",
         }}
       />
-
-      {/* --- Popup Donate --- */}
-      <Dialog open={donateOpen} onClose={() => setDonateOpen(false)}>
-        <DialogTitle>{t("donateTitle")}</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {t("donateDescription")}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDonateOpen(false)} color="inherit">{t("cancel")}</Button>
-          <Button
-            onClick={() => {
-              window.open("https://buy.stripe.com/fZu28qdDZ5Si78rboB63K00", "_blank");
-              setDonateOpen(false);
-            }}
-            variant="contained"
-            sx={{ backgroundColor: "#d97706", "&:hover": { backgroundColor: "#e07b12" } }}
-          >
-            {t("donate")}
-          </Button>
-        </DialogActions>
-      </Dialog>
     </FrameBox>
   );
 };
