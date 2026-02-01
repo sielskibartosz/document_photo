@@ -120,33 +120,24 @@ const SheetManager = ({
 
   // --- Wyślij arkusz do backendu i otwórz Stripe ---
   const handleDownloadClick = async () => {
-      if (!sheetUrl) return;
+  try {
+    const result = await generateSheet();
+    if (!result || !result.blob) return;
 
-      const result = await generateSheet();
-      if (!result || !result.blob) return;
+    // zapis do sessionStorage w base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      sessionStorage.setItem("sheetBlob", reader.result); // <-- średnik tutaj
+      // Wszystko OK → przekieruj do Stripe w tej samej karcie
+      const stripeLink = "https://buy.stripe.com/fZu28qdDZ5Si78rboB63K00";
+      window.location.href = stripeLink;
+    };
+    reader.readAsDataURL(result.blob); // <- brakowało wywołania FileReader
+  } catch (err) {
+    console.error("Error generating sheet:", err);
+  }
+};
 
-      // Wyślij blob do backendu
-      const formData = new FormData();
-        formData.append("sheet", result.blob, `sheet_${selectedFormat}.jpg`);
-
-        try {
-          const response = await fetch(`${BACKEND_URL}/save-sheet`, {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to save sheet on backend");
-          }
-
-          // Wszystko OK → przekieruj do Stripe w tej samej karcie
-          const stripeLink = "https://buy.stripe.com/fZu28qdDZ5Si78rboB63K00";
-          window.location.href = stripeLink;
-
-        } catch (err) {
-          console.error("Error:", err);
-        }
-  };
 
 
   if (!showSheetPreview || !sheetUrl) return null;
