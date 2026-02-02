@@ -15,45 +15,91 @@ const IdRequirementsPage = () => {
   const footer = t('idRequirements.footer');
 
   return (
-    <Box sx={{ minHeight: '100vh', p: { xs: 3, sm: 6 }, width: { xs: '95vw', sm: '70vw', md: '60vw' }, mx: 'auto', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", color: darkTheme.palette.text.primary, background: darkTheme.palette.mode === 'dark' ? 'linear-gradient(135deg, #1f2937 0%, #374151 100%)' : 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', borderRadius: 4, boxShadow: darkTheme.shadows[5], position: 'relative' }}>
-
+    <Box
+      sx={{
+        minHeight: '100vh',
+        p: { xs: 2, sm: 4 }, // zmniejszony padding
+        width: { xs: '95vw', sm: '80vw', md: '60vw' },
+        mx: 'auto',
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        color: darkTheme.palette.text.primary,
+        background:
+          darkTheme.palette.mode === 'dark'
+            ? 'linear-gradient(135deg, #1f2937 0%, #374151 100%)'
+            : 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        borderRadius: 3,
+        boxShadow: darkTheme.shadows[3],
+        position: 'relative',
+      }}
+    >
       {/* Strzałka wstecz */}
-      <IconButton onClick={() => navigate(-1)} sx={{ position: 'absolute', top: 16, left: 16, color: 'primary.main' }} aria-label="back">
-        <ArrowBackIcon fontSize="large" />
+      <IconButton
+        onClick={() => navigate(-1)}
+        sx={{ position: 'absolute', top: 12, left: 12, color: 'primary.main' }}
+        aria-label="back"
+      >
+        <ArrowBackIcon fontSize="medium" />
       </IconButton>
 
-      <Box sx={{ maxWidth: 700, mx: 'auto', textAlign: 'center' }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+      <Box sx={{ maxWidth: 600, mx: 'auto', textAlign: 'center' }}>
+        <Typography
+          variant="h5" // zmniejszony nagłówek
+          gutterBottom
+          sx={{ fontWeight: 'bold', mb: 2 }}
+        >
           {title}
         </Typography>
 
-        <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.7 }}>
+        <Typography variant="body2" paragraph sx={{ mb: 2, lineHeight: 1.5 }}>
           {header}
         </Typography>
 
         {/* Zdjęcia pod tytułem */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3, alignItems: 'center' }}>
-          <Box component="img" src="/images/correct_id_photo.png" sx={{ width: { xs: '95%', sm: '400px' }, borderRadius: 2, boxShadow: 3 }} />
-          <Box component="img" src="/images/incorrect_id_photo.png" sx={{ width: { xs: '95%', sm: '400px' }, borderRadius: 2, boxShadow: 3 }} />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' }, // w desktopie obok siebie
+            gap: 2,
+            mb: 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            component="img"
+            src="/images/correct_id_photo.png"
+            sx={{ width: { xs: '100%', sm: '180px' }, borderRadius: 2, boxShadow: 2 }}
+          />
+          <Box
+            component="img"
+            src="/images/incorrect_id_photo.png"
+            sx={{ width: { xs: '100%', sm: '180px' }, borderRadius: 2, boxShadow: 2 }}
+          />
         </Box>
 
         <List sx={{ mb: 0 }}>
           {list.map((item, index) => (
             <React.Fragment key={index}>
-              <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 3 }}>
+              <ListItem
+                sx={{
+                  display: 'block', // brak kropek
+                  pl: 0,            // usuwa padding
+                }}
+              >
                 <ListItemText
                   primary={item.primary}
                   secondary={item.secondary}
-                  primaryTypographyProps={{ fontWeight: 500 }}
-                  secondaryTypographyProps={{ lineHeight: 1.6 }}
+                  primaryTypographyProps={{ fontWeight: 500, fontSize: '0.9rem' }}
+                  secondaryTypographyProps={{ lineHeight: 1.4, fontSize: '0.85rem' }}
                 />
               </ListItem>
-              {index < list.length - 1 && <Divider sx={{ my: 1 }} />}
+              {index < list.length - 1 && <Divider sx={{ my: 0.5 }} />}
             </React.Fragment>
           ))}
         </List>
 
-        <Typography variant="body1" paragraph sx={{ lineHeight: 1.7, mt: 2 }}>
+
+        <Typography variant="body2" paragraph sx={{ lineHeight: 1.5, mt: 1.5 }}>
           {footer}
         </Typography>
       </Box>
