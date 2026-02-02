@@ -1,5 +1,4 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { darkTheme } from "./styles/theme";
@@ -10,6 +9,8 @@ import HomePage from "./pages/HomePage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import IdRequirementsPage from "./pages/IdRequirementsPage";
 import DownloadSuccessPage from "./pages/DownloadSuccessPage";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
+
 
 function App() {
   const { i18n } = useTranslation();
