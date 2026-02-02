@@ -6,7 +6,7 @@ const TabSelector = ({ tabs, activeTab, onTabChange }) => {
     const { t } = useTranslation();
 
     return (
-        <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 3 }}>
+        <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 3, flexWrap: 'wrap' }}>
             {tabs.map((tab) => (
                 <Button
                     key={tab.key}
@@ -15,11 +15,12 @@ const TabSelector = ({ tabs, activeTab, onTabChange }) => {
                     onClick={() => onTabChange(tab.key)}
                     sx={{
                         fontWeight: 'bold',
-                        fontSize: 16,
                         fontFamily: 'Roboto, sans-serif',
                         textTransform: 'none',
-                        minHeight: 40,
-                        padding: '6px 16px',
+                        fontSize: { xs: 14, sm: 16 },       // mniejsze na telefonie
+                        minHeight: { xs: 36, sm: 40 },      // mniejsze na telefonie
+                        padding: { xs: '4px 12px', sm: '6px 16px' }, // mniejsze paddingi
+                        buttonShadow: activeTab === tab.key ? '0 0 30px rgba(25, 118, 210, 0.25)' : 'none',
                     }}
                 >
                     {t(tab.labelKey)}

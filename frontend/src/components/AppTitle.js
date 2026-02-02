@@ -12,26 +12,45 @@ export default function AppTitle() {
 
   return (
     <Box sx={{ textAlign: "center", mb: 4 }}>
+
+      {/* Logo na górze */}
+     <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2, // odstęp między logo
+            mb: 1
+          }}
+        >
+          <Box
+            component="img"
+            src="/transparent_logo_small.png"
+            alt="Logo"
+            sx={{ width: { xs: 50, sm: 50, md: 70 }, height: "auto" }}
+          />
+        </Box>
+
       {/* Główny tytuł */}
       <Typography
-      variant="h3"
-      sx={{
-        fontFamily: "'Montserrat', 'Roboto', sans-serif",
-        letterSpacing: 1,
-        textShadow: "2px 2px 4px rgba(0,0,0,0.2)",
-        fontWeight: 500,
-        textAlign: "center",
-      }}
-    >
-      Photo
-      <Box
-          component="span"
-          sx={{ color: theme.palette.primary.main, fontWeight: 700, mx: 0.5 }}
-        >
-        ID
-      </Box>
-      Creator
-    </Typography>
+        variant="h3"
+        sx={{
+          fontFamily: "'Poppins', 'Roboto', sans-serif",
+          letterSpacing: 1,
+          textShadow: "2px 2px 4px rgba(0,0,0,0.2)",
+          fontWeight: 500,
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          flexWrap: "wrap",
+          fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+        }}
+      >
+        <Box component="span">
+  photo<Box component="span" color="primary.main">ID</Box>creator
+</Box>
+
+
+      </Typography>
 
       {/* Subtitle */}
       {subTitle && (
@@ -44,21 +63,6 @@ export default function AppTitle() {
         </Typography>
       )}
 
-      {/* Sub description */}
-      {/*{subDescription && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            mt: 0.8,
-            maxWidth: 520,
-            mx: "auto",
-            lineHeight: 1.6,
-          }}
-        >
-          {subDescription}
-        </Typography>
-      )}*/}
     </Box>
   );
 }

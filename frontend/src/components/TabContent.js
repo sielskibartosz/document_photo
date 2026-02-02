@@ -31,49 +31,51 @@ const TabContent = ({
     <Box sx={{ textAlign: "center", mb: 0, "& > *": { mb: 0 } }}>
       {/* Obrazki */}
       {tab.image && (
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: 350,
-            minHeight: 200,
-            margin: "0 auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 2,
-            backgroundColor: "transparent",
-            padding: 1,
-            boxSizing: "border-box",
-          }}
-        >
           <Box
-            component="img"
-            src={tab.image}
-            alt={t(tabFromList?.labelKey || "")}
             sx={{
-              maxWidth: "100%",
-              height: "auto",
-              objectFit: "contain",
+              width: "100%",
+              maxWidth: { xs: 250, sm: 350 },
+              minHeight: { xs: 150, sm: 200 },
+              margin: "0 auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               borderRadius: 2,
-              display: "block",
               backgroundColor: "transparent",
+              padding: 0,
+              boxSizing: "border-box",
+              boxShadow: "0 0 30px rgba(25, 118, 210, 0.25)"
             }}
-          />
-        </Box>
-      )}
+          >
+            <Box
+              component="img"
+              src={tab.image}
+              alt={t(tabFromList?.labelKey || "")}
+              sx={{
+                maxWidth: "100%",
+                height: "auto",
+                objectFit: "contain",
+                borderRadius: 2,
+                display: "block",
+                backgroundColor: "transparent",
+              }}
+            />
+          </Box>
+        )}
+
 
       {/* Tytuł */}
       {tab.title && (
         <Typography
           variant="body1"
-          sx={{ mb: 0.5, fontWeight: "normal", textAlign: "center", lineHeight: 1.2 }}
+          sx={{ mb: 0.5,mt:0.5, fontWeight: "normal", textAlign: "center", lineHeight: 1.2 }}
         >
           {tab.title}
         </Typography>
       )}
 
       {/* Opis */}
-      {tab.description && (
+      {/*{tab.description && (
         <Typography
           variant="body1"
           sx={{
@@ -89,28 +91,30 @@ const TabContent = ({
         >
           {tab.description}
         </Typography>
-      )}
+      )}*/}
 
       {/* Link do wymagań */}
         {tab.link && (
-          <Typography
-            variant="body1"
+          <Box
+            onClick={() => navigate(tab.link)}
             sx={{
-              display: "inline-block",
-              mt: 0,
+              display: "inline-flex",
+              alignItems: "center",
+              mt: 0.5, // minimalny odstęp od tytułu/obrazka
               cursor: "pointer",
               color: "primary.main",
               fontWeight: 500,
               textDecoration: "underline",
               "&:hover": { opacity: 0.8 },
               mx: "auto",
+              gap: 0.5, // odstęp między tekstem a ikoną
+              fontSize: 14, // mniejszy tekst
             }}
-            onClick={() => navigate(tab.link)}
           >
-            {t("id_link") || "Wymagania zdjęcia"}
-          </Typography>
+            <LinkIcon sx={{ fontSize: 16 }} /> {/* ikona */}
+            {t("id_link")}
+          </Box>
         )}
-
 
       {/* Kontener pól */}
         <Box
