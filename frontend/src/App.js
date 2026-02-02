@@ -1,180 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { Box, CssBaseline, ThemeProvider, useMediaQuery } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-import { TABS } from "./constants/tabs";
-import { buttonBaseStyle } from "./styles/buttonStyles";
-import FrameBox from "./styles/imagesStyles";
-import { parseAspectRatio } from "./utils/cropImage";
 import { darkTheme } from "./styles/theme";
-
-import CropperPanel from "./components/CropperPanel";
-import AppTitle from "./components/AppTitle";
 import AppHeader from "./components/AppHeader";
-import TabSelector from "./components/TabSelector";
-import TabContent from "./components/TabContent";
-import SheetManager from "./components/SheetManager";
-import useSheetManager from "./hooks/useSheetManager";
-import useImageCrop from "./hooks/useImageCrop";
+import CookiesBanner from "./components/CookiesBanner";
 
+import HomePage from "./pages/HomePage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import IdRequirementsPage from "./pages/IdRequirementsPage";
 import DownloadSuccessPage from "./pages/DownloadSuccessPage";
-import CookiesBanner from "./components/CookiesBanner"; // baner cookies
 
 function App() {
   const { i18n } = useTranslation();
-  const [activeTab, setActiveTab] = useState("id");
-  const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
-  const [selectedFormat, setSelectedFormat] = useState("10x15 cm Rossmann");
-
-  const [bgColors, setBgColors] = useState({
-    id: "#ffffff",
-    custom: "#ffffff",
-    selfie: "#ffffff",
-  });
-
-  const aspectRatio = parseAspectRatio(aspectInput);
-  const isSmallScreen = useMediaQuery("(max-width:600px)");
-
-  const {
-    imageSrc,
-    crop,
-    setCrop,
-    zoom,
-    setZoom,
-    croppedImage,
-    setCroppedImage,
-    noBgImage,
-    setNoBgImage,
-    onFileChange,
-    reset
-  } = useImageCrop();
-
-  const {
-    sheetImages,
-    setSheetImages,
-    selectedSheetUrl,
-    setSelectedSheetUrl,
-    showFullSheet,
-    addToSheet,
-    duplicateLastImage,
-    clearSheet,
-    toggleSheet
-  } = useSheetManager();
-
-  const currentBgColor = bgColors[activeTab];
-
-  const handleBgColorChange = (color) => {
-    if (activeTab === "id") return;
-    setBgColors((prev) => ({ ...prev, [activeTab]: color }));
-  };
-
-  const handleTabChange = (tabKey) => {
-    setActiveTab(tabKey);
-    const tab = TABS.find((t) => t.key === tabKey);
-    setAspectInput(tab.aspect);
-    reset();
-  };
-
-  const [cols, setCols] = useState(3);
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) setCols(1);
-      else if (window.innerWidth < 900) setCols(2);
-      else setCols(3);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const MainPage = (
-    <Box
-      sx={{
-        padding: isSmallScreen ? 2 : 4,
-        width: isSmallScreen ? "95vw" : "80vw",
-        margin: "10px auto 40px auto",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        color: darkTheme.palette.text.primary,
-        background:
-          darkTheme.palette.mode === "dark"
-            ? "linear-gradient(135deg, #1f2937 0%, #374151 100%)"
-            : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-        borderRadius: 3,
-        boxShadow: darkTheme.shadows[4],
-      }}
-    >
-      <AppTitle />
-      <TabSelector tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
-
-      <Box sx={{ position: "relative", width: "100%", mt: 2 }}>
-        <TabContent
-          tabKey={activeTab}
-          aspectInput={aspectInput}
-          setAspectInput={setAspectInput}
-          selectedFormat={selectedFormat}
-          setSelectedFormat={setSelectedFormat}
-          onFileChange={(file) => {
-            onFileChange(file);
-            toggleSheet(false);
-          }}
-          bgColor={currentBgColor}
-          setBgColor={handleBgColorChange}
-        />
-      </Box>
-
-      {sheetImages.length > 0 && showFullSheet && (
-        <Box sx={{ mb: 4 }}>
-          <SheetManager
-            sheetImages={sheetImages}
-            setSheetImages={setSheetImages}
-            sheetUrl={selectedSheetUrl}
-            setSheetUrl={setSelectedSheetUrl}
-            selectedFormat={selectedFormat}
-            duplicateImage={duplicateLastImage}
-            showSheetPreview={showFullSheet}
-            clearSheet={clearSheet}
-            cols={cols}
-            buttonBaseStyle={buttonBaseStyle}
-          />
-        </Box>
-      )}
-
-      {imageSrc && (
-        <FrameBox>
-          <CropperPanel
-            imageSrc={imageSrc}
-            crop={crop}
-            setCrop={setCrop}
-            zoom={zoom}
-            setZoom={setZoom}
-            aspectRatio={aspectRatio}
-            setNoBgImage={setNoBgImage}
-            onAddToSheet={(img) => { addToSheet(img, aspectRatio); reset(); }}
-            onClear={reset}
-            activeTab={activeTab}
-            bgColor={currentBgColor}
-          />
-        </FrameBox>
-      )}
-    </Box>
-  );
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Router>
         <AppHeader i18n={i18n} />
+
         <Routes>
-          <Route path="/" element={MainPage} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/id-requirements" element={<IdRequirementsPage />} />
           <Route path="/download-success" element={<DownloadSuccessPage />} />
         </Routes>
 
-        {/* Baner cookies – ładuje Google Ads/GA dopiero po akceptacji */}
         <CookiesBanner />
       </Router>
     </ThemeProvider>

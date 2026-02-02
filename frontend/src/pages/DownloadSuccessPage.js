@@ -2,9 +2,18 @@ import { useEffect } from "react";
 import { Box, Button, Typography, ThemeProvider, CssBaseline, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { darkTheme } from "../styles/theme";
+import { useTranslation } from 'react-i18next';
 
 const DownloadSuccessPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const gratitude = t('success_page.gratitude');
+  const not_downloaded = t('success_page.not_downloaded');
+  const download_btn = t('success_page.download_btn');
+  const main_page_btn = t('success_page.main_page_btn');
+
+
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
@@ -47,10 +56,10 @@ const DownloadSuccessPage = () => {
         }}
       >
         <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom color="text.primary">
-          Thank you for your payment!
+          {gratitude}
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          Your sheet download should start automatically. If it doesn’t, you can{" "}
+          {not_downloaded}
           <Button
             variant="text"
             onClick={() => {
@@ -64,7 +73,7 @@ const DownloadSuccessPage = () => {
               document.body.removeChild(link);
             }}
           >
-            download manually
+            {download_btn}
           </Button>
           .
         </Typography>
@@ -74,7 +83,7 @@ const DownloadSuccessPage = () => {
           color="primary"
           onClick={() => navigate("/")}
         >
-          Back to Home
+          {main_page_btn}
         </Button>
       </Box>
     </ThemeProvider>

@@ -1,7 +1,7 @@
 {
   "language": "Language",
   "title": "PhotoIDCreator",
-  "sub_title": "Free ID Photos",
+  "sub_title": "Low cost document photos",
   "id_tab": "ID Card / Driving License",
   "custom_tab": "Custom",
   "id_link": "Photo requirements",
@@ -57,7 +57,12 @@
     { "primary": "Contact lenses", "secondary": "Contact lenses are allowed if they do not change the natural eye color." }
   ],
   "footer": "Remember, the photo must be printed on high-quality photo paper. If the photo does not meet the requirements, it may be rejected by the officer."
-}
+},
+  "success_page": {
+    "not_downloaded": "If the download does not start automatically, please click download:",
+    "download_btn": "Download Sheet",
+    "gratitude": "Thank you for using PhotoIDCreator!",
+    "main_page_btn": "Main Page"}
 
 }
 

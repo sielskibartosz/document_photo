@@ -1,7 +1,7 @@
 {
   "language": "Język",
   "title": "PhotoIDCreator",
-  "sub_title": "Darmowe zdjęcia do dokumentów",
+  "sub_title": "Zdjęcia do dokumentów na każdą kieszeń",
   "id_tab": "Dowód osobisty / Prawo jazdy",
   "custom_tab": "Własne",
   "id_link": "Wymogi zdjęcia",
@@ -58,7 +58,12 @@
       { "primary": "Soczewki kontaktowe", "secondary": "Soczewki kontaktowe są dozwolone, o ile nie zmieniają naturalnego koloru oczu." }
     ],
     "footer": "Pamiętaj, że zdjęcie musi być wykonane na papierze fotograficznym w wysokiej jakości. Jeśli zdjęcie nie spełnia powyższych wymagań, może zostać odrzucone przez urzędnika."
-  }
+  },
+  "success_page": {
+    "not_downloaded": "Jeśli arkusz nie został automatycznie pobrany, kliknij pobierz:",
+    "download_btn": "Pobierz arkusz",
+    "gratitude": "Dziękuję za skorzystanie z PhotoIDCreator!",
+    "main_page_btn": "Strona główna"}
 }
 
 
