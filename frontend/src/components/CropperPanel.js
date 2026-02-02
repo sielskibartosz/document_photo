@@ -1,6 +1,6 @@
 // CropperPanel.js
 import React, { useCallback, useState, useEffect } from "react";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import CropperWrapper from "./CropperWrapper";
@@ -57,19 +57,26 @@ export default function CropperPanel({
   };
 
   const hexToRGBA = (hex) => {
-    if (!hex.startsWith("#") || (hex.length !== 7 && hex.length !== 4)) return [255,255,255,255];
-    let r, g, b;
+  try {
+    if (!hex.startsWith("#")) return [239,248,246,255]; // default kremowy
+    let r,g,b;
     if (hex.length === 7) {
       r = parseInt(hex.slice(1,3),16);
       g = parseInt(hex.slice(3,5),16);
       b = parseInt(hex.slice(5,7),16);
-    } else {
+    } else if (hex.length === 4) {
       r = parseInt(hex[1]+hex[1],16);
       g = parseInt(hex[2]+hex[2],16);
       b = parseInt(hex[3]+hex[3],16);
+    } else {
+      return [239,248,246,255]; // default
     }
     return [r,g,b,255];
-  };
+  } catch(e) {
+    return [239,248,246,255]; // default
+  }
+};
+
 
   const handleCropAndRemoveBg = async () => {
     if (!imageSrc || !croppedAreaPixels) return;
@@ -86,6 +93,8 @@ export default function CropperPanel({
       const formData = new FormData();
       formData.append("image", blob, "cropped.png");
       formData.append("bg_color", JSON.stringify(hexToRGBA(bgColor)));
+      console.log("Sending bg color:", hexToRGBA(bgColor));
+
 
       const response = await fetch(`${BACKEND_URL}/remove-background/`, {
         method: "POST",

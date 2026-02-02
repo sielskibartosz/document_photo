@@ -23,7 +23,7 @@ function CropperWrapper({
           width: "100%",
           maxWidth: 360,
           aspectRatio: aspectRatio,
-          backgroundColor: "#f0f0f0",
+          backgroundColor: "#f5f1e6",
           overflow: "hidden",
           borderRadius: 2,
           position: "relative",

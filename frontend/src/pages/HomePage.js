@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Box, useMediaQuery } from "@mui/material";
-import { useTranslation } from "react-i18next";
 
 import { TABS } from "../constants/tabs";
 import { buttonBaseStyle } from "../styles/buttonStyles";
@@ -18,15 +17,13 @@ import useSheetManager from "../hooks/useSheetManager";
 import useImageCrop from "../hooks/useImageCrop";
 
 const HomePage = () => {
-  const { i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
   const [selectedFormat, setSelectedFormat] = useState("10x15 cm Rossmann");
 
   const [bgColors, setBgColors] = useState({
-    id: "#ffffff",
+    id: "#fefcfb",
     custom: "#ffffff",
-    selfie: "#ffffff",
   });
 
   const aspectRatio = parseAspectRatio(aspectInput);
@@ -50,7 +47,6 @@ const HomePage = () => {
     setSelectedSheetUrl,
     showFullSheet,
     addToSheet,
-    duplicateLastImage,
     clearSheet,
     toggleSheet,
   } = useSheetManager();
