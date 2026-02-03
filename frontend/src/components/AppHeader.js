@@ -1,10 +1,17 @@
 import React from "react";
 import { Box, Select, MenuItem } from "@mui/material";
 import PrivacyPolicy from "./PrivacyPolicy";
-import Donate from "./Donate"; // ✅ import
+import Donate from "./Donate";
+import {PAYMENT_LINKS} from "../constants/paymentLinks";
 
 export default function AppHeader({ i18n }) {
-  const handleLanguageChange = (e) => i18n.changeLanguage(e.target.value);
+  const handleLanguageChange = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
+
+  // normalizacja: pl-PL → pl
+  const currentLang = i18n.language?.split("-")[0] || "pl";
+  const paymentLink = PAYMENT_LINKS[currentLang] || PAYMENT_LINKS.pl;
 
   return (
     <Box
@@ -17,16 +24,25 @@ export default function AppHeader({ i18n }) {
         py: 0.5,
         mb: 0.25,
         backgroundColor: "background.paper",
-        fontSize: "0.875rem"
+        fontSize: "0.875rem",
       }}
     >
       <PrivacyPolicy sx={{ cursor: "pointer", fontSize: "0.875rem" }} />
-      {/*<Donate />*/} {/* ✅ przycisk */}
+
+      {/*<Donate paymentLink={paymentLink} />*/}
+
       <Select
-        value={i18n.language}
+        value={currentLang}
         onChange={handleLanguageChange}
         size="small"
-        sx={{ fontSize: "0.875rem", height: 28 }}
+        displayEmpty
+        sx={{
+          fontSize: "0.875rem",
+          height: 28,
+          "& .MuiSelect-select": {
+            py: 0.5,
+          },
+        }}
       >
         <MenuItem value="pl">PL</MenuItem>
         <MenuItem value="en">EN</MenuItem>

@@ -14,14 +14,35 @@ const resources = {
   es: { translation: translationES },
 };
 
+// --- funkcja wykrywająca język na start
+function detectInitialLanguage() {
+  // 1️⃣ najpierw sprawdź, czy użytkownik wybrał język wcześniej
+  const savedLang = localStorage.getItem("i18nextLng");
+  if (savedLang) return savedLang;
+
+  // 2️⃣ inaczej wykryj język z przeglądarki
+  const browserLang = navigator.language || navigator.userLanguage; // np. "pl-PL"
+  const shortLang = browserLang.split("-")[0]; // "pl", "de", "en", "es"
+
+  // 3️⃣ jeśli obsługiwany → użyj, jeśli nie → fallback
+  if (["pl", "de", "en", "es"].includes(shortLang)) return shortLang;
+
+  return "pl"; // domyślnie polski
+}
+
 i18n
-  .use(initReactI18next) // integracja z React
-  .use(LanguageDetector)  // opcjonalnie: wykrywanie języka przeglądarki
+  .use(initReactI18next)    // integracja z React
+  .use(LanguageDetector)    // wykrywanie języka przeglądarki
   .init({
     resources,
-    lng: "pl",            // <-- domyślny język
-    fallbackLng: "pl",     // jeśli tłumaczenie nie istnieje
+    lng: detectInitialLanguage(),  // <-- automatyczny wybór
+    fallbackLng: "pl",             // jeśli tłumaczenie nie istnieje
     interpolation: { escapeValue: false },
+    detection: {
+      // pozwala pamiętać wybór użytkownika w localStorage
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
+    },
   });
 
 export default i18n;

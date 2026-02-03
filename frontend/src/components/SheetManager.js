@@ -4,7 +4,7 @@ import { PAPER_FORMATS } from "../constants/paperFormats";
 import FrameBox from "../styles/imagesStyles";
 import { Box, Typography, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { BACKEND_URL } from "../constants/backendConfig";
+import { PAYMENT_LINKS } from "../constants/paymentLinks";
 
 const SheetManager = ({
   sheetImages,
@@ -15,7 +15,7 @@ const SheetManager = ({
   showSheetPreview,
   clearSheet,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(0);
   const [sheetBlob, setSheetBlob] = useState(null);
 
@@ -118,25 +118,28 @@ const SheetManager = ({
     setSheetImages((prev) => [...prev, prev[0]]);
   };
 
-  // --- Wyślij arkusz do backendu i otwórz Stripe ---
-  const handleDownloadClick = async () => {
-  try {
-    const result = await generateSheet();
-    if (!result || !result.blob) return;
+  // --- Zapisz arkusz w local storage  i otwórz Stripe ---
+     const handleDownloadClick = async () => {
+      try {
+        const result = await generateSheet();
+        if (!result?.blob) return;
 
-    // zapis do sessionStorage w base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      sessionStorage.setItem("sheetBlob", reader.result); // <-- średnik tutaj
-      // Wszystko OK → przekieruj do Stripe w tej samej karcie
-      const stripeLink = "https://buy.stripe.com/fZu28qdDZ5Si78rboB63K00";
-      window.location.href = stripeLink;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          sessionStorage.setItem("sheetBlob", reader.result);
+
+          const lang = i18n.language || "pl";
+          const stripeLink = PAYMENT_LINKS[lang] || PAYMENT_LINKS.en;
+
+          // przekierowanie w tej samej karcie (lepsze dla Stripe)
+          window.location.href = stripeLink;
+        };
+
+        reader.readAsDataURL(result.blob);
+      } catch (err) {
+        console.error("Error generating sheet:", err);
+      }
     };
-    reader.readAsDataURL(result.blob); // <- brakowało wywołania FileReader
-  } catch (err) {
-    console.error("Error generating sheet:", err);
-  }
-};
 
 
 
