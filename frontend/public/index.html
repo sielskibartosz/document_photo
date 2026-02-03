@@ -15,29 +15,15 @@
       content="zdjęcia do dowodu, zdjęcie do paszportu online, zdjęcia biometryczne, zdjęcia do legitymacji, generator zdjęć do dokumentów, PhotoIDCreator"
     />
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://photoidcreator.com/" />
-    <meta property="og:title" content="PhotoIDCreator – zdjęcia do dowodu online" />
-    <meta
-      property="og:description"
-      content="Stwórz zdjęcia do dowodu, paszportu, legitymacji i wizy online. Szybko, łatwo i gotowe do druku z PhotoIDCreator."
-    />
-    <meta property="og:image" content="https://photoidcreator.com/preview.jpg" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-CONVERSION_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    <!-- Twitter Card -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://photoidcreator.com/" />
-    <meta property="twitter:title" content="PhotoIDCreator – zdjęcia do dowodu online" />
-    <meta
-      property="twitter:description"
-      content="Stwórz zdjęcia do dowodu, paszportu, legitymacji i wizy online. Szybko, łatwo i gotowe do druku z PhotoIDCreator."
-    />
-    <meta property="twitter:image" content="https://photoidcreator.com/preview.jpg" />
-
-    <link rel="icon" href="/logo_no_text.png" />
-    <link rel="apple-touch-icon" href="/logo_no_text.png" />
-    <link rel="manifest" href="/manifest.json" />
+      gtag('config', 'AW-CONVERSION_ID'); // <-- wpisz tu swoje ID konwersji
+    </script>
 
     <!-- CSS i JS React -->
     <link href="/static/css/main.e6c13ad2.css" rel="stylesheet" />
@@ -46,7 +32,6 @@
 
   <body>
     <noscript>Musisz włączyć JavaScript, aby korzystać z tej aplikacji.</noscript>
-
     <div id="root"></div>
 
     <!-- Treść statyczna dla SEO -->
@@ -57,14 +42,13 @@
         paszportu, legitymacji studenckiej lub wizy. Aplikacja automatycznie przycina i dopasowuje zdjęcie
         do wymagań biometrycznych, usuwa tło i generuje gotowy arkusz do druku.
       </p>
-      <p>
-        Możesz wybrać format zdjęcia (np. 35x45 mm) oraz papier (A4, 10x15 cm). Wszystko odbywa się w przeglądarce – szybko, bezpiecznie i anonimowo.
-      </p>
-      <p>
-        PhotoIDCreator is an online tool that helps you create the perfect passport,
-        ID card, and visa photos from home. Upload your image, remove the background,
-        crop it to the correct size, and download it ready for printing.
-      </p>
     </section>
+
+    <!-- Google Ads Event -->
+    <script>
+      gtag('event', 'ads_conversion_PAGE_VIEW_1', {
+        // tutaj możesz dodać parametry eventu, jeśli potrzebujesz
+      });
+    </script>
   </body>
 </html>
