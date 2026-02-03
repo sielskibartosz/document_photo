@@ -8,7 +8,6 @@ import AspectInput from "./AspectInput";
 import FormatSelector from "./FormatSelector";
 import ImageUploader from "./ImageUploader";
 import FotoBackgroundColor from "./FotoBackgroundColor";
-import LinkIcon from '@mui/icons-material/Link';
 
 const TabContent = ({
   tabKey,
@@ -93,28 +92,45 @@ const TabContent = ({
         </Typography>
       )}*/}
 
-      {/* Link do wymagań */}
-        {tab.link && (
-          <Box
-            onClick={() => navigate(tab.link)}
-            sx={{
-              display: "inline-flex",
-              alignItems: "center",
-              mt: 0.5, // minimalny odstęp od tytułu/obrazka
-              cursor: "pointer",
-              color: "primary.main",
-              fontWeight: 500,
-              textDecoration: "underline",
-              "&:hover": { opacity: 0.8 },
-              mx: "auto",
-              gap: 0.5, // odstęp między tekstem a ikoną
-              fontSize: 14, // mniejszy tekst
-            }}
-          >
-            <LinkIcon sx={{ fontSize: 16 }} /> {/* ikona */}
-            {t("id_link")}
-          </Box>
-        )}
+      {/* Linki do wymagań i How It Works */}
+{tab.link && (
+  <Box
+    sx={{
+      display: "inline-flex",
+      alignItems: "center",
+      mt: 0.5,
+      cursor: "pointer",
+      color: "primary.main",
+      fontWeight: 500,
+      textDecoration: "underline",
+      mx: "auto",
+      gap: 0.5,
+      fontSize: 14,
+    }}
+  >
+    {/* Link do wymagań */}
+        <Box
+          onClick={() => navigate(tab.link)}
+          sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}
+        >
+          {/* <LinkIcon sx={{ fontSize: 16 }} /> */}
+
+          {t("id_link")}
+        </Box>
+
+        {/* Pionowa kreska */}
+        <Typography sx={{ mx: 1, color: "text.primary" }}>|</Typography>
+
+        {/* Link do How It Works */}
+        <Box
+          onClick={() => navigate("/how-it-works")}
+          sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}
+        >
+          {/* <LinkIcon sx={{ fontSize: 16 }} /> */}
+          {t("how_it_works.link_text", "Jak działa aplikacja")}
+        </Box>
+      </Box>
+    )}
 
       {/* Kontener pól */}
         <Box

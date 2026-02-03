@@ -57,5 +57,20 @@
       { "primary": "Kontaktlinsen", "secondary": "Kontaktlinsen sind erlaubt, sofern sie die natürliche Augenfarbe nicht verändern." }
     ],
     "footer": "Denken Sie daran, dass das Foto auf hochwertigem Fotopapier gedruckt werden muss. Wenn das Foto die Anforderungen nicht erfüllt, kann es vom Sachbearbeiter abgelehnt werden."
-  }
+  },
+    "how_it_works": {
+      "link_text": "Wie funktioniert es?",
+      "title": "Wie PhotoIDCreator funktioniert",
+      "subtitle": "Erstellen Sie professionelle Ausweis- und Passfotos in wenigen Minuten – direkt von Ihrem Handy oder Computer.",
+      "steps": [
+        "Wählen Sie das Papierformat (A4, 10×15 cm usw.), auf dem Sie Ihre Fotos drucken möchten",
+        "Laden Sie Ihr Foto hoch (mit Ihrem Handy oder Ihrer Kamera aufgenommen)",
+        "Schneiden Sie das Foto zu und entfernen Sie den Hintergrund, damit es den offiziellen Anforderungen entspricht",
+        "Überprüfen Sie die Vorschau des Blattes mit den hinzugefügten Fotos – stellen Sie sicher, dass alles korrekt aussieht",
+        "Zahlen Sie eine geringe Gebühr und laden Sie das druckfertige Blatt herunter"
+      ],
+      "final_step": "Sie können zu einem örtlichen Fotodruckgeschäft, Rossmann oder Cewe gehen und Ihre Fotos ausdrucken",
+      "video_title": "Wie PhotoIDCreator funktioniert"
+}
+
 }

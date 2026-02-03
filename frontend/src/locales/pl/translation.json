@@ -3,11 +3,14 @@
   "title": "PhotoIDCreator",
   "sub_title": "Zrób zdjęcie do dowodu samodzielnie",
   "sub_description": "Zrób je sam z telefonu - szybko, łatwo i tanio!",
+
   "id_tab": "Dowód osobisty / Prawo jazdy",
   "custom_tab": "Własne",
   "id_link": "Wymagania zdjęcia",
+
   "format": "Format papieru",
   "format_info": "Wybierz format papieru, na którym zostanie wydrukowane zdjęcie",
+
   "foto_selection": "Wybierz zdjęcie",
   "foto_size": "Wymiary zdjęcia",
   "color_choice": "Kolor tła",
@@ -19,11 +22,13 @@
   "remove_bg": "Usuń tło",
   "add_to_sheet": "Zapisz",
   "zoom": "Powiększenie",
+
   "sheet_header": "Zdjęcia dodane do arkusza",
   "duplicate_photo": "Powiel zdjęcie",
   "clear_sheet": "Wyczyść arkusz",
   "download_sheet": "Pobierz arkusz",
   "sheetThumbnail": "Miniatura arkusza",
+
   "foto_upload_info": "Aby uzyskać najlepsze rezultaty, użyj zdjęcia zrobionego na jednolitym tle. Unikaj zdjęć z cieniami, odblaskami lub innymi obiektami w tle. Jeżeli przycięte zdjęcie nie spełnia wymagań, spróbuj ponownie z innym zdjęciem.",
 
   "donateHeader": "Postaw mi kawę",
@@ -31,8 +36,8 @@
   "donateDescription": "Twoja darowizna wspiera rozwój aplikacji i pokrywa koszty jej utrzymania. Dziękujemy za każde wsparcie!",
   "cancel": "Anuluj",
   "donate": "Wspieram",
-  "privacyPolicy_title": "Polityka prywatności",
 
+  "privacyPolicy_title": "Polityka prywatności",
   "privacyPolicy_content_header": "Twoja prywatność jest dla nas ważna. Chcemy wyjaśnić, w jaki sposób obsługujemy zdjęcia przesyłane do naszej aplikacji:",
   "privacyPolicy_content": [
     "Wszystkie operacje wykonywane w przeglądarce nie zapisują zdjęć ani żadnych danych osobowych.",
@@ -43,9 +48,8 @@
     "Kontakt: barteksdepot@gmail.com"
   ],
 
-
   "idRequirements": {
-    "title": "Wymagania dotyczące zdjęcia do dowodu lub paszportu",
+    "title": "Wymagania zdjęcia do dowodu lub paszportu",
     "header": "Aby Twoje zdjęcie zostało zaakceptowane przy składaniu wniosku o dowód osobisty lub paszport, musi spełniać następujące wymagania:",
     "list": [
       { "primary": "Aktualność zdjęcia", "secondary": "Zdjęcie powinno być wykonane nie wcześniej niż 6 miesięcy przed złożeniem wniosku." },
@@ -60,14 +64,27 @@
     ],
     "footer": "Pamiętaj, że zdjęcie musi być wykonane na papierze fotograficznym w wysokiej jakości. Jeśli zdjęcie nie spełnia powyższych wymagań, może zostać odrzucone przez urzędnika."
   },
+
   "success_page": {
     "not_downloaded": "Jeśli arkusz nie został automatycznie pobrany, kliknij pobierz:",
     "download_btn": "Pobierz arkusz",
     "gratitude": "Dziękuję za skorzystanie z PhotoIDCreator!",
-    "main_page_btn": "Strona główna"}
+    "main_page_btn": "Strona główna"
+  },
+
+  "how_it_works": {
+    "link_text": "Jak to działa?",
+    "title": "Jak działa PhotoIDCreator",
+    "subtitle": "Stwórz profesjonalne zdjęcia do dowodu i paszportu w kilka minut – bezpośrednio z telefonu lub komputera.",
+    "steps": [
+      "Wybierz format papieru (A4, 10×15 cm,...) na którym chcesz wydrukować zdjęcia",
+      "Prześlij swoje zdjęcie (zrobione telefonem lub aparatem)",
+      "Wykadruj zdjęcie i usuń tło, aby spełniało wymagania urzędowe",
+      "Zweryfikuj podgląd arkusza z dodanymi zdjęciami - upewnij się, że wszystko wygląda dobrze",
+      "Zapłać niewielką opłatę i pobierz gotowy arkusz do druku"
+    ],
+    "final_step": "Możesz udać się do lokalnej drukarni, Rossmanna lub Cewe i wydrukować swoje zdjęcia",
+    "video_title": "Jak działa PhotoIDCreator"
+
+  }
 }
-
-
-
-
-

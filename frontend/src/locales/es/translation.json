@@ -57,5 +57,20 @@
       { "primary": "Lentes de contacto", "secondary": "Se permiten lentes de contacto siempre que no alteren el color natural de los ojos." }
     ],
     "footer": "Recuerde que la foto debe imprimirse en papel fotográfico de alta calidad. Si la foto no cumple con los requisitos, puede ser rechazada por el funcionario."
-  }
+  },
+    "how_it_works": {
+      "link_text": "¿Cómo funciona?",
+      "title": "Cómo funciona PhotoIDCreator",
+      "subtitle": "Crea fotos profesionales para DNI y pasaporte en minutos – directamente desde tu teléfono o computadora.",
+      "steps": [
+        "Elige el formato de papel (A4, 10×15 cm, etc.) en el que deseas imprimir tus fotos",
+        "Sube tu foto (tomada con tu teléfono o cámara)",
+        "Recorta la foto y elimina el fondo para cumplir con los requisitos oficiales",
+        "Previsualiza la hoja con las fotos agregadas – asegúrate de que todo se vea correctamente",
+        "Paga una pequeña tarifa y descarga la hoja lista para imprimir"
+      ],
+      "final_step": "Puedes ir a una imprenta local, Rossmann o Cewe y imprimir tus fotos",
+      "video_title": "Cómo funciona PhotoIDCreator"
+}
+
 }

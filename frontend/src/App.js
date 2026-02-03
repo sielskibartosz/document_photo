@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import IdRequirementsPage from "./pages/IdRequirementsPage";
 import DownloadSuccessPage from "./pages/DownloadSuccessPage";
+import HowItWorksPage from "./pages/HowItWorksPage";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 
@@ -26,6 +27,7 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/id-requirements" element={<IdRequirementsPage />} />
           <Route path="/download-success" element={<DownloadSuccessPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
         </Routes>
 
         <CookiesBanner />

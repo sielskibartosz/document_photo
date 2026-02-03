@@ -62,7 +62,23 @@
     "not_downloaded": "If the download does not start automatically, please click download:",
     "download_btn": "Download Sheet",
     "gratitude": "Thank you for using PhotoIDCreator!",
-    "main_page_btn": "Main Page"}
+    "main_page_btn": "Main Page"},
+
+  "how_it_works": {
+  "link_text": "How it works?",
+  "title": "How PhotoIDCreator works",
+  "subtitle": "Create professional ID and passport photos in minutes – directly from your phone or computer.",
+  "steps": [
+    "Choose the paper format (A4, 10×15 cm, etc.) on which you want to print your photos",
+    "Upload your photo (taken with your phone or camera)",
+    "Crop the photo and remove the background to meet official requirements",
+    "Preview the sheet with added photos – make sure everything looks correct",
+    "Pay a small fee and download the ready-to-print sheet"
+  ],
+  "final_step": "You can go to a local print shop, Rossmann, or Cewe to print your photos",
+  "video_title": "How PhotoIDCreator works"
+}
+
 
 }
 
