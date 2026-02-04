@@ -13,10 +13,19 @@ const DownloadSuccessPage = () => {
   const download_btn = t('success_page.download_btn');
   const main_page_btn = t('success_page.main_page_btn');
 
-
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
+    // 🔴 Google Ads Conversion Event
+    if (window.gtag) {
+      window.gtag('event', 'purchase_success', {
+        event_category: 'ecommerce',
+        event_label: 'PhotoIDCreator',
+        value: 1,
+      });
+    }
+
+    // ⬇️ Pobieranie pliku
     const dataUrl = sessionStorage.getItem("sheetBlob");
     if (!dataUrl) return;
 
@@ -27,7 +36,6 @@ const DownloadSuccessPage = () => {
     link.click();
     document.body.removeChild(link);
 
-    // można usunąć z sessionStorage po pobraniu
     sessionStorage.removeItem("sheetBlob");
   }, []);
 
@@ -58,8 +66,9 @@ const DownloadSuccessPage = () => {
         <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom color="text.primary">
           {gratitude}
         </Typography>
+
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          {not_downloaded}
+          {not_downloaded}{" "}
           <Button
             variant="text"
             onClick={() => {
