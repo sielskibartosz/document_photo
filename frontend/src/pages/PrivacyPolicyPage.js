@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { darkTheme } from "../styles/theme";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
 
 export default function PrivacyPolicyPage() {
   const { t } = useTranslation();
@@ -30,6 +31,13 @@ export default function PrivacyPolicyPage() {
         position: "relative",
       }}
     >
+     {/* SEO */}
+      <SEO
+        title="PhotoIDCreator – Polityka prywatności"
+        description="Poznaj politykę prywatności PhotoIDCreator. Dowiedz się, jakie dane zbieramy, jak je przetwarzamy i jak dbamy o Twoją prywatność."
+        url="https://photoidcreator.com/privacy-policy"
+      />
+
       {/* Strzałka wstecz */}
       <IconButton
         onClick={() => navigate("/")}

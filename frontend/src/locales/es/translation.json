@@ -5,8 +5,11 @@
   "id_tab": "DNI / Licencia de conducir",
   "custom_tab": "Personalizado",
   "id_link": "Requisitos de la foto",
+
   "format": "Tamaño de papel",
   "format_info": "Seleccione el tamaño de papel para imprimir la foto",
+  "close": "Cerrar",
+
   "foto_selection": "Elegir foto",
   "foto_size": "Dimensiones de la foto",
   "color_choice": "Color de fondo",

@@ -4,9 +4,12 @@
   "sub_title": "Low cost document photos",
   "id_tab": "ID Card / Driving License",
   "custom_tab": "Custom",
+
   "id_link": "Photo requirements",
   "format": "Paper Size",
   "format_info": "Select the paper size for printing the photo",
+  "close": "Close",
+
   "foto_selection": "Select a Photo",
   "foto_size": "Photo Dimensions",
   "color_choice": "Background Color",

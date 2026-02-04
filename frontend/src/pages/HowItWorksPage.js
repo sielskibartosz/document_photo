@@ -11,6 +11,7 @@ import PreviewIcon from "@mui/icons-material/Visibility";
 import PaymentIcon from "@mui/icons-material/Payment";
 import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
+import SEO from "../components/SEO";
 
 const HowItWorksPage = () => {
   const navigate = useNavigate();
@@ -26,7 +27,12 @@ const HowItWorksPage = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-
+       {/* SEO */}
+      <SEO
+        title="PhotoIDCreator – Jak działa aplikacja"
+        description="Dowiedz się, jak w prostych krokach przygotować zdjęcia do dowodu, paszportu, legitymacji lub wizy online z PhotoIDCreator."
+        url="https://photoidcreator.com/how-it-works"
+      />
       <Box
         sx={{
           minHeight: "100vh",

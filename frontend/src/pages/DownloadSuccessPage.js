@@ -3,6 +3,7 @@ import { Box, Button, Typography, ThemeProvider, CssBaseline, useMediaQuery } fr
 import { useNavigate } from "react-router-dom";
 import { darkTheme } from "../styles/theme";
 import { useTranslation } from 'react-i18next';
+import SEO from "../components/SEO";
 
 const DownloadSuccessPage = () => {
   const navigate = useNavigate();
@@ -40,8 +41,14 @@ const DownloadSuccessPage = () => {
   }, []);
 
   return (
+
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+      <SEO
+        title="PhotoIDCreator – pobranie zdjęcia zakończone sukcesem"
+        description="Dziękujemy za użycie PhotoIDCreator. Twoje zdjęcie do dokumentów zostało wygenerowane i jest gotowe do pobrania."
+        url="https://photoidcreator.com/#/download-success"
+      />
       <Box
         sx={{
           minHeight: "100vh",

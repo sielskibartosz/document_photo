@@ -4,6 +4,7 @@ import { darkTheme } from '../styles/theme';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useTranslation } from 'react-i18next';
+import SEO from "../components/SEO";
 
 const IdRequirementsPage = () => {
   const navigate = useNavigate();
@@ -31,6 +32,12 @@ const IdRequirementsPage = () => {
         boxShadow: darkTheme.shadows[3],
       }}
     >
+    {/* SEO */}
+      <SEO
+        title="PhotoIDCreator – Wymagania zdjęcia do dowodu"
+        description="Dowiedz się, jakie są wymagania zdjęcia do dowodu, paszportu i legitymacji. Z PhotoIDCreator przygotujesz zdjęcie idealne do dokumentów."
+        url="https://photoidcreator.com/id-requirements"
+      />
       {/* Górny pasek: strzałka + tytuł */}
         <Box sx={{ position: 'relative', mb: 3, textAlign: 'center' }}>
           {/* Strzałka wstecz */}
