@@ -31,7 +31,7 @@ export default function CropperPanel({
     setCroppedAreaPixels(areaPixels);
   }, []);
 
-  // Symulowany licznik podczas loadingu
+  // Simulate progress bar
   useEffect(() => {
     if (!loading) {
       setLoadingProgress(0);
@@ -57,26 +57,25 @@ export default function CropperPanel({
   };
 
   const hexToRGBA = (hex) => {
-  try {
-    if (!hex.startsWith("#")) return [239,248,246,255]; // default kremowy
-    let r,g,b;
-    if (hex.length === 7) {
-      r = parseInt(hex.slice(1,3),16);
-      g = parseInt(hex.slice(3,5),16);
-      b = parseInt(hex.slice(5,7),16);
-    } else if (hex.length === 4) {
-      r = parseInt(hex[1]+hex[1],16);
-      g = parseInt(hex[2]+hex[2],16);
-      b = parseInt(hex[3]+hex[3],16);
-    } else {
-      return [239,248,246,255]; // default
+    try {
+      if (!hex.startsWith("#")) return [239, 248, 246, 255]; // default
+      let r, g, b;
+      if (hex.length === 7) {
+        r = parseInt(hex.slice(1, 3), 16);
+        g = parseInt(hex.slice(3, 5), 16);
+        b = parseInt(hex.slice(5, 7), 16);
+      } else if (hex.length === 4) {
+        r = parseInt(hex[1] + hex[1], 16);
+        g = parseInt(hex[2] + hex[2], 16);
+        b = parseInt(hex[3] + hex[3], 16);
+      } else {
+        return [239, 248, 246, 255];
+      }
+      return [r, g, b, 255];
+    } catch (e) {
+      return [239, 248, 246, 255];
     }
-    return [r,g,b,255];
-  } catch(e) {
-    return [239,248,246,255]; // default
-  }
-};
-
+  };
 
   const handleCropAndRemoveBg = async () => {
     if (!imageSrc || !croppedAreaPixels) return;
@@ -86,15 +85,13 @@ export default function CropperPanel({
       const height = width / aspectRatio;
       const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
 
-      const blob = cropped.startsWith("data:")
-        ? dataURLtoBlob(cropped)
-        : await (await fetch(cropped)).blob();
+      const blob =
+        cropped.startsWith("data:") ? dataURLtoBlob(cropped) : await (await fetch(cropped)).blob();
 
       const formData = new FormData();
       formData.append("image", blob, "cropped.png");
       formData.append("bg_color", JSON.stringify(hexToRGBA(bgColor)));
-      console.log("Sending bg color:", hexToRGBA(bgColor));
-
+//      console.log("Sending bg color:", hexToRGBA(bgColor));
 
       const response = await fetch(`${BACKEND_URL}/remove-background/`, {
         method: "POST",
@@ -102,21 +99,16 @@ export default function CropperPanel({
       });
 
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.detail || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        const errText = await response.text();
+        throw new Error(errText || t("remove_bg_error", "Błąd przy usuwaniu tła"));
       }
 
-      const resultJson = await response.json();
-      const imageData = resultJson.image;
-      const byteCharacters = atob(imageData);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-      const byteArray = new Uint8Array(byteNumbers);
-      const objectUrl = URL.createObjectURL(new Blob([byteArray], { type: "image/png" }));
+      // --- NEW: read as blob instead of JSON ---
+      const resultBlob = await response.blob();
+      const objectUrl = URL.createObjectURL(resultBlob);
 
       setNoBgImage(objectUrl);
       if (onAddToSheet) onAddToSheet(objectUrl);
-
     } catch (error) {
       alert(error.message);
     } finally {

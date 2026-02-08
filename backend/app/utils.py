@@ -1,13 +1,17 @@
+import json
 
-def hex_to_rgba(hex_color: str):
-    hex_color = hex_color.lstrip('#')
-    length = len(hex_color)
-    if length == 6:
-        r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
-        a = 255
-    elif length == 8:
-        r, g, b, a = (int(hex_color[0:2], 16), int(hex_color[2:4], 16),
-                      int(hex_color[4:6], 16), int(hex_color[6:8], 16))
-    else:
+
+def parse_bg_color(bg_color: str):
+    """Safely parse bg_color string into valid RGBA tuple."""
+    try:
+        if bg_color.startswith("[") and bg_color.endswith("]"):
+            bg_list = json.loads(bg_color)
+        else:
+            bg_list = [int(x) for x in bg_color.split(",")]
+        # Clamp values and ensure 4 elements
+        bg_list = [max(0, min(255, int(c))) for c in bg_list[:4]]
+        while len(bg_list) < 4:
+            bg_list.append(255)
+        return tuple(bg_list)
+    except Exception:
         return (255, 255, 255, 255)
-    return (r, g, b, a)
