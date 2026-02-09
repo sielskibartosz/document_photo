@@ -16,3 +16,11 @@ primary_region = "ams"
   memory = '4gb'
   cpu_kind = 'shared'
   cpus = 2
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+

@@ -10,11 +10,40 @@ from PIL import Image
 from transparent_background import Remover
 import logging
 
-# Configure logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("uvicorn")
+# -----------------------
+# Configure logging
+# -----------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+logger = logging.getLogger("remove-bg")
 
+# -----------------------
+# Load env and allowed origins
+# -----------------------
+load_dotenv()
+allowed_origin = os.getenv("ALLOWED_ORIGIN", "")
+allowed_origins = [o.strip() for o in allowed_origin.split(",") if o.strip()]
 
+# -----------------------
+# FastAPI app
+# -----------------------
+app = FastAPI(title="Remove Background API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins or ["*"],  # jeśli brak env, pozwól wszystkim
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+remover = Remover()
+MAX_DIMENSION = 5000
+
+# -----------------------
+# Helper
+# -----------------------
 def parse_bg_color(bg_color: str):
     try:
         if bg_color.startswith("[") and bg_color.endswith("]"):
@@ -28,27 +57,14 @@ def parse_bg_color(bg_color: str):
     except Exception:
         return (255, 255, 255, 255)
 
-
-app = FastAPI(title="Remove Background API")
-load_dotenv()
-allowed_origin = os.getenv("ALLOWED_ORIGIN", "").split(",")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origin,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-remover = Remover()
-MAX_DIMENSION = 5000
-
-
+# -----------------------
+# Endpoints
+# -----------------------
 @app.post("/remove-background/")
 async def remove_background(
-        background_tasks: BackgroundTasks,
-        image: UploadFile = File(...),
-        bg_color: str = Form("[255,255,255]"),
+    background_tasks: BackgroundTasks,
+    image: UploadFile = File(...),
+    bg_color: str = Form("[255,255,255]"),
 ):
     try:
         contents = await image.read()
@@ -67,6 +83,7 @@ async def remove_background(
             composed.save(tmp.name, format="PNG")
             tmp_path = tmp.name
 
+        # Usuń plik po wysłaniu
         background_tasks.add_task(lambda: os.remove(tmp_path))
         logger.info(f"Processed image {image.filename}, size {img.size}")
 
@@ -76,7 +93,16 @@ async def remove_background(
         logger.exception("Error processing image")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-
 @app.get("/ping")
 def ping():
+    logger.info("Ping received")
     return {"message": "Server is running!"}
+
+# -----------------------
+# Run server
+# -----------------------
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8080))
+    logger.info(f"Starting server on 0.0.0.0:{port}")
+    uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
