@@ -46,7 +46,7 @@ app.add_middleware(
 logger = logging.getLogger("uvicorn")
 
 # --- Model ---
-remover = Remover()  # default U2Net
+remover = Remover() # default U2Net
 
 # --- Constants ---
 MAX_DIMENSION = 5000  # Max width/height to limit memory usage

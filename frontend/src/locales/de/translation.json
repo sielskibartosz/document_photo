@@ -59,6 +59,14 @@
     ],
     "footer": "Denken Sie daran, dass das Foto auf hochwertigem Fotopapier gedruckt werden muss. Wenn das Foto die Anforderungen nicht erfüllt, kann es vom Sachbearbeiter abgelehnt werden."
   },
+    "success_page": {
+  "not_downloaded": "Wenn der Download nicht automatisch startet, klicken Sie bitte hier, um den Download zu starten:",
+  "download_btn": "Herunterladen",
+  "gratitude": "Vielen Dank, dass Sie PhotoIDCreator verwendet haben! Wir hoffen, dass Sie mit dem Ergebnis zufrieden sind.",
+  "main_page_btn": "Startseite",
+  "download_problems": "Haben Sie Probleme beim Herunterladen des Dokuments? Versuchen Sie es erneut oder schreiben Sie uns an: barteksdepot@gmail.com"
+},
+
     "how_it_works": {
       "link_text": "Wie funktioniert es?",
       "title": "Wie PhotoIDCreator funktioniert",

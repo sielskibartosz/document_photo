@@ -70,7 +70,8 @@
     "not_downloaded": "Jeśli arkusz nie został automatycznie pobrany, kliknij pobierz:",
     "download_btn": "Pobierz arkusz",
     "gratitude": "Dziękuję za skorzystanie z PhotoIDCreator!",
-    "main_page_btn": "Strona główna"
+    "main_page_btn": "Strona główna",
+    "download_problems": "Nie udało Ci się pobrać arkusza? Spróbuj ponownie lub napisz na: barteksdepot@gmail.com"
   },
 
   "how_it_works": {

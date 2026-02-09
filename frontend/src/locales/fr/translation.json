@@ -70,7 +70,8 @@
     "not_downloaded": "Si la planche n’a pas été téléchargée automatiquement, cliquez sur :",
     "download_btn": "Télécharger la planche",
     "gratitude": "Merci d’avoir utilisé PhotoIDCreator !",
-    "main_page_btn": "Page principale"
+    "main_page_btn": "Page principale",
+    "download_problems": "Vous n’arrivez pas à télécharger la planche? Essayez à nouveau ou contactez‑nous: barteksdepot@gmail.com"
   },
 
   "how_it_works": {

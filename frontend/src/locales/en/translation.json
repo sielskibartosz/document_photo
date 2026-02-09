@@ -65,7 +65,9 @@
     "not_downloaded": "If the download does not start automatically, please click download:",
     "download_btn": "Download Sheet",
     "gratitude": "Thank you for using PhotoIDCreator!",
-    "main_page_btn": "Main Page"},
+    "main_page_btn": "Main Page",
+    "download_problems": "Having trouble downloading the sheet? Try again or contact us: barteksdepot@gmail.com"
+  },
 
   "how_it_works": {
   "link_text": "How it works?",

@@ -61,6 +61,15 @@
     ],
     "footer": "Recuerde que la foto debe imprimirse en papel fotográfico de alta calidad. Si la foto no cumple con los requisitos, puede ser rechazada por el funcionario."
   },
+
+  "success_page": {
+    "not_downloaded": " Si la hoja no se descargó automáticamente, haga clic en:",
+    "download_btn": "Descargar hoja",
+    "gratitude": "¡Gracias por usar PhotoIDCreator!",
+    "main_page_btn": "Volver a la página principal",
+    "download_problems": "¿No puedes descargar la hoja? Intenta nuevamente o contáctanos: barteksdepot@gmail.com"
+  },
+
     "how_it_works": {
       "link_text": "¿Cómo funciona?",
       "title": "Cómo funciona PhotoIDCreator",

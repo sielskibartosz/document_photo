@@ -13,6 +13,7 @@ const DownloadSuccessPage = () => {
   const not_downloaded = t('success_page.not_downloaded');
   const download_btn = t('success_page.download_btn');
   const main_page_btn = t('success_page.main_page_btn');
+  const download_problems = t('success_page.download_problems');
 
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
@@ -41,7 +42,6 @@ const DownloadSuccessPage = () => {
   }, []);
 
   return (
-
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <SEO
@@ -98,9 +98,15 @@ const DownloadSuccessPage = () => {
           variant="contained"
           color="primary"
           onClick={() => navigate("/")}
+          sx={{ mb: 3 }}
         >
           {main_page_btn}
         </Button>
+
+        {/* Sekcja kontaktowa */}
+        <Typography variant="body2" color="text.secondary">
+          {download_problems}
+        </Typography>
       </Box>
     </ThemeProvider>
   );
