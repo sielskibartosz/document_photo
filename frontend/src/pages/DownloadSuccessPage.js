@@ -1,44 +1,57 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Box, Button, Typography, ThemeProvider, CssBaseline, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { darkTheme } from "../styles/theme";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import SEO from "../components/SEO";
 
 const DownloadSuccessPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const gratitude = t('success_page.gratitude');
-  const not_downloaded = t('success_page.not_downloaded');
-  const download_btn = t('success_page.download_btn');
-  const main_page_btn = t('success_page.main_page_btn');
-  const download_problems = t('success_page.download_problems');
+  const gratitude = t("success_page.gratitude");
+  const not_downloaded = t("success_page.not_downloaded");
+  const download_btn = t("success_page.download_btn");
+  const main_page_btn = t("success_page.main_page_btn");
+  const download_problems = t("success_page.download_problems");
 
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+
+  // 🔒 zabezpieczenie przed wielokrotnym auto-downloadem
+  const autoDownloadTriggered = useRef(false);
+
+  const downloadFile = () => {
+    const dataUrl = sessionStorage.getItem("sheetBlob");
+    if (!dataUrl) return false;
+
+    try {
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = "sheet.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   useEffect(() => {
     // 🔴 Google Ads Conversion Event
     if (window.gtag) {
-      window.gtag('event', 'purchase_success', {
-        event_category: 'ecommerce',
-        event_label: 'PhotoIDCreator',
+      window.gtag("event", "purchase_success", {
+        event_category: "ecommerce",
+        event_label: "PhotoIDCreator",
         value: 1,
       });
     }
 
-    // ⬇️ Pobieranie pliku
-    const dataUrl = sessionStorage.getItem("sheetBlob");
-    if (!dataUrl) return;
-
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = "sheet.jpg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    sessionStorage.removeItem("sheetBlob");
+    // ⬇️ próba automatycznego pobrania
+    if (!autoDownloadTriggered.current) {
+      autoDownloadTriggered.current = true;
+      downloadFile();
+    }
   }, []);
 
   return (
@@ -49,6 +62,7 @@ const DownloadSuccessPage = () => {
         description="Dziękujemy za użycie PhotoIDCreator. Twoje zdjęcie do dokumentów zostało wygenerowane i jest gotowe do pobrania."
         url="https://photoidcreator.com/#/download-success"
       />
+
       <Box
         sx={{
           minHeight: "100vh",
@@ -70,40 +84,30 @@ const DownloadSuccessPage = () => {
           boxShadow: darkTheme.shadows[4],
         }}
       >
-        <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom color="text.primary">
+        <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom>
           {gratitude}
         </Typography>
 
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          {not_downloaded}{" "}
-          <Button
-            variant="text"
-            onClick={() => {
-              const dataUrl = sessionStorage.getItem("sheetBlob");
-              if (!dataUrl) return;
-              const link = document.createElement("a");
-              link.href = dataUrl;
-              link.download = "sheet.jpg";
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }}
-          >
-            {download_btn}
-          </Button>
-          .
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          {not_downloaded}
         </Typography>
 
         <Button
           variant="contained"
-          color="primary"
+          onClick={downloadFile}
+          sx={{ mb: 3 }}
+        >
+          {download_btn}
+        </Button>
+
+        <Button
+          variant="outlined"
           onClick={() => navigate("/")}
           sx={{ mb: 3 }}
         >
           {main_page_btn}
         </Button>
 
-        {/* Sekcja kontaktowa */}
         <Typography variant="body2" color="text.secondary">
           {download_problems}
         </Typography>
