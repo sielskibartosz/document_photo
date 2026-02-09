@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from PIL import Image
 from transparent_background import Remover
 import logging
-from .helpers import parse_bg_color
+from helpers import parse_bg_color
 import sys
 print(sys.path)
 
