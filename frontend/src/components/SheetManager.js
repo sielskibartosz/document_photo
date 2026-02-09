@@ -24,9 +24,12 @@ const SheetManager = ({
   const photoWidthCm = 3.5;
   const maxPhotoHeightCm = 4.5;
 
-  // --- Generowanie arkusza ---
   const generateSheet = async () => {
-    if (!sheetImages.length) return { url: null, visibleCount: 0, blob: null };
+    if (!sheetImages.length) {
+      console.warn("No images to generate the sheet.");
+      return { url: null, visibleCount: 0, blob: null };
+    }
+
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
     const heightPx = Math.round(cmToPx(format.height, dpi));
@@ -47,15 +50,25 @@ const SheetManager = ({
     for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio } = sheetImages[i];
       const img = await createImage(image);
+
+      // Sprawdź, czy img jest poprawny
+      if (!img) {
+        console.warn(`Image at index ${i} could not be created.`);
+        continue;
+      }
+
       let imgHeight = Math.round(imgWidth / aspectRatio);
       const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
       if (imgHeight > maxHeightPx) {
         imgHeight = maxHeightPx;
         imgWidth = Math.round(imgHeight * aspectRatio);
       }
+
       const x = margin + colIndex * (imgWidth + margin);
       const y = currentY;
+
       if (y + imgHeight + margin > heightPx) break;
+
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
       ctx.lineWidth = 2;
       ctx.strokeStyle = "black";
@@ -63,6 +76,7 @@ const SheetManager = ({
       actualCount++;
       currentRowHeight = Math.max(currentRowHeight, imgHeight);
       colIndex++;
+
       if (colIndex >= cols) {
         colIndex = 0;
         currentY += currentRowHeight + margin;
@@ -72,6 +86,11 @@ const SheetManager = ({
 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
+        if (!blob) {
+          console.error("Blob generation failed.");
+          resolve({ url: null, visibleCount: actualCount, blob: null });
+          return;
+        }
         const url = URL.createObjectURL(blob);
         resolve({ url, visibleCount: actualCount, blob });
       }, "image/jpeg", 0.92);
@@ -101,7 +120,6 @@ const SheetManager = ({
     }
   }, [sheetImages, createSheetImage]);
 
-  // --- Czyszczenie arkusza ---
   const onClearSheetClick = () => {
     if (clearSheet) clearSheet();
     else {
@@ -112,36 +130,32 @@ const SheetManager = ({
     }
   };
 
-  // --- Duplikowanie pierwszego zdjęcia ---
   const duplicateImage = () => {
     if (!sheetImages.length) return;
     setSheetImages((prev) => [...prev, prev[0]]);
   };
 
-  // --- Zapisz arkusz w local storage  i otwórz Stripe ---
-     const handleDownloadClick = async () => {
-      try {
-        const result = await generateSheet();
-        if (!result?.blob) return;
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          sessionStorage.setItem("sheetBlob", reader.result);
-
-          const lang = i18n.language || "pl";
-          const stripeLink = PAYMENT_LINKS[lang] || PAYMENT_LINKS.en;
-
-          // przekierowanie w tej samej karcie (lepsze dla Stripe)
-          window.location.href = stripeLink;
-        };
-
-        reader.readAsDataURL(result.blob);
-      } catch (err) {
-        console.error("Error generating sheet:", err);
+  const handleDownloadClick = async () => {
+    try {
+      const result = await generateSheet();
+      if (!result?.blob) {
+        alert("Nie udało się wygenerować arkusza.");
+        return;
       }
-    };
 
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        sessionStorage.setItem("sheetBlob", reader.result);
+        const lang = i18n.language || "pl";
+        const stripeLink = PAYMENT_LINKS[lang] || PAYMENT_LINKS.en;
+        window.location.href = stripeLink;
+      };
 
+      reader.readAsDataURL(result.blob);
+    } catch (err) {
+      console.error("Błąd podczas generowania arkusza:", err);
+    }
+  };
 
   if (!showSheetPreview || !sheetUrl) return null;
 

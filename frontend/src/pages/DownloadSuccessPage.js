@@ -24,7 +24,6 @@ const DownloadSuccessPage = () => {
 
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
-  // zabezpieczenie przed wielokrotnym auto-downloadem
   const autoDownloadTriggered = useRef(false);
 
   const downloadFile = () => {
@@ -36,7 +35,6 @@ const DownloadSuccessPage = () => {
     }
 
     try {
-      // 🔁 dataURL -> Blob (KLUCZOWE)
       const parts = dataUrl.split(",");
       const mime = parts[0].match(/:(.*?);/)?.[1] || "image/jpeg";
       const binary = atob(parts[1]);
@@ -60,12 +58,12 @@ const DownloadSuccessPage = () => {
       return true;
     } catch (err) {
       console.error("Download failed", err);
+      alert("Pobieranie nie powiodło się. Spróbuj ponownie.");
       return false;
     }
   };
 
   useEffect(() => {
-    // 🔴 Google Ads Conversion
     if (window.gtag) {
       window.gtag("event", "purchase_success", {
         event_category: "ecommerce",
@@ -74,10 +72,12 @@ const DownloadSuccessPage = () => {
       });
     }
 
-    // ⬇️ próba automatycznego pobrania
     if (!autoDownloadTriggered.current) {
       autoDownloadTriggered.current = true;
-      downloadFile();
+      const success = downloadFile();
+      if (!success) {
+        alert("Nie udało się automatycznie pobrać pliku.");
+      }
     }
   }, []);
 
