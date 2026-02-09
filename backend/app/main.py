@@ -8,16 +8,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from PIL import Image
 from transparent_background import Remover
-import logging
-
-# -----------------------
-# Configure logging
-# -----------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger("remove-bg")
 
 # -----------------------
 # Load env and allowed origins
@@ -72,7 +62,7 @@ async def remove_background(
 
         if img.width > MAX_DIMENSION or img.height > MAX_DIMENSION:
             img.thumbnail((MAX_DIMENSION, MAX_DIMENSION))
-            logger.info(f"Image resized to {img.size} to save memory.")
+            print(f"Image resized to {img.size} to save memory.")
 
         result = remover.process(img, type="rgba").convert("RGBA")
         bg_tuple = parse_bg_color(bg_color)
@@ -85,17 +75,17 @@ async def remove_background(
 
         # Usuń plik po wysłaniu
         background_tasks.add_task(lambda: os.remove(tmp_path))
-        logger.info(f"Processed image {image.filename}, size {img.size}")
+        print(f"Processed image {image.filename}, size {img.size}")
 
         return FileResponse(tmp_path, media_type="image/png", filename="result.png")
 
     except Exception as e:
-        logger.exception("Error processing image")
+        print("Error processing image")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @app.get("/ping")
 def ping():
-    logger.info("Ping received")
+    print("Ping received")
     return {"message": "Server is running!"}
 
 # -----------------------
@@ -104,5 +94,5 @@ def ping():
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8080))
-    logger.info(f"Starting server on 0.0.0.0:{port}")
+    print(f"Starting server on 0.0.0.0:{port}")
     uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")

@@ -2,6 +2,7 @@ app = "document-photo"
 primary_region = "ams"
 
 [build]
+dockerfile = "Dockerfile"
 
 [http_service]
   internal_port = 8080
@@ -16,13 +17,4 @@ primary_region = "ams"
   memory = '4gb'
   cpu_kind = 'shared'
   cpus = 2
-
-[[services]]
-  internal_port = 8080
-  protocol = "tcp"
-
-[[services.ports]]
-  port = 80
-  handlers = ["http"]
-
 

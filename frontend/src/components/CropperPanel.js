@@ -39,7 +39,7 @@ export default function CropperPanel({
     }
     let progress = 0;
     const interval = setInterval(() => {
-      progress += Math.random() * 3;
+      progress += Math.random() * 2;
       if (progress >= 100) progress = 99;
       setLoadingProgress(Math.floor(progress));
     }, 300);

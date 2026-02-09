@@ -15,7 +15,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Skopiuj resztę kodu
-COPY . .
+COPY . /app
 
 # Ustaw zmienne środowiskowe
 ENV PYTHONUNBUFFERED=1
@@ -25,4 +25,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Uruchom serwer Uvicorn wskazując właściwą ścieżkę do main.py
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--log-level", "info"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
