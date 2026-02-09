@@ -1,5 +1,12 @@
 import { useEffect, useRef } from "react";
-import { Box, Button, Typography, ThemeProvider, CssBaseline, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  ThemeProvider,
+  CssBaseline,
+  useMediaQuery,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { darkTheme } from "../styles/theme";
 import { useTranslation } from "react-i18next";
@@ -17,28 +24,48 @@ const DownloadSuccessPage = () => {
 
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
-  // 🔒 zabezpieczenie przed wielokrotnym auto-downloadem
+  // zabezpieczenie przed wielokrotnym auto-downloadem
   const autoDownloadTriggered = useRef(false);
 
   const downloadFile = () => {
     const dataUrl = sessionStorage.getItem("sheetBlob");
-    if (!dataUrl) return false;
+
+    if (!dataUrl) {
+      alert("Plik nie jest już dostępny. Wygeneruj zdjęcie ponownie.");
+      return false;
+    }
 
     try {
+      // 🔁 dataURL -> Blob (KLUCZOWE)
+      const parts = dataUrl.split(",");
+      const mime = parts[0].match(/:(.*?);/)?.[1] || "image/jpeg";
+      const binary = atob(parts[1]);
+      const array = new Uint8Array(binary.length);
+
+      for (let i = 0; i < binary.length; i++) {
+        array[i] = binary.charCodeAt(i);
+      }
+
+      const blob = new Blob([array], { type: mime });
+      const url = URL.createObjectURL(blob);
+
       const link = document.createElement("a");
-      link.href = dataUrl;
+      link.href = url;
       link.download = "sheet.jpg";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
       return true;
-    } catch {
+    } catch (err) {
+      console.error("Download failed", err);
       return false;
     }
   };
 
   useEffect(() => {
-    // 🔴 Google Ads Conversion Event
+    // 🔴 Google Ads Conversion
     if (window.gtag) {
       window.gtag("event", "purchase_success", {
         event_category: "ecommerce",
