@@ -9,8 +9,10 @@ from fastapi.responses import FileResponse, JSONResponse
 from PIL import Image
 from transparent_background import Remover
 import logging
+from .helpers import parse_bg_color
+import sys
+print(sys.path)
 
-from utils import parse_bg_color
 
 # --- Setup ---
 app = FastAPI(title="Remove Background API")
