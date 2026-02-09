@@ -2,39 +2,52 @@ import os
 import io
 import json
 import tempfile
+import asyncio
+import logging
+
 from dotenv import load_dotenv
-from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from PIL import Image
 from transparent_background import Remover
-import logging
-import sys
 
-print(sys.path)
+# ---------- helpers ----------
 
 def parse_bg_color(bg_color: str):
-    """Safely parse bg_color string into valid RGBA tuple."""
     try:
-        if bg_color.startswith("[") and bg_color.endswith("]"):
-            bg_list = json.loads(bg_color)
+        if bg_color.startswith("["):
+            bg = json.loads(bg_color)
         else:
-            bg_list = [int(x) for x in bg_color.split(",")]
-        # Clamp values and ensure 4 elements
-        bg_list = [max(0, min(255, int(c))) for c in bg_list[:4]]
-        while len(bg_list) < 4:
-            bg_list.append(255)
-        return tuple(bg_list)
+            bg = [int(x) for x in bg_color.split(",")]
+        bg = [max(0, min(255, int(c))) for c in bg[:4]]
+        while len(bg) < 4:
+            bg.append(255)
+        return tuple(bg)
     except Exception:
         return (255, 255, 255, 255)
 
 
-# --- Setup ---
-app = FastAPI(title="Remove Background API")
+class FileResponseWithCleanup(FileResponse):
+    def __init__(self, *args, cleanup_path=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.cleanup_path = cleanup_path
+
+    async def __call__(self, scope, receive, send):
+        try:
+            await super().__call__(scope, receive, send)
+        finally:
+            if self.cleanup_path and os.path.exists(self.cleanup_path):
+                os.remove(self.cleanup_path)
+
+
+# ---------- app setup ----------
+
 load_dotenv()
+app = FastAPI(title="Remove Background API")
+
 allowed_origin = os.getenv("ALLOWED_ORIGIN", "").split(",")
 
-# --- CORS ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origin,
@@ -42,80 +55,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Logger ---
 logger = logging.getLogger("uvicorn")
 
-# --- Model ---
-remover = Remover() # default U2Net
+# ---------- model ----------
 
-# --- Constants ---
-MAX_DIMENSION = 5000  # Max width/height to limit memory usage
+remover = Remover()  # U2Net
+MAX_DIMENSION = 5000
 
+
+# ---------- endpoint ----------
 
 @app.post("/remove-background/")
 async def remove_background(
-        background_tasks: BackgroundTasks,
-        image: UploadFile = File(...),
-        bg_color: str = Form("[255,255,255]"),
+    image: UploadFile = File(...),
+    bg_color: str = Form("[255,255,255]"),
 ):
     try:
-        # --- Read image ---
         contents = await image.read()
+
         try:
             img = Image.open(io.BytesIO(contents))
-            img.verify()  # Validate image
-            img = Image.open(io.BytesIO(contents)).convert("RGB")  # Reopen for processing
+            img.verify()
+            img = Image.open(io.BytesIO(contents)).convert("RGB")
         except Exception:
-            return JSONResponse(content={"error": "Invalid image"}, status_code=400)
+            return JSONResponse({"error": "Invalid image"}, 400)
 
-        # --- Resize if too large ---
         if img.width > MAX_DIMENSION or img.height > MAX_DIMENSION:
             img.thumbnail((MAX_DIMENSION, MAX_DIMENSION))
-            logger.info(f"Image resized to {img.size} to save memory.")
 
-        # --- Remove background ---
-        result = remover.process(img, type="rgba").convert("RGBA")
+        loop = asyncio.get_running_loop()
+        result = await loop.run_in_executor(
+            None,
+            lambda: remover.process(img, type="rgba").convert("RGBA")
+        )
 
-        # --- Parse background color ---
         bg_tuple = parse_bg_color(bg_color)
-
-        # --- Composite over background ---
         background = Image.new("RGBA", result.size, bg_tuple)
         composed = Image.alpha_composite(background, result)
 
-        # --- Save to temp file ---
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
             composed.save(tmp.name, format="PNG")
             tmp_path = tmp.name
 
-        # --- Schedule deletion ---
-        background_tasks.add_task(lambda: os.remove(tmp_path))
-        logger.info(f"Processed image {image.filename}, size {img.size}")
+        logger.info(
+            f"Sending file {tmp_path}, size={os.path.getsize(tmp_path)} bytes"
+        )
 
-        # --- Return file ---
-        return FileResponse(tmp_path, media_type="image/png", filename="result.png")
+        return FileResponseWithCleanup(
+            tmp_path,
+            media_type="image/png",
+            filename="result.png",
+            headers={
+                "Cache-Control": "no-store",
+                "Content-Disposition": "attachment; filename=result.png",
+            },
+            cleanup_path=tmp_path,
+        )
 
     except Exception as e:
-        logger.exception("Error processing image")
-        return JSONResponse(content={"error": str(e)}, status_code=500)
-
-
-# @app.post("/save-sheet")
-# async def save_sheet(sheet: UploadFile = File(...)):
-#     with open("sheet.jpg", "wb") as f:
-#         shutil.copyfileobj(sheet.file, f)
-#     return {"status": "ok"}
-#
-#
-# @app.get("/download-sheet")
-# def download_sheet():
-#     return FileResponse(
-#         path="sheet.jpg",  # plik wcześniej zapisany
-#         media_type="image/jpeg",
-#         filename="photo.jpg"
-#     )
+        logger.exception("Processing error")
+        return JSONResponse({"error": str(e)}, 500)
 
 
 @app.get("/ping")
 def ping():
-    return {"message": "Server is running!"}
+    return {"status": "ok"}
