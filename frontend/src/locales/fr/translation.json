@@ -1,0 +1,90 @@
+{
+  "language": "Langue",
+  "title": "PhotoIDCreator",
+  "sub_title": "Prenez votre photo d'identité vous-même",
+  "sub_description": "Prenez-la avec votre téléphone — rapide, facile et économique !",
+
+  "id_tab": "Carte d'identité / Permis de conduire",
+  "custom_tab": "Personnalisé",
+  "id_link": "Exigences de la photo",
+
+  "format": "Format de papier",
+  "format_info": "Choisissez le format de papier sur lequel la photo sera imprimée",
+  "close": "Fermer",
+
+  "foto_selection": "Choisir une photo",
+  "foto_size": "Dimensions de la photo",
+  "color_choice": "Couleur de fond",
+  "aspect_tooltip": "Largeur / Hauteur [mm]",
+  "crop_photo": "Rogner la photo",
+  "add_with_bg": "Rogner",
+  "crop_and_remove": "Rogner et changer le fond",
+  "removing_bg": "Traitement…",
+  "remove_bg": "Supprimer le fond",
+  "add_to_sheet": "Enregistrer",
+  "zoom": "Zoom",
+
+  "sheet_header": "Photos ajoutées à la planche",
+  "duplicate_photo": "Dupliquer la photo",
+  "clear_sheet": "Effacer la planche",
+  "download_sheet": "Télécharger la planche",
+  "sheetThumbnail": "Miniature de la planche",
+
+  "foto_upload_info": "Pour de meilleurs résultats, utilisez une photo prise sur un fond uni. Évitez les ombres, reflets ou objets visibles en arrière‑plan. Si la photo recadrée ne remplit pas les exigences officielles, essayez avec une autre image.",
+
+  "donateHeader": "Offrez‑moi un café",
+  "donateTitle": "Soutenez le développement de l’application",
+  "donateDescription": "Votre don aide à développer l’application et couvrir ses coûts. Merci pour votre soutien !",
+  "cancel": "Annuler",
+  "donate": "Soutenir",
+
+  "privacyPolicy_title": "Politique de confidentialité",
+  "privacyPolicy_content_header": "Votre vie privée est importante. Voici comment nous gérons les photos téléchargées :",
+  "privacyPolicy_content": [
+    "Toutes les opérations effectuées dans le navigateur ne sauvegardent aucune photo ni donnée personnelle.",
+    "Les photos téléchargées sont traitées uniquement pour supprimer le fond.",
+    "Les photos ne sont ni stockées ni partagées avec des tiers.",
+    "Nous ne vendons ni ne communiquons aucune photo ou donnée personnelle à des entités externes.",
+    "Les photos sont traitées temporairement et supprimées immédiatement après traitement.",
+    "Contact : barteksdepot@gmail.com"
+  ],
+
+  "idRequirements": {
+    "title": "Exigences pour une photo d’identité ou de passeport",
+    "header": "Pour que votre photo soit acceptée lors d’une demande de carte d’identité ou de passeport en France, elle doit répondre aux exigences suivantes :",
+    "list": [
+      { "primary": "Photo récente", "secondary": "La photo doit avoir été prise dans les 6 derniers mois." },
+      { "primary": "Dimensions de la photo", "secondary": "35 mm (largeur) × 45 mm (hauteur)." },
+      { "primary": "Fond de la photo", "secondary": "Fond uni et clair, sans ombres ni motifs." },
+      { "primary": "Éclairage", "secondary": "Éclairage uniforme, sans ombres sur le visage." },
+      { "primary": "Posture de la personne", "secondary": "La personne doit regarder droit devant avec une expression neutre." },
+      { "primary": "Visibilité du visage", "secondary": "Le visage doit occuper 70‑80 % de la photo, y compris le haut des épaules." },
+      { "primary": "Couvre‑chef", "secondary": "Interdit sauf raisons religieuses strictes, et la totalité du visage doit être visible." },
+      { "primary": "Lunettes", "secondary": "Les lunettes correctrices sont autorisées si les yeux sont visibles et sans reflets gênants." },
+      { "primary": "Lentilles de contact", "secondary": "Autorisées si elles n’altèrent pas la couleur naturelle des yeux." }
+    ],
+    "footer": "Veillez à imprimer cette photo sur papier photo de haute qualité. Si les exigences ne sont pas respectées, la photo peut être refusée."
+  },
+
+  "success_page": {
+    "not_downloaded": "Si la planche n’a pas été téléchargée automatiquement, cliquez sur :",
+    "download_btn": "Télécharger la planche",
+    "gratitude": "Merci d’avoir utilisé PhotoIDCreator !",
+    "main_page_btn": "Page principale"
+  },
+
+  "how_it_works": {
+    "link_text": "Comment ça marche ?",
+    "title": "Comment fonctionne PhotoIDCreator",
+    "subtitle": "Créez des photos professionnelles pour carte d’identité et passeport en quelques minutes – depuis votre téléphone ou ordinateur.",
+    "steps": [
+      "Choisissez le format de papier (A4, 10×15 cm, …) pour l’impression",
+      "Téléchargez votre photo prise avec un téléphone ou un appareil photo",
+      "Recadrez la photo et supprimez le fond pour respecter les exigences officielles",
+      "Vérifiez l’aperçu de la planche avec toutes les photos ajoutées",
+      "Payez le montant demandé et téléchargez votre planche prête à imprimer"
+    ],
+    "final_step": "Vous pouvez ensuite imprimer vos photos en magasin, en pharmacie ou en borne photo.",
+    "video_title": "Comment fonctionne PhotoIDCreator"
+  }
+}

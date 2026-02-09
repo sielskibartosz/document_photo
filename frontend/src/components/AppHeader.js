@@ -48,6 +48,7 @@ export default function AppHeader({ i18n }) {
         <MenuItem value="en">EN</MenuItem>
         <MenuItem value="de">DE</MenuItem>
         <MenuItem value="es">ES</MenuItem>
+        <MenuItem value="fr">FR</MenuItem>
       </Select>
     </Box>
   );
