@@ -1,38 +1,28 @@
-# Wersja Pythona 3.12 slim (mniejsza niż pełna)
+# Wersja Pythona
 FROM python:3.12-slim
 
 # Ustaw katalog roboczy w kontenerze
 WORKDIR /app
 
-# Zainstaluj zależności systemowe potrzebne dla PIL i transparent-background
+# Zainstaluj zależności systemowe potrzebne dla PIL / OpenCV
 RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgomp1 \
  && rm -rf /var/lib/apt/lists/*
 
-# Skopiuj requirements i zainstaluj Python dependencies (cache-friendly)
+# Skopiuj plik z wymaganiami i zainstaluj zależności Python
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Utwórz folder na feedback (persistent volume)
-RUN mkdir -p /app/data && chmod 755 /app/data
-
-# Skopiuj KOD (po instalacji zależności - cache-friendly)
-COPY app/ ./app/
+# Skopiuj resztę kodu
+COPY . /app
 
 # Ustaw zmienne środowiskowe
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PORT=8080 \
-    FEEDBACK_FILE=/app/data/feedback.txt
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
 
-# Otwórz port
+# Otwórz port, na którym będzie nasłuchiwać FastAPI
 EXPOSE 8080
 
-# Uruchom serwer Uvicorn (production-ready)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "2"]
+# Uruchom serwer Uvicorn wskazując właściwą ścieżkę do main.py
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
