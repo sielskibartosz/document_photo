@@ -3,9 +3,11 @@ import io
 import json
 import tempfile
 from dotenv import load_dotenv
-from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from pydantic import BaseModel
+from datetime import datetime
 from PIL import Image
 from transparent_background import Remover
 
@@ -19,7 +21,7 @@ allowed_origins = [o.strip() for o in allowed_origin.split(",") if o.strip()]
 # -----------------------
 # FastAPI app
 # -----------------------
-app = FastAPI(title="Remove Background API")
+app = FastAPI(title="Remove Background & Feedback API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,12 +30,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# -----------------------
+# Background remover
+# -----------------------
 remover = Remover()
 MAX_DIMENSION = 5000
 
-# -----------------------
-# Helper
-# -----------------------
 def parse_bg_color(bg_color: str):
     try:
         if bg_color.startswith("[") and bg_color.endswith("]"):
@@ -47,8 +49,51 @@ def parse_bg_color(bg_color: str):
     except Exception:
         return (255, 255, 255, 255)
 
+
+FEEDBACK_FILE = "feedback.txt"
+ADMIN_KEY = os.getenv("ADMIN_KEY")  # domyślne hasło: 123
+
 # -----------------------
-# Endpoints
+# Dodawanie opinii
+# -----------------------
+@app.post("/api/feedback")
+async def submit_feedback(request: Request):
+    print("feedback endpoint hit")
+    data = await request.json()
+    message = data.get("message")
+    if not message:
+        return {"status": "error", "detail": "Brak wiadomości"}
+
+    from datetime import datetime
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    entry = {"timestamp": now, "message": message}
+
+    with open(FEEDBACK_FILE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry) + "\n")
+
+    return {"status": "ok"}
+
+
+# -----------------------
+# Podgląd opinii (po haśle)
+# -----------------------
+@app.get("/api/feedback/view/{key}")
+async def view_feedback(key: str):
+    if key != ADMIN_KEY:
+        return {"status": "error", "feedbacks": []}
+
+    feedbacks = []
+    try:
+        with open(FEEDBACK_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                feedbacks.append(json.loads(line))
+    except FileNotFoundError:
+        pass
+
+    return {"status": "ok", "feedbacks": feedbacks}
+
+# -----------------------
+# Remove background endpoint
 # -----------------------
 @app.post("/remove-background/")
 async def remove_background(
@@ -83,16 +128,19 @@ async def remove_background(
         print("Error processing image")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
+# -----------------------
+# Ping
+# -----------------------
 @app.get("/ping")
 def ping():
     print("Ping received")
     return {"message": "Server is running!"}
 
 # -----------------------
-# Run server
-# -----------------------
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8080))
-    print(f"Starting server on 0.0.0.0:{port}")
-    uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
+# # Run server
+# # -----------------------
+# if __name__ == "__main__":
+#     import uvicorn
+#     port = int(os.environ.get("PORT", 8000))
+#     print(f"Starting server on 0.0.0.0:{port}")
+#     uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")

@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { grey } from "@mui/material/colors";
 import {
   Box,
   Button,
@@ -6,11 +7,14 @@ import {
   ThemeProvider,
   CssBaseline,
   useMediaQuery,
+  Dialog,
 } from "@mui/material";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 import { useNavigate } from "react-router-dom";
 import { darkTheme } from "../styles/theme";
 import { useTranslation } from "react-i18next";
 import SEO from "../components/SEO";
+import FeedbackForm from "../components/FeedbackForm";
 
 const DownloadSuccessPage = () => {
   const navigate = useNavigate();
@@ -23,8 +27,9 @@ const DownloadSuccessPage = () => {
   const download_problems = t("success_page.download_problems");
 
   const isSmallScreen = useMediaQuery("(max-width:600px)");
-
   const autoDownloadTriggered = useRef(false);
+
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const downloadFile = () => {
     const dataUrl = sessionStorage.getItem("sheetBlob");
@@ -58,7 +63,7 @@ const DownloadSuccessPage = () => {
       return true;
     } catch (err) {
       console.error("Download failed", err);
-      alert("Pobieranie nie powiodło się. Spróbuj ponownie.");
+      alert("Download failed");
       return false;
     }
   };
@@ -95,10 +100,11 @@ const DownloadSuccessPage = () => {
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           alignItems: "center",
           textAlign: "center",
-          p: isSmallScreen ? 2 : 4,
+          pt: isSmallScreen ? 20 : 25,
+          pb: 4,
           width: isSmallScreen ? "95vw" : "80vw",
           margin: "10px auto",
           fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
@@ -109,20 +115,21 @@ const DownloadSuccessPage = () => {
               : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
           borderRadius: 3,
           boxShadow: darkTheme.shadows[4],
+          position: "relative",
         }}
       >
         <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom>
           {gratitude}
         </Typography>
 
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
           {not_downloaded}
         </Typography>
 
         <Button
           variant="contained"
           onClick={downloadFile}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2 }}
         >
           {download_btn}
         </Button>
@@ -130,14 +137,62 @@ const DownloadSuccessPage = () => {
         <Button
           variant="outlined"
           onClick={() => navigate("/")}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2 }}
         >
           {main_page_btn}
         </Button>
 
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
           {download_problems}
         </Typography>
+
+        {/* Pływająca ikonka z podpisem */}
+        <Box
+          onClick={() => setFeedbackOpen(true)}
+          sx={{
+            position: "fixed",
+            bottom: 24,
+            right: 24,
+            zIndex: 999,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            cursor: "pointer",
+            gap: 0.5,
+          }}
+        >
+          <FeedbackIcon
+            sx={{ fontSize: 40, color: "primary.main" }} // rozmiar ikony
+          />
+          <Typography
+            variant="caption"
+            sx={{ color: "primary.main", fontWeight: 500 }}
+          >
+            Zostaw opinię
+          </Typography>
+        </Box>
+
+        {/* Dialog feedback */}
+        <Dialog
+          open={feedbackOpen}
+          onClose={() => setFeedbackOpen(false)}
+          PaperProps={{
+            sx: {
+              backgroundColor: grey, // brak szarej ramki
+              boxShadow: 3,
+              borderRadius: 2,
+              p: 0,
+              m: 0,
+            },
+          }}
+          BackdropProps={{
+            sx: {
+              backgroundColor: "rgba(0,0,0,0.2)", // lekki cień za oknem, opcjonalnie
+            },
+          }}
+        >
+          <FeedbackForm innerBox />
+        </Dialog>
       </Box>
     </ThemeProvider>
   );

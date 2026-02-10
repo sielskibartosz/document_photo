@@ -87,6 +87,11 @@
     ],
     "final_step": "Możesz udać się do lokalnej drukarni, Rossmanna lub Cewe i wydrukować swoje zdjęcia",
     "video_title": "Jak działa PhotoIDCreator"
-
-  }
+  },
+   "feedback": {
+     "header": "Napisz co myślisz o tej aplikacji. Opinie pomagają mi w ulepszaniu strony.",
+     "send_btn": "Wyślij",
+     "success_message": "Dziękuję za Twoją opinię!",
+     "error_message": "Coś poszło nie tak. Spróbuj ponownie później."}
 }
+

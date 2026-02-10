@@ -10,8 +10,9 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import IdRequirementsPage from "./pages/IdRequirementsPage";
 import DownloadSuccessPage from "./pages/DownloadSuccessPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import FeedbackViewPage from "./pages/FeedbackViewPage"; // <-- nowa strona do podglądu opinii
 
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   const { i18n } = useTranslation();
@@ -28,6 +29,7 @@ function App() {
           <Route path="/id-requirements" element={<IdRequirementsPage />} />
           <Route path="/download-success" element={<DownloadSuccessPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/feedback/view/:key" element={<FeedbackViewPage />} />
         </Routes>
 
         <CookiesBanner />
