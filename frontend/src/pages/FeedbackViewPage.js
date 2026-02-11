@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Box, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
-
-const BACKEND_URL = "http://localhost:8000";
+import { BACKEND_URL } from "../constants/backendConfig";  // ✅ DODANE
 
 const FeedbackViewPage = () => {
   const { key } = useParams();
@@ -15,7 +14,7 @@ const FeedbackViewPage = () => {
     const fetchFeedback = async () => {
       try {
         const res = await axios.get(
-          `${BACKEND_URL}/api/feedback/view/${key}`
+          `${BACKEND_URL}/api/feedback/view/${key}/`  // ✅ SLASH NA KOŃCU
         );
 
         if (res.data.status === "ok") {
@@ -35,7 +34,7 @@ const FeedbackViewPage = () => {
 
     if (key) fetchFeedback();
     else setStatus("Brak klucza dostępu.");
-  }, [key]);
+  }, [key, BACKEND_URL]);  // ✅ BACKEND_URL w deps
 
   return (
     <Box
@@ -68,34 +67,33 @@ const FeedbackViewPage = () => {
           }}
         >
           {status}
-        </Typography>
+      </Typography>
       )}
 
       {feedbacks.map((fb, idx) => (
-        <Typography
-          key={idx}
-          sx={{
-            fontSize: 14,
-            lineHeight: 1.6,
-            mb: 1.2,
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {fb.message}
+        <Box key={idx} sx={{ mb: 2 }}>
+          <Typography
+            sx={{
+              fontSize: 14,
+              lineHeight: 1.6,
+              whiteSpace: "pre-wrap",
+              mb: 0.5,
+            }}
+          >
+            {fb.message}
+          </Typography>
           {fb.timestamp && (
             <Typography
               component="span"
               sx={{
-                display: "block",
                 fontSize: 11,
                 color: grey[500],
-                ml: 2,
               }}
             >
               {fb.timestamp}
             </Typography>
           )}
-        </Typography>
+        </Box>
       ))}
     </Box>
   );
