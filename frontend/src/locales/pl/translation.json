@@ -41,12 +41,12 @@
   "privacyPolicy_title": "Polityka prywatności",
   "privacyPolicy_content_header": "Twoja prywatność jest dla nas ważna. Chcemy wyjaśnić, w jaki sposób obsługujemy zdjęcia przesyłane do naszej aplikacji:",
   "privacyPolicy_content": [
-    "Wszystkie operacje wykonywane w przeglądarce nie zapisują zdjęć ani żadnych danych osobowych.",
-    "Zdjęcia przesyłane do aplikacji są przetwarzane wyłącznie w celu usunięcia tła przy użyciu narzędzia Rembg.",
-    "Zdjęcia nie są przechowywane ani udostępniane osobom trzecim.",
-    "Nie sprzedajemy ani nie udostępniamy zdjęć ani innych danych osobowych żadnym podmiotom zewnętrznym.",
-    "Zdjęcia są przetwarzane tymczasowo i usuwane natychmiast po zakończeniu operacji usuwania tła.",
-    "Kontakt: barteksdepot@gmail.com"
+    "Zdjęcia przesyłane do aplikacji są przetwarzane wyłącznie w celu usunięcia tła i nie są przechowywane ani udostępniane osobom trzecim.",
+    "Nie sprzedajemy, nie wynajmujemy ani nie udostępniamy danych osobowych użytkowników żadnym podmiotom zewnętrznym.",
+    "Przetwarzanie zdjęć odbywa się tymczasowo i zdjęcia są usuwane natychmiast po zakończeniu operacji, co zapewnia pełną ochronę prywatności użytkownika.",
+    "Aplikacja nie gromadzi dodatkowych danych osobowych ani nie korzysta z technologii śledzenia.",
+    "Wszelkie dane użytkownika są traktowane poufnie i przetwarzane zgodnie z obowiązującymi przepisami o ochronie danych osobowych.",
+    "Kontakt w sprawach prywatności: barteksdepot@gmail.com"
   ],
 
   "idRequirements": {

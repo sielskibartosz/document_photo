@@ -58,7 +58,7 @@ const CookiesBanner = () => {
       <p style={{ margin: 0 }}>
         Ta strona korzysta z plików cookies, aby poprawić jakość usług.{" "}
         <a
-          href="/privacy-policy"
+          href="/#/privacy-policy"
           style={{ color: "#00bcd4", textDecoration: "underline" }}
         >
           Dowiedz się więcej
@@ -74,6 +74,7 @@ const CookiesBanner = () => {
           borderRadius: "4px",
           cursor: "pointer",
         }}
+        autoFocus
       >
         Akceptuję
       </button>
