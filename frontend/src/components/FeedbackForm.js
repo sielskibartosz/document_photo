@@ -22,7 +22,7 @@ const FeedbackForm = ({ onClose }) => {
     if (!message.trim()) return;
 
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/feedback`, { message });
+      const res = await axios.post(`${BACKEND_URL}/api/feedback/`, { message });
       if (res.data.status === "ok") {
         setStatus(t("feedback.thanks"));
         setMessage("");
