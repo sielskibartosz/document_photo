@@ -25,13 +25,11 @@
   "download_sheet": "Blatt herunterladen",
   "sheetThumbnail": "Blattvorschau",
   "foto_upload_info": "Für beste Ergebnisse verwenden Sie ein Foto vor einheitlichem Hintergrund. Vermeiden Sie Fotos mit Schatten, Spiegelungen oder anderen Objekten im Hintergrund. Wenn das zugeschnittene Foto die Anforderungen nicht erfüllt, versuchen Sie es mit einem anderen Foto erneut.",
-
   "donateHeader": "Kaffee für mich",
   "donateTitle": "Unterstütze die Entwicklung",
   "donateDescription": "Ihre Spende hilft, die Serverkosten zu decken und unterstützt die Weiterentwicklung der Anwendung. Vielen Dank für Ihre Unterstützung!",
   "cancel": "Abbrechen",
   "donate": "Ich spende",
-
   "privacyPolicy_title": "Datenschutz",
   "privacyPolicy_content_header": "Ihre Privatsphäre ist uns wichtig. Wir möchten erklären, wie wir die hochgeladenen Fotos in unserer Anwendung verarbeiten:",
   "privacyPolicy_content": [
@@ -42,44 +40,74 @@
     "Fotos werden nur vorübergehend verarbeitet und nach Abschluss der Hintergrundentfernung sofort gelöscht.",
     "Kontakt: barteksdepot@gmail.com"
   ],
-
   "idRequirements": {
     "title": "Anforderungen an Ausweis- / Passfotos",
     "header": "Damit Ihr Foto bei der Beantragung eines Personalausweises oder Reisepasses akzeptiert wird, muss es die folgenden Anforderungen erfüllen:",
     "list": [
-      { "primary": "Aktualität des Fotos", "secondary": "Das Foto darf nicht älter als 6 Monate vor der Antragstellung sein." },
-      { "primary": "Fotoabmessungen", "secondary": "35 mm (Breite) × 45 mm (Höhe)." },
-      { "primary": "Hintergrund", "secondary": "Einheitlicher, heller Hintergrund (z. B. weiß oder hellblau), ohne Schatten oder dekorative Elemente." },
-      { "primary": "Beleuchtung", "secondary": "Gleichmäßige Beleuchtung, keine Schatten im Gesicht." },
-      { "primary": "Körperhaltung", "secondary": "Blick geradeaus, offene Augen, geschlossener Mund, natürlicher Gesichtsausdruck." },
-      { "primary": "Gesichtssichtbarkeit", "secondary": "Das Gesicht sollte 70–80 % des Fotos einnehmen, einschließlich des gesamten Kopfes und der oberen Schultern." },
-      { "primary": "Kopfbedeckung", "secondary": "Keine Kopfbedeckung, außer aus religiösen Gründen. In diesem Fall muss das gesamte Gesicht sichtbar sein." },
-      { "primary": "Brille", "secondary": "Korrekturbrillen sind erlaubt, solange die Augen deutlich sichtbar sind, die Rahmen die Augenbrauen nicht verdecken und keine Spiegelungen auftreten." },
-      { "primary": "Kontaktlinsen", "secondary": "Kontaktlinsen sind erlaubt, sofern sie die natürliche Augenfarbe nicht verändern." }
+      {
+        "primary": "Aktualität des Fotos",
+        "secondary": "Das Foto darf nicht älter als 6 Monate vor der Antragstellung sein."
+      },
+      {
+        "primary": "Fotoabmessungen",
+        "secondary": "35 mm (Breite) × 45 mm (Höhe)."
+      },
+      {
+        "primary": "Hintergrund",
+        "secondary": "Einheitlicher, heller Hintergrund (z. B. weiß oder hellblau), ohne Schatten oder dekorative Elemente."
+      },
+      {
+        "primary": "Beleuchtung",
+        "secondary": "Gleichmäßige Beleuchtung, keine Schatten im Gesicht."
+      },
+      {
+        "primary": "Körperhaltung",
+        "secondary": "Blick geradeaus, offene Augen, geschlossener Mund, natürlicher Gesichtsausdruck."
+      },
+      {
+        "primary": "Gesichtssichtbarkeit",
+        "secondary": "Das Gesicht sollte 70–80 % des Fotos einnehmen, einschließlich des gesamten Kopfes und der oberen Schultern."
+      },
+      {
+        "primary": "Kopfbedeckung",
+        "secondary": "Keine Kopfbedeckung, außer aus religiösen Gründen. In diesem Fall muss das gesamte Gesicht sichtbar sein."
+      },
+      {
+        "primary": "Brille",
+        "secondary": "Korrekturbrillen sind erlaubt, solange die Augen deutlich sichtbar sind, die Rahmen die Augenbrauen nicht verdecken und keine Spiegelungen auftreten."
+      },
+      {
+        "primary": "Kontaktlinsen",
+        "secondary": "Kontaktlinsen sind erlaubt, sofern sie die natürliche Augenfarbe nicht verändern."
+      }
     ],
     "footer": "Denken Sie daran, dass das Foto auf hochwertigem Fotopapier gedruckt werden muss. Wenn das Foto die Anforderungen nicht erfüllt, kann es vom Sachbearbeiter abgelehnt werden."
   },
-    "success_page": {
-  "not_downloaded": "Wenn der Download nicht automatisch startet, klicken Sie bitte hier, um den Download zu starten:",
-  "download_btn": "Herunterladen",
-  "gratitude": "Vielen Dank, dass Sie PhotoIDCreator verwendet haben! Wir hoffen, dass Sie mit dem Ergebnis zufrieden sind.",
-  "main_page_btn": "Startseite",
-  "download_problems": "Haben Sie Probleme beim Herunterladen des Dokuments? Versuchen Sie es erneut oder schreiben Sie uns an: barteksdepot@gmail.com"
-},
-
-    "how_it_works": {
-      "link_text": "Wie funktioniert es?",
-      "title": "Wie PhotoIDCreator funktioniert",
-      "subtitle": "Erstellen Sie professionelle Ausweis- und Passfotos in wenigen Minuten – direkt von Ihrem Handy oder Computer.",
-      "steps": [
-        "Wählen Sie das Papierformat (A4, 10×15 cm usw.), auf dem Sie Ihre Fotos drucken möchten",
-        "Laden Sie Ihr Foto hoch (mit Ihrem Handy oder Ihrer Kamera aufgenommen)",
-        "Schneiden Sie das Foto zu und entfernen Sie den Hintergrund, damit es den offiziellen Anforderungen entspricht",
-        "Überprüfen Sie die Vorschau des Blattes mit den hinzugefügten Fotos – stellen Sie sicher, dass alles korrekt aussieht",
-        "Zahlen Sie eine geringe Gebühr und laden Sie das druckfertige Blatt herunter"
-      ],
-      "final_step": "Sie können zu einem örtlichen Fotodruckgeschäft, Rossmann oder Cewe gehen und Ihre Fotos ausdrucken",
-      "video_title": "Wie PhotoIDCreator funktioniert"
-}
-
+  "success_page": {
+    "not_downloaded": "Wenn der Download nicht automatisch startet, klicken Sie bitte hier, um den Download zu starten:",
+    "download_btn": "Herunterladen",
+    "gratitude": "Vielen Dank, dass Sie PhotoIDCreator verwendet haben! Wir hoffen, dass Sie mit dem Ergebnis zufrieden sind.",
+    "main_page_btn": "Startseite",
+    "download_problems": "Haben Sie Probleme beim Herunterladen des Dokuments? Versuchen Sie es erneut oder schreiben Sie uns an: barteksdepot@gmail.com"
+  },
+  "how_it_works": {
+    "link_text": "Wie funktioniert es?",
+    "title": "Wie PhotoIDCreator funktioniert",
+    "subtitle": "Erstellen Sie professionelle Ausweis- und Passfotos in wenigen Minuten – direkt von Ihrem Handy oder Computer.",
+    "steps": [
+      "Wählen Sie das Papierformat (A4, 10×15 cm usw.), auf dem Sie Ihre Fotos drucken möchten",
+      "Laden Sie Ihr Foto hoch (mit Ihrem Handy oder Ihrer Kamera aufgenommen)",
+      "Schneiden Sie das Foto zu und entfernen Sie den Hintergrund, damit es den offiziellen Anforderungen entspricht",
+      "Überprüfen Sie die Vorschau des Blattes mit den hinzugefügten Fotos – stellen Sie sicher, dass alles korrekt aussieht",
+      "Zahlen Sie eine geringe Gebühr und laden Sie das druckfertige Blatt herunter"
+    ],
+    "final_step": "Sie können zu einem örtlichen Fotodruckgeschäft, Rossmann oder Cewe gehen und Ihre Fotos ausdrucken",
+    "video_title": "Wie PhotoIDCreator funktioniert"
+  },
+  "feedback": {
+    "header": "Sag uns, was du von dieser App hältst. Dein Feedback hilft mir, die Seite zu verbessern.",
+    "send_btn": "Senden",
+    "thanks": "Vielen Dank für dein Feedback!",
+    "error": "Etwas ist schiefgelaufen. Bitte versuche es später erneut."
+  }
 }

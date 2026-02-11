@@ -57,7 +57,9 @@ const FeedbackForm = ({ onClose }) => {
         flexDirection: "column",
         alignItems: "center",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        color: "#fff", // pasuje do darkTheme
+        color: "#fff",
+        height: "280px", // ZMNIEJSZONA WYSOKOŚĆ
+        boxSizing: "border-box",
       }}
     >
       {/* X do zamykania */}
@@ -91,20 +93,47 @@ const FeedbackForm = ({ onClose }) => {
       </button>
 
       <h3
+        style={{
+          fontSize: "16px",
+          margin: "10px 0 5px 0", // Mniej marginesu na dole
+          fontWeight: "bold",
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        {t("feedback.header")}
+      </h3>
+
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          width: "100%",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        {/* REZERWUJ MIEJSCE DLA STATUSU W FORMIE - POD PRZYCISKIEM */}
+        <div
           style={{
-            fontSize: "16px", // mniejszy rozmiar
-            margin: "10px 0",
-            fontWeight: "bold",
-            textAlign: "center", // wyśrodkowanie
-            width: "100%", // żeby textAlign działało
+            height: "20px", // Mniejsze miejsce na status
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "14px",
+            opacity: status ? 1 : 0,
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            transition: "opacity 0.3s ease",
+            marginBottom: "5px",
           }}
         >
-          {t("feedback.header")}
-        </h3>
+          {status}
+        </div>
 
-      <form onSubmit={handleSubmit} style={{ width: "100%", flex: 1 }}>
         <textarea
-          placeholder=""
+          placeholder="..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={4}
@@ -116,10 +145,14 @@ const FeedbackForm = ({ onClose }) => {
             border: `1px solid ${grey[600]}`,
             boxSizing: "border-box",
             resize: "none",
-            height: "120px",
+            height: "100px", // Zmniejszona wysokość textarea
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            lineHeight: "1.4",
+            overflow: "hidden",
+            flex: "1 0 auto",
           }}
         />
+
         <button
           type="submit"
           disabled={!message.trim()}
@@ -138,20 +171,6 @@ const FeedbackForm = ({ onClose }) => {
           {t("feedback.send_btn")}
         </button>
       </form>
-
-      {status && (
-        <p
-          style={{
-            marginTop: "5px",
-            fontSize: "14px",
-            textAlign: "center",
-            opacity: 0.9,
-            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-          }}
-        >
-          {status}
-        </p>
-      )}
     </div>
   );
 };

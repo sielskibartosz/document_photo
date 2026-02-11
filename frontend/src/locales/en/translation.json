@@ -4,12 +4,10 @@
   "sub_title": "Low cost document photos",
   "id_tab": "ID Card / Driving License",
   "custom_tab": "Custom",
-
   "id_link": "Photo requirements",
   "format": "Paper Size",
   "format_info": "Select the paper size for printing the photo",
   "close": "Close",
-
   "foto_selection": "Select a Photo",
   "foto_size": "Photo Dimensions",
   "color_choice": "Background Color",
@@ -27,13 +25,11 @@
   "download_sheet": "Download Sheet",
   "sheetThumbnail": "Sheet Thumbnail",
   "foto_upload_info": "To achieve the best results, use a photo taken against a uniform background. Avoid photos with shadows, reflections, or other objects in the background. If the cropped photo does not meet the requirements, try again with a different one.",
-
   "donateHeader": "Buy Me a Coffee",
   "donateTitle": "Support the Development",
   "donateDescription": "Your donation helps cover server costs and supports further development of the application. Thank you for your support!",
   "cancel": "Cancel",
   "donate": "I'm Donating",
-
   "privacyPolicy_title": "Privacy Policy",
   "privacyPolicy_content_header": "Your privacy is important to us. We would like to explain how we handle the photos uploaded to our application:",
   "privacyPolicy_content": [
@@ -44,23 +40,49 @@
     "Photos are only processed temporarily and are immediately deleted after the background removal operation is completed.",
     "Contact: barteksdepot@gmail.com"
   ],
-
   "idRequirements": {
-  "title": "ID / Passport Photo Requirements",
-  "header": "To be accepted, your photo must meet the following requirements when applying for an ID card or passport:",
-  "list": [
-    { "primary": "Photo recency", "secondary": "Photo must have been taken no earlier than 6 months before application." },
-    { "primary": "Photo dimensions", "secondary": "35 mm (width) × 45 mm (height)." },
-    { "primary": "Photo background", "secondary": "Uniform, light background (e.g., white or light blue), without shadows or decorative elements." },
-    { "primary": "Lighting", "secondary": "Even lighting, no shadows on the face." },
-    { "primary": "Subject's posture", "secondary": "Look straight ahead with open eyes and closed mouth, with a natural expression." },
-    { "primary": "Face visibility", "secondary": "The face should occupy 70-80% of the photo, including the entire head and upper shoulders." },
-    { "primary": "Headwear", "secondary": "No headwear unless required for religious reasons. In that case, the full face must be visible." },
-    { "primary": "Glasses", "secondary": "Corrective glasses are allowed as long as eyes are clearly visible, frames do not cover eyebrows, and no glare is visible." },
-    { "primary": "Contact lenses", "secondary": "Contact lenses are allowed if they do not change the natural eye color." }
-  ],
-  "footer": "Remember, the photo must be printed on high-quality photo paper. If the photo does not meet the requirements, it may be rejected by the officer."
-},
+    "title": "ID / Passport Photo Requirements",
+    "header": "To be accepted, your photo must meet the following requirements when applying for an ID card or passport:",
+    "list": [
+      {
+        "primary": "Photo recency",
+        "secondary": "Photo must have been taken no earlier than 6 months before application."
+      },
+      {
+        "primary": "Photo dimensions",
+        "secondary": "35 mm (width) × 45 mm (height)."
+      },
+      {
+        "primary": "Photo background",
+        "secondary": "Uniform, light background (e.g., white or light blue), without shadows or decorative elements."
+      },
+      {
+        "primary": "Lighting",
+        "secondary": "Even lighting, no shadows on the face."
+      },
+      {
+        "primary": "Subject's posture",
+        "secondary": "Look straight ahead with open eyes and closed mouth, with a natural expression."
+      },
+      {
+        "primary": "Face visibility",
+        "secondary": "The face should occupy 70-80% of the photo, including the entire head and upper shoulders."
+      },
+      {
+        "primary": "Headwear",
+        "secondary": "No headwear unless required for religious reasons. In that case, the full face must be visible."
+      },
+      {
+        "primary": "Glasses",
+        "secondary": "Corrective glasses are allowed as long as eyes are clearly visible, frames do not cover eyebrows, and no glare is visible."
+      },
+      {
+        "primary": "Contact lenses",
+        "secondary": "Contact lenses are allowed if they do not change the natural eye color."
+      }
+    ],
+    "footer": "Remember, the photo must be printed on high-quality photo paper. If the photo does not meet the requirements, it may be rejected by the officer."
+  },
   "success_page": {
     "not_downloaded": "If the download does not start automatically, please click download:",
     "download_btn": "Download Sheet",
@@ -68,23 +90,26 @@
     "main_page_btn": "Main Page",
     "download_problems": "Having trouble downloading the sheet? Try again or contact us: barteksdepot@gmail.com"
   },
-
   "how_it_works": {
-  "link_text": "How it works?",
-  "title": "How PhotoIDCreator works",
-  "subtitle": "Create professional ID and passport photos in minutes – directly from your phone or computer.",
-  "steps": [
-    "Choose the paper format (A4, 10×15 cm, etc.) on which you want to print your photos",
-    "Upload your photo (taken with your phone or camera)",
-    "Crop the photo and remove the background to meet official requirements",
-    "Preview the sheet with added photos – make sure everything looks correct",
-    "Pay a small fee and download the ready-to-print sheet"
-  ],
-  "final_step": "You can go to a local print shop, Rossmann, or Cewe to print your photos",
-  "video_title": "How PhotoIDCreator works"
-}
-
-
+    "link_text": "How it works?",
+    "title": "How PhotoIDCreator works",
+    "subtitle": "Create professional ID and passport photos in minutes – directly from your phone or computer.",
+    "steps": [
+      "Choose the paper format (A4, 10×15 cm, etc.) on which you want to print your photos",
+      "Upload your photo (taken with your phone or camera)",
+      "Crop the photo and remove the background to meet official requirements",
+      "Preview the sheet with added photos – make sure everything looks correct",
+      "Pay a small fee and download the ready-to-print sheet"
+    ],
+    "final_step": "You can go to a local print shop, Rossmann, or Cewe to print your photos",
+    "video_title": "How PhotoIDCreator works"
+  },
+  "feedback": {
+    "header": "Tell us what you think about this app. Your feedback helps me improve the site.",
+    "send_btn": "Send",
+    "thanks": "Thank you for your feedback!",
+    "error": "Something went wrong. Please try again later."
+  }
 }
 
 

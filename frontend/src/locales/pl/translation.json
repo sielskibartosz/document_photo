@@ -91,7 +91,7 @@
    "feedback": {
      "header": "Napisz co myślisz o tej aplikacji. Opinie pomagają mi w ulepszaniu strony.",
      "send_btn": "Wyślij",
-     "success_message": "Dziękuję za Twoją opinię!",
-     "error_message": "Coś poszło nie tak. Spróbuj ponownie później."}
+     "thanks": "Dziękuję za Twoją opinię!",
+     "error": "Coś poszło nie tak. Spróbuj ponownie później."}
 }
 
