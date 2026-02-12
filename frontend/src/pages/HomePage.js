@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, useMediaQuery, Dialog } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import { Box, useMediaQuery} from "@mui/material";
 
 import { TABS } from "../constants/tabs";
 import { buttonBaseStyle } from "../styles/buttonStyles";
@@ -15,9 +14,6 @@ import TabContent from "../components/TabContent";
 import SheetManager from "../components/SheetManager";
 import useSheetManager from "../hooks/useSheetManager";
 import useImageCrop from "../hooks/useImageCrop";
-
-import FeedbackForm from "../components/FeedbackForm";
-import FeedbackIcon from "@mui/icons-material/Feedback";
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState("id");
@@ -75,9 +71,6 @@ const HomePage = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // Feedback popup
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
     <Box
@@ -151,52 +144,6 @@ const HomePage = () => {
           />
         </FrameBox>
       )}
-
-      {/* Pływająca ikonka feedback */}
-      <Box
-        onClick={() => setFeedbackOpen(true)}
-        sx={{
-          position: "fixed",
-          bottom: 24,
-          right: 24,
-          zIndex: 999,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          cursor: "pointer",
-          gap: 0.5,
-        }}
-      >
-        <FeedbackIcon sx={{ fontSize: 40, color: "primary.main" }} />
-        <Box
-          component="span"
-          sx={{ color: "primary.main", fontSize: 12, fontWeight: 500 }}
-        >
-          Zostaw opinię
-        </Box>
-      </Box>
-
-      {/* Dialog feedback */}
-     <Dialog
-          open={feedbackOpen}
-          onClose={() => setFeedbackOpen(false)}
-          PaperProps={{
-            sx: {
-              backgroundColor: grey, // brak szarej ramki
-              boxShadow: 3,
-              borderRadius: 2,
-              p: 0,
-              m: 0,
-            },
-          }}
-          BackdropProps={{
-            sx: {
-              backgroundColor: "rgba(0,0,0,0.2)", // lekki cień za oknem, opcjonalnie
-            },
-          }}
-        >
-          <FeedbackForm innerBox />
-        </Dialog>
     </Box>
   );
 };
