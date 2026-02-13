@@ -6,13 +6,13 @@ export const TABS = [
 
 export const TAB_DESCRIPTION = {
   id: {
-    title: "35/45 mm",
+    title: " ",
     description: "",
     link: "/id-requirements",
-    image: "/images/ai_ID.png",
+    image: "",
   },
   custom: {
     title: "",
-    image: "/images/custom_foto.jpg"
+    image: ""
   },
 };
