@@ -48,7 +48,7 @@ const FeedbackForm = ({ onClose }) => {
     <div
       style={{
         position: "relative",
-        padding: "20px",
+        padding: "10px", // Zmniejszony padding z 20px
         maxWidth: "400px",
         margin: "auto",
         borderRadius: "10px",
@@ -58,47 +58,18 @@ const FeedbackForm = ({ onClose }) => {
         alignItems: "center",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
         color: "#fff",
-        height: "280px", // ZMNIEJSZONA WYSOKOŚĆ
+        height: "260px", // Lekko zmniejszona wysokość
         boxSizing: "border-box",
       }}
     >
-      {/* X do zamykania */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          closeForm();
-        }}
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "15px",
-          background: "none",
-          border: "none",
-          color: "#fff",
-          fontSize: "24px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          width: "30px",
-          height: "30px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: "50%",
-          transition: "background-color 0.2s",
-        }}
-        onMouseEnter={(e) => (e.target.style.backgroundColor = "rgba(255,255,255,0.2)")}
-        onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
-      >
-        ×
-      </button>
-
       <h3
         style={{
           fontSize: "16px",
-          margin: "10px 0 5px 0", // Mniej marginesu na dole
+          margin: "1px 0 1px 0", // Zmniejszone marginesy
           fontWeight: "bold",
-          textAlign: "center",
+          textAlign: "justify",
           width: "100%",
+          color: "primary.main", // Niebieski kolor jak primary.main
         }}
       >
         {t("feedback.header")}
@@ -114,10 +85,9 @@ const FeedbackForm = ({ onClose }) => {
           justifyContent: "space-between",
         }}
       >
-        {/* REZERWUJ MIEJSCE DLA STATUSU W FORMIE - POD PRZYCISKIEM */}
         <div
           style={{
-            height: "20px", // Mniejsze miejsce na status
+            height: "20px",
             width: "100%",
             display: "flex",
             alignItems: "center",
@@ -126,7 +96,7 @@ const FeedbackForm = ({ onClose }) => {
             opacity: status ? 1 : 0,
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
             transition: "opacity 0.3s ease",
-            marginBottom: "5px",
+            marginBottom: "3px", // Zmniejszony margines
           }}
         >
           {status}
@@ -140,12 +110,12 @@ const FeedbackForm = ({ onClose }) => {
           maxLength={500}
           style={{
             width: "100%",
-            padding: "10px",
+            padding: "8px", // Zmniejszony padding z 10px
             borderRadius: "5px",
-            border: `1px solid ${grey[600]}`,
+            border: `1px solid ${grey[800]}`,
             boxSizing: "border-box",
             resize: "none",
-            height: "100px", // Zmniejszona wysokość textarea
+            height: "95px", // Zmniejszona wysokość textarea
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
             lineHeight: "1.4",
             overflow: "hidden",
@@ -157,8 +127,8 @@ const FeedbackForm = ({ onClose }) => {
           type="submit"
           disabled={!message.trim()}
           style={{
-            marginTop: "10px",
-            padding: "10px 20px",
+            marginTop: "1px", // Zmniejszony margines z 10px
+            padding: "8px 16px", // Zmniejszony padding
             borderRadius: "5px",
             cursor: "pointer",
             width: "100%",
