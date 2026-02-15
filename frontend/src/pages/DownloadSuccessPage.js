@@ -65,14 +65,18 @@ const DownloadSuccessPage = () => {
   };
 
   useEffect(() => {
+    // Google Conversion Tracking
     if (window.gtag) {
-      window.gtag("event", "purchase_success", {
-        event_category: "ecommerce",
-        event_label: "PhotoIDCreator",
-        value: 1,
+      window.gtag("event", "conversion", {
+        send_to: "AW-17550154396/_6-ECIjRr_kbEJy1yLBB",
+        value: 7.0,
+        currency: "PLN",
+        transaction_id: "",
+        new_customer: true,
       });
     }
 
+    // Auto download
     if (!autoDownloadTriggered.current) {
       autoDownloadTriggered.current = true;
       const success = downloadFile();
@@ -83,90 +87,77 @@ const DownloadSuccessPage = () => {
   }, []);
 
   return (
-    <>
-        <script>
-          gtag('event', 'conversion', {
-              'send_to': 'AW-17550154396/_6-ECIjRr_kbEJy1yLBB',
-              'value': 7.0,
-              'currency': 'PLN',
-              'transaction_id': ''
-              'new_customer': true /* calculate dynamically, populate with true/false */,
-          });
-        </script>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <SEO
+        title="PhotoIDCreator – pobranie zdjęcia zakończone sukcesem"
+        description="Dziękujemy za użycie PhotoIDCreator. Twoje zdjęcie do dokumentów zostało wygenerowane i jest gotowe do pobrania."
+        url="https://photoidcreator.com/#/download-success"
+      />
 
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          textAlign: "center",
+          pt: isSmallScreen ? 20 : 25,
+          pb: 4,
+          width: isSmallScreen ? "95vw" : "80vw",
+          margin: "10px auto",
+          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          color: darkTheme.palette.text.primary,
+          background:
+            darkTheme.palette.mode === "dark"
+              ? "linear-gradient(135deg, #1f2937 0%, #374151 100%)"
+              : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+          borderRadius: 3,
+          boxShadow: darkTheme.shadows[4],
+          position: "relative",
+        }}
+      >
+        <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom>
+          {gratitude}
+        </Typography>
 
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <SEO
-          title="PhotoIDCreator – pobranie zdjęcia zakończone sukcesem"
-          description="Dziękujemy za użycie PhotoIDCreator. Twoje zdjęcie do dokumentów zostało wygenerowane i jest gotowe do pobrania."
-          url="https://photoidcreator.com/#/download-success"
-        />
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          {not_downloaded}
+        </Typography>
 
-        <Box
-          sx={{
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            textAlign: "center",
-            pt: isSmallScreen ? 20 : 25,
-            pb: 4,
-            width: isSmallScreen ? "95vw" : "80vw",
-            margin: "10px auto",
-            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-            color: darkTheme.palette.text.primary,
-            background:
-              darkTheme.palette.mode === "dark"
-                ? "linear-gradient(135deg, #1f2937 0%, #374151 100%)"
-                : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-            borderRadius: 3,
-            boxShadow: darkTheme.shadows[4],
-            position: "relative",
-          }}
+        <Button
+          variant="contained"
+          onClick={downloadFile}
+          sx={{ mb: 2 }}
         >
-          <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom>
-            {gratitude}
-          </Typography>
+          {download_btn}
+        </Button>
 
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-            {not_downloaded}
-          </Typography>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/")}
+          sx={{ mb: 2 }}
+        >
+          {main_page_btn}
+        </Button>
 
-          <Button
-            variant="contained"
-            onClick={downloadFile}
-            sx={{ mb: 2 }}
+        {/* Kontener z idealnym odstępem */}
+        <Box sx={{ width: "100%", mb: 1 }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mb: 0.5,
+              lineHeight: 1.3
+            }}
           >
-            {download_btn}
-          </Button>
-
-          <Button
-            variant="outlined"
-            onClick={() => navigate("/")}
-            sx={{ mb: 2 }}
-          >
-            {main_page_btn}
-          </Button>
-
-          {/* Kontener z idealnym odstępem */}
-          <Box sx={{ width: "100%", mb: 1 }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                mb: 0.5,
-                lineHeight: 1.3
-              }}
-            >
-              {download_problems}
-            </Typography>
-            <FeedbackForm />
-          </Box>
+            {download_problems}
+          </Typography>
+          <FeedbackForm />
         </Box>
-      </ThemeProvider>
-    </>
+      </Box>
+    </ThemeProvider>
   );
 };
 
