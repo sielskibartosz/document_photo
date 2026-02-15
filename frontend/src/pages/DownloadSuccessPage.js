@@ -84,7 +84,6 @@ const DownloadSuccessPage = () => {
 
   return (
     <>
-        <!-- Event snippet for Zakup-arkusza conversion page -->
         <script>
           gtag('event', 'conversion', {
               'send_to': 'AW-17550154396/_6-ECIjRr_kbEJy1yLBB',
