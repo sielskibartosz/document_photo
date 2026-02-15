@@ -84,18 +84,17 @@ const DownloadSuccessPage = () => {
 
   return (
     <>
-      {/* Google Tag Manager */}
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-4GGMXV1R1V" />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-4GGMXV1R1V');
-          `,
-        }}
-      />
+        <!-- Event snippet for Zakup-arkusza conversion page -->
+        <script>
+          gtag('event', 'conversion', {
+              'send_to': 'AW-17550154396/_6-ECIjRr_kbEJy1yLBB',
+              'value': 7.0,
+              'currency': 'PLN',
+              'transaction_id': ''
+              'new_customer': true /* calculate dynamically, populate with true/false */,
+          });
+        </script>
+
 
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
