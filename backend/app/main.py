@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import config
 from app.api.feedback import router as feedback_router
 from app.api.background import router as background_router
+from app.api.sheet import router as download_router
 
 app = FastAPI(
     title="Remove Background & Feedback API",
@@ -19,6 +20,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 
+app.include_router(download_router)
 app.include_router(feedback_router)
 app.include_router(background_router)
 

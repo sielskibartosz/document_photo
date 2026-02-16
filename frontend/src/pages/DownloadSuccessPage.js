@@ -1,5 +1,4 @@
-import { useEffect, useRef } from "react";
-import { grey } from "@mui/material/colors";
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,6 +12,7 @@ import { darkTheme } from "../styles/theme";
 import { useTranslation } from "react-i18next";
 import SEO from "../components/SEO";
 import FeedbackForm from "../components/FeedbackForm";
+import { BACKEND_URL } from "../constants/backendConfig";
 
 const DownloadSuccessPage = () => {
   const navigate = useNavigate();
@@ -25,42 +25,41 @@ const DownloadSuccessPage = () => {
   const download_problems = t("success_page.download_problems");
 
   const isSmallScreen = useMediaQuery("(max-width:600px)");
-  const autoDownloadTriggered = useRef(false);
 
-  const downloadFile = () => {
+  const downloadFromBackend = async () => {
     const dataUrl = sessionStorage.getItem("sheetBlob");
 
     if (!dataUrl) {
       alert("Plik nie jest już dostępny. Wygeneruj zdjęcie ponownie.");
-      return false;
+      return;
     }
 
     try {
-      const parts = dataUrl.split(",");
-      const mime = parts[0].match(/:(.*?);/)?.[1] || "image/jpeg";
-      const binary = atob(parts[1]);
-      const array = new Uint8Array(binary.length);
+      // 🔹 Wywołanie backendu
+      const response = await fetch(`${BACKEND_URL}/api/download/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image_base64: dataUrl }),
+      });
 
-      for (let i = 0; i < binary.length; i++) {
-        array[i] = binary.charCodeAt(i);
+      if (!response.ok) {
+        throw new Error("Błąd serwera");
       }
 
-      const blob = new Blob([array], { type: mime });
-      const url = URL.createObjectURL(blob);
+      const data = await response.json();
 
+      // 🔹 Pobranie pliku przez tymczasowy link
       const link = document.createElement("a");
-      link.href = url;
-      link.download = "sheet.jpg";
+      link.href = `${BACKEND_URL}${data.url}`;
+      link.download = "photo_sheet.jpg"; // nazwa pliku
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      URL.revokeObjectURL(url);
-      return true;
     } catch (err) {
-      console.error("Download failed", err);
-      alert("Download failed");
-      return false;
+      console.error(err);
+      alert("Nie udało się pobrać pliku.");
     }
   };
 
@@ -74,15 +73,6 @@ const DownloadSuccessPage = () => {
         transaction_id: "",
         new_customer: true,
       });
-    }
-
-    // Auto download
-    if (!autoDownloadTriggered.current) {
-      autoDownloadTriggered.current = true;
-      const success = downloadFile();
-      if (!success) {
-        alert("Nie udało się automatycznie pobrać pliku.");
-      }
     }
   }, []);
 
@@ -128,7 +118,7 @@ const DownloadSuccessPage = () => {
 
         <Button
           variant="contained"
-          onClick={downloadFile}
+          onClick={downloadFromBackend}
           sx={{ mb: 2 }}
         >
           {download_btn}
@@ -142,19 +132,22 @@ const DownloadSuccessPage = () => {
           {main_page_btn}
         </Button>
 
-        {/* Kontener z idealnym odstępem */}
         <Box sx={{ width: "100%", mb: 1 }}>
           <Typography
             variant="body2"
             color="text.secondary"
             sx={{
               mb: 0.5,
-              lineHeight: 1.3
+              lineHeight: 1.3,
             }}
           >
             {download_problems}
           </Typography>
-          <FeedbackForm />
+
+          {/* 🔹 dodane odstęp między tekstem a formularzem */}
+          <Box sx={{ mt: 4 }}>
+            <FeedbackForm />
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>
