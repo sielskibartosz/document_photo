@@ -1,10 +1,13 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 import uuid
 import base64
+from fastapi import Request
+
+from app.services import download_tokens
 
 router = APIRouter(prefix="/api/download", tags=["download"])
 
@@ -12,8 +15,6 @@ DOWNLOAD_DIR = "downloads"
 TOKEN_EXPIRE_MINUTES = 10
 
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-
-download_tokens = {}
 
 
 class DownloadRequest(BaseModel):
@@ -33,9 +34,9 @@ async def create_download(request: DownloadRequest):
         with open(path, "wb") as f:
             f.write(file_bytes)
 
-        download_tokens[token] = {
+        request.app.state.download_tokens[token] = {
             "path": path,
-            "expires": datetime.utcnow() + timedelta(minutes=TOKEN_EXPIRE_MINUTES),
+            "expires": datetime.now(timezone.utc) + timedelta(minutes=TOKEN_EXPIRE_MINUTES),
             "used": False
         }
 
@@ -46,8 +47,9 @@ async def create_download(request: DownloadRequest):
 
 
 @router.get("/{token}")
-async def download_file(token: str, background_tasks: BackgroundTasks):
-    data = download_tokens.get(token)
+async def download_file(token: str, background_tasks: BackgroundTasks, request: Request):
+    data = request.app.state.download_tokens.get(token)
+
 
     if not data:
         raise HTTPException(status_code=404, detail="Link nie istnieje")
@@ -55,7 +57,8 @@ async def download_file(token: str, background_tasks: BackgroundTasks):
     if data["used"]:
         raise HTTPException(status_code=403, detail="Link został już użyty")
 
-    if datetime.utcnow() > data["expires"]:
+    # ✅ porównanie z timezone-aware datetime
+    if datetime.now(timezone.utc) > data["expires"]:
         raise HTTPException(status_code=403, detail="Link wygasł")
 
     path = data["path"]
@@ -66,8 +69,8 @@ async def download_file(token: str, background_tasks: BackgroundTasks):
     data["used"] = True
     download_tokens.pop(token, None)
 
-    # 🔥 usuwamy plik po wysłaniu
-    background_tasks.add_task(os.remove, path)
+    # 🔥 jeśli chcesz usunąć plik po pobraniu, odkomentuj poniższe:
+    # background_tasks.add_task(os.remove, path)
 
     return FileResponse(
         path,
