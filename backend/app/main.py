@@ -1,3 +1,5 @@
+
+#main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -16,17 +18,13 @@ async def lifespan(app: FastAPI):
     yield
     task.cancel()
 
-
 app = FastAPI(
     title="Remove Background & Feedback API",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    lifespan=lifespan,  # ✅ nowy sposób zamiast on_event
+    lifespan=lifespan,
 )
-
-app.state.download_tokens = {}
-
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,3 +1,4 @@
+#services.py
 import os
 import asyncio
 import json
@@ -8,9 +9,8 @@ import io
 from app.config import config
 from fastapi import FastAPI
 from transparent_background import Remover
+from app.api.sheet import download_tokens
 
-# 🔹 słownik tokenów do pobierania arkuszy
-download_tokens: dict[str, dict] = {}
 
 remover = Remover()
 
@@ -84,24 +84,19 @@ async def cleanup_expired_files(app: FastAPI):
     while True:
         now = datetime.now(timezone.utc)
         expired_tokens = []
-
-        tokens = app.state.download_tokens
-        print(f"[cleanup] Tokens: {list(tokens.keys())}")
-
-        for token, data in list(tokens.items()):
+        for token, data in list(download_tokens.items()):
             if now > data["expires"]:
                 path = data["path"]
                 if os.path.exists(path):
                     try:
                         os.remove(path)
-                        print(f"[cleanup] Removed file: {path}")
                     except Exception as e:
                         print(f"[cleanup] Failed to remove {path}: {e}")
                 expired_tokens.append(token)
 
         for token in expired_tokens:
-            tokens.pop(token, None)
-            print(f"[cleanup] Removed token: {token}")
+            download_tokens.pop(token, None)
 
-        await asyncio.sleep(20)  # co 10 minut
+        await asyncio.sleep(60)
+
 
