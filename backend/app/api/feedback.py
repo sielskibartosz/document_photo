@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
 from app.models import FeedbackResponse
-from app.services import save_feedback, load_feedbacks
 from app.config import config
+
+from app.services.feedback_service import save_feedback, load_feedbacks
 
 router = APIRouter(prefix="/api/feedback", tags=["feedback"])
 

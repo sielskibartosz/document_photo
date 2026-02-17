@@ -4,7 +4,7 @@ import { PAPER_FORMATS } from "../constants/paperFormats";
 import FrameBox from "../styles/imagesStyles";
 import { Box, Typography, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { PAYMENT_LINKS } from "../constants/paymentLinks";
+import { BACKEND_URL } from "../constants/backendConfig";
 
 const SheetManager = ({
   sheetImages,
@@ -14,21 +14,19 @@ const SheetManager = ({
   setSheetImages,
   showSheetPreview,
   clearSheet,
+  priceId,
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(0);
-  const [sheetBlob, setSheetBlob] = useState(null);
 
   const dpi = 300;
   const margin = 20;
   const photoWidthCm = 3.5;
   const maxPhotoHeightCm = 4.5;
 
+  // ---------------- GENERATE SHEET ----------------
   const generateSheet = async () => {
-    if (!sheetImages.length) {
-      console.warn("No images to generate the sheet.");
-      return { url: null, visibleCount: 0, blob: null };
-    }
+    if (!sheetImages.length) return { blob: null, visibleCount: 0 };
 
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
@@ -50,12 +48,7 @@ const SheetManager = ({
     for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio } = sheetImages[i];
       const img = await createImage(image);
-
-      // Sprawdź, czy img jest poprawny
-      if (!img) {
-        console.warn(`Image at index ${i} could not be created.`);
-        continue;
-      }
+      if (!img) continue;
 
       let imgHeight = Math.round(imgWidth / aspectRatio);
       const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
@@ -66,17 +59,16 @@ const SheetManager = ({
 
       const x = margin + colIndex * (imgWidth + margin);
       const y = currentY;
-
       if (y + imgHeight + margin > heightPx) break;
 
       ctx.drawImage(img, x, y, imgWidth, imgHeight);
-      ctx.lineWidth = 2;
       ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
       ctx.strokeRect(x, y, imgWidth, imgHeight);
+
       actualCount++;
       currentRowHeight = Math.max(currentRowHeight, imgHeight);
       colIndex++;
-
       if (colIndex >= cols) {
         colIndex = 0;
         currentY += currentRowHeight + margin;
@@ -84,50 +76,32 @@ const SheetManager = ({
       }
     }
 
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          console.error("Blob generation failed.");
-          resolve({ url: null, visibleCount: actualCount, blob: null });
-          return;
-        }
-        const url = URL.createObjectURL(blob);
-        resolve({ url, visibleCount: actualCount, blob });
-      }, "image/jpeg", 0.92);
-    });
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+    return { blob, visibleCount: actualCount };
   };
 
+  // ---------------- CREATE SHEET IMAGE ----------------
   const createSheetImage = useCallback(async () => {
     const result = await generateSheet();
-    if (result && result.url) {
-      setSheetUrl(result.url);
+    if (result && result.blob) {
+      const url = URL.createObjectURL(result.blob);
+      setSheetUrl(url);
       setVisibleCount(result.visibleCount);
-      setSheetBlob(result.blob);
     } else {
       setSheetUrl(null);
       setVisibleCount(0);
-      setSheetBlob(null);
     }
   }, [sheetImages, selectedFormat, setSheetUrl]);
 
   useEffect(() => {
-    if (sheetImages.length > 0) {
-      createSheetImage();
-    } else {
-      setSheetUrl(null);
-      setVisibleCount(0);
-      setSheetBlob(null);
-    }
+    if (sheetImages.length > 0) createSheetImage();
+    else setSheetUrl(null);
   }, [sheetImages, createSheetImage]);
 
+  // ---------------- BUTTON HANDLERS ----------------
   const onClearSheetClick = () => {
     if (clearSheet) clearSheet();
-    else {
-      setSheetImages([]);
-      setSheetUrl(null);
-      setVisibleCount(0);
-      setSheetBlob(null);
-    }
+    else setSheetImages([]);
   };
 
   const duplicateImage = () => {
@@ -135,28 +109,48 @@ const SheetManager = ({
     setSheetImages((prev) => [...prev, prev[0]]);
   };
 
-  const handleDownloadClick = async () => {
-    try {
-      const result = await generateSheet();
-      if (!result?.blob) {
-        alert("Nie udało się wygenerować arkusza.");
-        return;
-      }
+  // ---------------- HANDLE PAYMENT ----------------
+const handleDownloadClick = async () => {
+  if (!sheetImages.length) return;
 
+  try {
+    // 1️⃣ Generowanie arkusza i konwersja na base64
+    const { blob } = await generateSheet();
+    const base64Image = await new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        sessionStorage.setItem("sheetBlob", reader.result);
-        const lang = i18n.language || "pl";
-        const stripeLink = PAYMENT_LINKS[lang] || PAYMENT_LINKS.en;
-        window.location.href = stripeLink;
-      };
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
 
-      reader.readAsDataURL(result.blob);
-    } catch (err) {
-      console.error("Błąd podczas generowania arkusza:", err);
-    }
-  };
+    // 2️⃣ Wysyłamy do /api/download/create
+    const downloadResp = await fetch(`${BACKEND_URL}/api/download/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image_base64: base64Image }),
+    });
+    const downloadData = await downloadResp.json();
+    const token = downloadData.token;
 
+    // 3️⃣ Wywołujemy Stripe link
+    const redirect_url = `${window.location.origin}/#/download-success?token=${token}`;
+    const paymentResp = await fetch(`${BACKEND_URL}/api/payments/create-link`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ price_id: priceId, token, redirect_url }),
+    });
+
+    const paymentData = await paymentResp.json();
+    window.location.href = paymentData.url;
+
+  } catch (err) {
+    console.error("Błąd przy tworzeniu linku płatności:", err);
+    alert(err.message || "Nie udało się utworzyć linku płatności.");
+  }
+};
+
+
+  // ---------------- RENDER ----------------
   if (!showSheetPreview || !sheetUrl) return null;
 
   return (
@@ -165,41 +159,17 @@ const SheetManager = ({
         {t("sheet_header")}: {visibleCount} ({selectedFormat})
       </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 2,
-          flexWrap: "wrap",
-          mb: 3,
-          width: "100%",
-        }}
-      >
-        <Button variant="contained" onClick={duplicateImage} sx={{ fontWeight: 500 }}>
-          {t("duplicate_photo", "Duplicate Photo")}
-        </Button>
-        <Button variant="outlined" color="error" onClick={onClearSheetClick} sx={{ fontWeight: 500 }}>
-          {t("clear_sheet", "Clear Sheet")}
-        </Button>
-        <Button variant="contained" color="success" onClick={handleDownloadClick} sx={{ fontWeight: 500 }}>
-          {t("download_sheet", "Download Sheet")}
-        </Button>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, flexWrap: "wrap", mb: 3 }}>
+        <Button variant="contained" onClick={duplicateImage}>{t("duplicate_photo", "Duplicate Photo")}</Button>
+        <Button variant="outlined" color="error" onClick={onClearSheetClick}>{t("clear_sheet", "Clear Sheet")}</Button>
+        <Button variant="contained" color="success" onClick={handleDownloadClick}>{t("download_sheet", "Download Sheet")}</Button>
       </Box>
 
       <Box
         component="img"
         src={sheetUrl}
         alt="sheet"
-        sx={{
-          maxWidth: "100%",
-          width: { xs: "100%", md: "auto" },
-          borderRadius: 2,
-          boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
-          border: "1px solid #ddd",
-          display: "block",
-          mx: "auto",
-        }}
+        sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", mx: "auto" }}
       />
     </FrameBox>
   );

@@ -1,5 +1,3 @@
-
-#main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -8,15 +6,18 @@ import asyncio
 from app.config import config
 from app.api.feedback import router as feedback_router
 from app.api.background import router as background_router
-from app.api.sheet import router as download_router
-from app.services import cleanup_expired_files
+from app.services.cleanup_service import cleanup_expired_files
+from app.api.download import router as download_router  # pobieranie plików
+from app.api.stripe_payments import router as stripe_router  # Stripe PaymentLink + webhook
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # uruchamiamy task czyszczący stare pliki
     task = asyncio.create_task(cleanup_expired_files(app))
     yield
     task.cancel()
+
 
 app = FastAPI(
     title="Remove Background & Feedback API",
@@ -26,6 +27,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ---------------- CORS ----------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=config.ALLOWED_ORIGINS or ["*"],
@@ -34,14 +36,16 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-app.include_router(download_router)
+# ---------------- ROUTERY ----------------
+app.include_router(download_router)  # dostęp do plików
+app.include_router(stripe_router)    # Stripe payments & webhook
 app.include_router(feedback_router)
 app.include_router(background_router)
 
 
+# ---------------- HEALTH CHECK ----------------
 @app.get("/ping")
 async def ping():
-    """Health check endpoint."""
     return {"status": "ok", "message": "Server is running!"}
 
 

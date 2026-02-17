@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, useMediaQuery} from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 
 import { TABS } from "../constants/tabs";
 import { buttonBaseStyle } from "../styles/buttonStyles";
@@ -12,10 +12,15 @@ import AppTitle from "../components/AppTitle";
 import TabSelector from "../components/TabSelector";
 import TabContent from "../components/TabContent";
 import SheetManager from "../components/SheetManager";
+
 import useSheetManager from "../hooks/useSheetManager";
 import useImageCrop from "../hooks/useImageCrop";
 
+import { STRIPE_PRICE_ID_PROD_PLN, STRIPE_PRICE_ID_PROD_EUR } from "../constants/payments";
+import { useTranslation } from "react-i18next";
+
 const HomePage = () => {
+  const { i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
   const [selectedFormat, setSelectedFormat] = useState("10x15 cm Rossmann");
@@ -60,6 +65,7 @@ const HomePage = () => {
     reset();
   };
 
+  // ---------------- responsive columns ----------------
   const [cols, setCols] = useState(3);
   useEffect(() => {
     const handleResize = () => {
@@ -71,6 +77,10 @@ const HomePage = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // ---------------- Stripe priceId w zależności od języka ----------------
+  const currentLang = i18n.language?.split("-")[0] || "pl";
+  const priceId = currentLang === "pl" ? STRIPE_PRICE_ID_PROD_PLN : STRIPE_PRICE_ID_PROD_EUR;
 
   return (
     <Box
@@ -121,6 +131,7 @@ const HomePage = () => {
           clearSheet={clearSheet}
           cols={cols}
           buttonBaseStyle={buttonBaseStyle}
+          priceId={priceId} // <-- dynamiczny priceId w zależności od języka
         />
       )}
 

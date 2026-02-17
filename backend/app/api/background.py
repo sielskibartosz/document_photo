@@ -2,8 +2,7 @@ from fastapi import APIRouter, UploadFile, File, Form, BackgroundTasks, HTTPExce
 from fastapi.responses import FileResponse
 import os
 import tempfile
-from app.services import process_image
-from app.config import config
+from app.services.image_service import process_image
 
 router = APIRouter(prefix="/remove-background", tags=["background"])
 

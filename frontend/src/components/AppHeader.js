@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Select, MenuItem } from "@mui/material";
 import PrivacyPolicy from "./PrivacyPolicy";
 import Donate from "./Donate";
-import {PAYMENT_LINKS} from "../constants/paymentLinks";
 
 export default function AppHeader({ i18n }) {
   const handleLanguageChange = (e) => {
@@ -11,7 +10,6 @@ export default function AppHeader({ i18n }) {
 
   // normalizacja: pl-PL → pl
   const currentLang = i18n.language?.split("-")[0] || "pl";
-  const paymentLink = PAYMENT_LINKS[currentLang] || PAYMENT_LINKS.pl;
 
   return (
     <Box
