@@ -1,24 +1,27 @@
+# download_service.py
 import os
 import uuid
 from datetime import datetime, timedelta, timezone
-from app.config import config  # import config z centralnego miejsca
+from app.config import config
 
-# ⚠️ Produkcyjnie zamiast dict użyj bazy danych
 download_tokens = {}  # token -> { path, expires, paid }
 
 def save_file(image_bytes: bytes) -> str:
     """Zapisuje plik i generuje token do pobrania"""
     token = str(uuid.uuid4())
     filename = f"{token}.jpg"
-    path = config.DOWNLOAD_PATH / filename  # korzystamy z config
+    path = os.path.join(config.DOWNLOAD_DIR, filename)
+
     with open(path, "wb") as f:
         f.write(image_bytes)
 
     download_tokens[token] = {
-        "path": str(path),  # zapisujemy ścieżkę jako string
+        "path": path,
         "expires": datetime.now(timezone.utc) + timedelta(minutes=config.TOKEN_EXPIRE_MINUTES),
         "paid": False
     }
+    print("✅ Created download token:", token)
+    print("Available tokens:", list(download_tokens.keys()))
     return token
 
 def get_file(token: str):

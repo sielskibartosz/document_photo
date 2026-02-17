@@ -6,7 +6,6 @@ from PIL import Image
 import io
 from app.config import config
 from transparent_background import Remover
-from app.api.backend_stripe import download_tokens
 
 remover = Remover()
 

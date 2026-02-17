@@ -13,7 +13,10 @@ from app.config import config
 
 from app.services.download_service import download_tokens
 
+from app.services.download_service import save_file
+
 router = APIRouter(prefix="/api/download", tags=["download"])
+
 
 @router.get("/{token}")
 async def download_file(token: str):
@@ -39,21 +42,8 @@ async def create_download(body: CreateDownloadRequest):
             encoded = body.image_base64
         file_bytes = base64.b64decode(encoded)
 
-        # generujemy token
-        token = str(uuid.uuid4())
-        filename = f"{token}.jpg"
-        path = os.path.join(config.DOWNLOAD_DIR, filename)
-
-        # zapis pliku
-        with open(path, "wb") as f:
-            f.write(file_bytes)
-
-        # zapis tokena
-        download_tokens[token] = {
-            "path": path,
-            "expires": datetime.now(timezone.utc) + timedelta(minutes=config.TOKEN_EXPIRE_MINUTES),
-            "paid": False
-        }
+        # zapis pliku i wygenerowanie tokena
+        token = save_file(file_bytes)
 
         return JSONResponse({"token": token})
     except Exception as e:
