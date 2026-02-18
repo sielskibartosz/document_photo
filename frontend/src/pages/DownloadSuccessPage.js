@@ -35,21 +35,43 @@ const downloadFromBackend = async () => {
   }
 };
 useEffect(() => {
-  // zabezpieczenie przed podwójnym odpaleniem w React StrictMode
+  // zabezpieczenie przed podwójnym odpaleniem
   if (window.__conversion_sent__) return;
 
-  if (window.gtag) {
-    const transactionId = new URLSearchParams(window.location.search).get("order_id") || Date.now().toString();
+  // pobranie tokenu z hash
+  const hash = window.location.hash; // "#/download-success?token=abc"
+  const queryString = hash.split("?")[1]; // "token=abc"
+  if (!queryString) return;
 
-    window.gtag("event", "conversion", {
-      send_to: "AW-17550154396/_6-ECIjRr_kbEJy1yLBB",
-      value: 7.0,
-      currency: "PLN",
-      transaction_id: transactionId,
-    });
+  const urlParams = new URLSearchParams(queryString);
+  const token = urlParams.get("token");
+  if (!token) return;
 
-    window.__conversion_sent__ = true;
-  }
+  // fetch do backendu, żeby pobrać prawdziwe order_id / value
+  const sendConversion = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/order-by-token/${token}`);
+      if (!response.ok) throw new Error("Nie udało się pobrać order_id");
+      const data = await response.json();
+      const transactionId = data.order_id; // prawdziwe ID transakcji
+      const value = data.amount || 7.0;   // wartość płatności z backendu
+
+      if (window.gtag) {
+        window.gtag("event", "conversion", {
+          send_to: "AW-17550154396/_6-ECIjRr_kbEJy1yLBB",
+          value: value,
+          currency: "PLN",
+          transaction_id: transactionId,
+        });
+        window.__conversion_sent__ = true;
+        console.log("Google Ads conversion sent:", transactionId, value);
+      }
+    } catch (err) {
+      console.error("Błąd wysyłania konwersji:", err);
+    }
+  };
+
+  sendConversion();
 }, []);
 
 
