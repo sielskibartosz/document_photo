@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Button, Typography, ThemeProvider, CssBaseline, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { darkTheme } from "../styles/theme";
@@ -34,6 +34,24 @@ const downloadFromBackend = async () => {
     alert("Nie udało się pobrać pliku.");
   }
 };
+useEffect(() => {
+  // zabezpieczenie przed podwójnym odpaleniem w React StrictMode
+  if (window.__conversion_sent__) return;
+
+  if (window.gtag) {
+    const transactionId = new URLSearchParams(window.location.search).get("order_id") || Date.now().toString();
+
+    window.gtag("event", "conversion", {
+      send_to: "AW-17550154396/_6-ECIjRr_kbEJy1yLBB",
+      value: 7.0,
+      currency: "PLN",
+      transaction_id: transactionId,
+    });
+
+    window.__conversion_sent__ = true;
+  }
+}, []);
+
 
   return (
     <ThemeProvider theme={darkTheme}>
