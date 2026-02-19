@@ -6,7 +6,8 @@ from app.config import config
 
 download_tokens = {}  # token -> { path, expires, paid }
 
-def save_file(image_bytes: bytes) -> str:
+
+def save_file(image_bytes: bytes, is_admin: bool = False) -> str:
     """Zapisuje plik i generuje token do pobrania"""
     token = str(uuid.uuid4())
     filename = f"{token}.jpg"
@@ -18,15 +19,17 @@ def save_file(image_bytes: bytes) -> str:
     download_tokens[token] = {
         "path": path,
         "expires": datetime.now(timezone.utc) + timedelta(minutes=config.TOKEN_EXPIRE_MINUTES),
-        "paid": False
+        "paid": is_admin  # jeśli admin, od razu oznaczone jako opłacone
     }
     print("✅ Created download token:", token)
     print("Available tokens:", list(download_tokens.keys()))
     return token
 
+
 def get_file(token: str):
     """Zwraca dane pliku po tokenie"""
     return download_tokens.get(token)
+
 
 def mark_paid(token: str):
     """Oznacza token jako opłacony"""

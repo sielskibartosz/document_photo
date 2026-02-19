@@ -5,6 +5,7 @@ import FrameBox from "../styles/imagesStyles";
 import { Box, Typography, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { BACKEND_URL } from "../constants/backendConfig";
+import apiFetch from "../utils/apiFetch";
 
 const SheetManager = ({
   sheetImages,
@@ -110,12 +111,18 @@ const SheetManager = ({
   };
 
   // ---------------- HANDLE PAYMENT ----------------
+// ---------------- HANDLE PAYMENT ----------------
 const handleDownloadClick = async () => {
   if (!sheetImages.length) return;
 
   try {
     // 1️⃣ Generowanie arkusza i konwersja na base64
     const { blob } = await generateSheet();
+    if (!blob) {
+      alert("Nie udało się wygenerować arkusza.");
+      return;
+    }
+
     const base64Image = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
@@ -124,23 +131,57 @@ const handleDownloadClick = async () => {
     });
 
     // 2️⃣ Wysyłamy do /api/download/create
-    const downloadResp = await fetch(`${BACKEND_URL}/api/download/create`, {
+    const downloadResp = await apiFetch(`${BACKEND_URL}/api/download/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image_base64: base64Image }),
     });
+
+    if (!downloadResp.ok) {
+      const errorText = await downloadResp.text();
+      console.error("Błąd /download/create:", downloadResp.status, errorText);
+      alert("Błąd backendu przy tworzeniu tokena:\n" + errorText);
+      return;
+    }
+
     const downloadData = await downloadResp.json();
     const token = downloadData.token;
 
     // 3️⃣ Wywołujemy Stripe link
     const redirect_url = `${window.location.origin}/#/download-success?token=${token}`;
-    const paymentResp = await fetch(`${BACKEND_URL}/api/payments/create-link`, {
+    const bodyData = { price_id: priceId, token, redirect_url };
+    console.log("💡 Sending to /create-link:", bodyData);
+
+    const paymentResp = await apiFetch(`${BACKEND_URL}/api/payments/create-link`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ price_id: priceId, token, redirect_url }),
+      body: JSON.stringify(bodyData),
     });
 
-    const paymentData = await paymentResp.json();
+    console.log("💡 /create-link status:", paymentResp.status);
+    const responseText = await paymentResp.text();
+    console.log("💡 /create-link raw response:", responseText);
+
+    if (!paymentResp.ok) {
+      alert("Błąd backendu przy tworzeniu linku płatności:\n" + responseText);
+      return; // ❌ zatrzymujemy redirect
+    }
+
+    const paymentData = JSON.parse(responseText);
+    console.log("💡 /create-link parsed response:", paymentData);
+
+    // ADMIN BYPASS
+    if (paymentData.url === "ADMIN_BYPASS") {
+      window.location.href = `${window.location.origin}/#/download-success?token=${token}`;
+      return;
+    }
+
+    // 💳 Normalny Stripe flow
+    if (!paymentData.url) {
+      alert("Brak URL do przekierowania ze Stripe.");
+      return;
+    }
+
     window.location.href = paymentData.url;
 
   } catch (err) {
@@ -148,6 +189,7 @@ const handleDownloadClick = async () => {
     alert(err.message || "Nie udało się utworzyć linku płatności.");
   }
 };
+
 
 
   // ---------------- RENDER ----------------
