@@ -46,7 +46,7 @@ export default function AppTitle() {
         }}
       >
         <Box component="span">
-  photo<Box component="span" color="primary.main">ID</Box>creator
+  Photo<Box component="span" color="primary.main">ID</Box>Creator
 </Box>
 
 

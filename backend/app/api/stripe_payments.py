@@ -13,22 +13,23 @@ router = APIRouter(prefix="/api/payments", tags=["stripe"])
 
 
 @router.post("/create-link")
-async def create_link(body: CreateLinkRequest, x_admin_token: str | None = Header(None)):
-    # ADMIN BYPASS
-    if x_admin_token == os.getenv("ADMIN_SECRET"):
-        try:
-            mark_paid(body.token)
-            print("ADMIN BYPASS OK")
-        except Exception as e:
-            print("MARK_PAID ERROR:", e)
-            raise
+async def create_link(
+    body: CreateLinkRequest,
+    x_admin_token: str | None = Header(None, alias="X-Admin-Token")  # ✅ OK!
+):
+    print(f"[DEBUG] body: {body}")
+    print(f"[DEBUG] x_admin_token: '{x_admin_token}'")
+
+    # 🔥 ADMIN BYPASS – TEN SAM klucz!
+    if x_admin_token == config.ADMIN_DOWNLOAD_KEY:
+        print(f"[ADMIN] BYPASS dla {body.token}")
+        mark_paid(body.token)
         return {"url": "ADMIN_BYPASS"}
 
-    try:
-        url = create_payment_link(body.price_id, body.token, body.redirect_url)
-        return {"url": url}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Stripe TYLKO dla normalnych users
+    print(f"[STRIPE] Tworzę link dla price_id: {body.price_id}")
+    url = create_payment_link(body.price_id, body.token, body.redirect_url)
+    return {"url": url}
 
 
 @router.post("/webhook")

@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "homepage": "https://photoidcreator.com",
+  "homepage": "https://github.com/sielskibartosz/document_photo.git",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
