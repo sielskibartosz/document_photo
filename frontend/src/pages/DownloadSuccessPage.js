@@ -63,7 +63,14 @@ const downloadFromBackend = async () => {
         <Typography variant="body1" sx={{ mb: 2 }}>{t("success_page.not_downloaded")}</Typography>
         <Button variant="contained" onClick={downloadFromBackend} sx={{ mb: 2 }}>{t("success_page.download_btn")}</Button>
         <Button variant="outlined" onClick={() => navigate("/")} sx={{ mb: 2 }}>{t("success_page.main_page_btn")}</Button>
-        <Box sx={{ mt: 4 }}><FeedbackForm /></Box>
+        <Box sx={{
+          mt: 4,
+          width: "100%",
+          maxWidth: isSmallScreen ? "90%" : "600px",
+          mx: "auto"
+        }}>
+          <FeedbackForm />
+        </Box>
       </Box>
     </ThemeProvider>
   );

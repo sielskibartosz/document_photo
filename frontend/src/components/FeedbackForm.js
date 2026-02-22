@@ -58,7 +58,8 @@ const FeedbackForm = ({ onClose }) => {
         alignItems: "center",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
         color: "#fff",
-        height: "260px", // Lekko zmniejszona wysokość
+        minHeight: "260px",
+        height: "auto",
         boxSizing: "border-box",
       }}
     >
@@ -127,8 +128,9 @@ const FeedbackForm = ({ onClose }) => {
           type="submit"
           disabled={!message.trim()}
           style={{
-            marginTop: "1px", // Zmniejszony margines z 10px
-            padding: "8px 16px", // Zmniejszony padding
+            marginTop: "1px",
+            marginBottom: "8px", // 🔹 tu dodana minimalna przerwa
+            padding: "8px 16px",
             borderRadius: "5px",
             cursor: "pointer",
             width: "100%",
