@@ -29,15 +29,8 @@ const downloadFromBackend = async () => {
     link.href = URL.createObjectURL(blob);
     link.download = "photo_sheet.jpg";
     link.click();
-    // 🔥 KONWERSJA GOOGLE ADS
-    if (window.gtag) {
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-17550154396/_6-ECIjRr_kbEJy1yLBB',
-        value: 7.0,
-        currency: 'PLN',
-        transaction_id: token
-      });
-    }
+
+
   } catch (err) {
     console.error(err);
     alert("Nie udało się pobrać pliku.");
