@@ -47,7 +47,7 @@ const DownloadSuccessPage = () => {
 
       if (token) {
         window.gtag('event', 'conversion', {
-          send_to: 'AW-17550154396/_6-ECIjRr_kbEJy1yLBB',
+          send_to: 'AW-17550154396/gwoSCO_jlv4bEJy1yLBB',
           value: 7.0,
           currency: 'PLN',
           transaction_id: token
