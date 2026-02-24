@@ -52,14 +52,15 @@ async def stripe_webhook(request: Request):
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
 
-        payment_intent_id = session.get("payment_intent")
-        token = None
-        ga_client_id = None  # 🔥 Nowy!
+        # 🔥 Pobierz Z SESSION METADATA (pierwszy wybór)
+        token = session.metadata.get("token")
+        ga_client_id = session.metadata.get("ga_client_id")
 
-        if payment_intent_id:
-            pi = stripe.PaymentIntent.retrieve(payment_intent_id)
-            token = pi.metadata.get("token")
-            ga_client_id = pi.metadata.get("ga_client_id")  # 🔥 Pobranie z metadata!
+        # Fallback na PaymentIntent (rzadko potrzebne)
+        if not token and session.get("payment_intent"):
+            pi = stripe.PaymentIntent.retrieve(session["payment_intent"])
+            token = pi.metadata.get("token") or token
+            ga_client_id = pi.metadata.get("ga_client_id") or ga_client_id
 
         email = session.get("customer_details", {}).get("email")
         amount = session.get("amount_total", 0) / 100
@@ -71,7 +72,6 @@ async def stripe_webhook(request: Request):
             mark_paid(token)
 
         if email and transaction_id:
-            # 🔥 Przekazanie GA client_id do konwersji!
             send_google_conversion(email, transaction_id, amount, ga_client_id)
 
     return {"status": "success"}
