@@ -52,15 +52,28 @@ async def stripe_webhook(request: Request):
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
 
-        # 🔥 Pobierz Z SESSION METADATA (pierwszy wybór)
+        # 🔥 1. PIERWSZY WYBÓR: Session metadata (PaymentLink metadata propaguje się tutaj)
         token = session.metadata.get("token")
         ga_client_id = session.metadata.get("ga_client_id")
 
-        # Fallback na PaymentIntent (rzadko potrzebne)
-        if not token and session.get("payment_intent"):
-            pi = stripe.PaymentIntent.retrieve(session["payment_intent"])
-            token = pi.metadata.get("token") or token
-            ga_client_id = pi.metadata.get("ga_client_id") or ga_client_id
+        # 🔥 2. FALLBACK: PaymentIntent metadata
+        payment_intent_id = session.get("payment_intent")
+        if not token and payment_intent_id:
+            try:
+                pi = stripe.PaymentIntent.retrieve(payment_intent_id)
+                token = pi.metadata.get("token") or token
+                ga_client_id = pi.metadata.get("ga_client_id") or ga_client_id
+            except Exception as e:
+                print(f"[STRIPE] PaymentIntent fallback error: {e}")
+
+        # 🔥 3. ULTYMATYWNY FALLBACK: PaymentLink retrieve
+        if not token and session.get("payment_link"):
+            try:
+                pl = stripe.PaymentLink.retrieve(session["payment_link"])
+                token = pl.metadata.get("token") or token
+                ga_client_id = pl.metadata.get("ga_client_id") or ga_client_id
+            except Exception as e:
+                print(f"[STRIPE] PaymentLink fallback error: {e}")
 
         email = session.get("customer_details", {}).get("email")
         amount = session.get("amount_total", 0) / 100
@@ -70,6 +83,7 @@ async def stripe_webhook(request: Request):
 
         if token:
             mark_paid(token)
+            print(f"[STRIPE] Marked paid: {token}")
 
         if email and transaction_id:
             send_google_conversion(email, transaction_id, amount, ga_client_id)
