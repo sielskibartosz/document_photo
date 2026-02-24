@@ -27,7 +27,13 @@ async def create_link(
         return {"url": "ADMIN_BYPASS"}
 
     print(f"[STRIPE] Tworzę link dla price_id: {body.price_id}")
-    url = create_payment_link(body.price_id, body.token, body.redirect_url)
+    # 🔥 Przekazanie ga_client_id do stripe_service
+    url = create_payment_link(
+        body.price_id,
+        body.token,
+        body.redirect_url,
+        body.ga_client_id
+    )
     return {"url": url}
 
 
@@ -48,21 +54,24 @@ async def stripe_webhook(request: Request):
 
         payment_intent_id = session.get("payment_intent")
         token = None
+        ga_client_id = None  # 🔥 Nowy!
 
         if payment_intent_id:
             pi = stripe.PaymentIntent.retrieve(payment_intent_id)
             token = pi.metadata.get("token")
+            ga_client_id = pi.metadata.get("ga_client_id")  # 🔥 Pobranie z metadata!
 
         email = session.get("customer_details", {}).get("email")
         amount = session.get("amount_total", 0) / 100
         transaction_id = session.get("id")
 
-        print(f"[STRIPE] email={email} amount={amount} token={token}")
+        print(f"[STRIPE] email={email} amount={amount} token={token} ga_client_id={ga_client_id}")
 
         if token:
             mark_paid(token)
 
         if email and transaction_id:
-            send_google_conversion(email, transaction_id, amount)
+            # 🔥 Przekazanie GA client_id do konwersji!
+            send_google_conversion(email, transaction_id, amount, ga_client_id)
 
     return {"status": "success"}

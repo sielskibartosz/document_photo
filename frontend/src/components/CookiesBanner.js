@@ -28,7 +28,32 @@ const CookiesBanner = () => {
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config','G-4GGMXV1R1V');
+      gtag('config', 'G-4GGMXV1R1V', {
+        'cookie_flags': 'SameSite=None;Secure',
+        'allow_ad_personalization_signals': false
+      });
+
+      // Globalna funkcja do pobierania GA client_id
+      window.getGAClientId = function() {
+        // Metoda 1: Z cookie _ga
+        const gaCookie = document.cookie.match(/(_ga_[A-Z0-9]+)=([^;]+)/);
+        if (gaCookie) {
+          const parts = gaCookie[2].split('.');
+          return parts.slice(-2).join('.');
+        }
+        // Metoda 2: Z gtag API (asynchronicznie)
+        return new Promise((resolve) => {
+          gtag('get', 'G-4GGMXV1R1V', 'client_id', (clientId) => {
+            resolve(clientId);
+          });
+        });
+      };
+
+      // Event po załadowaniu GA (opcjonalnie)
+      gtag('event', 'cookies_accepted', {
+        event_category: 'user_consent',
+        event_label: 'cookies_banner'
+      });
     `;
     document.head.appendChild(inlineGA);
   };

@@ -1,6 +1,7 @@
 import hashlib
 import requests
 from app.config import config
+from typing import Optional
 
 
 def hash_data(value: str) -> str:
@@ -8,7 +9,10 @@ def hash_data(value: str) -> str:
     return hashlib.sha256(value.encode()).hexdigest()
 
 
-def send_google_conversion(email: str, transaction_id: str, value: float):
+def send_google_conversion(email: str, transaction_id: str, value: float, client_id: Optional[str] = None):
+    """
+    Wysyła purchase event do GA4 z poprawnym client_id (rozwiązuje "nie wykryto danych strumienia")
+    """
     if not email:
         print("[GOOGLE ADS] Brak emaila — pomijam konwersję")
         return
@@ -21,8 +25,9 @@ def send_google_conversion(email: str, transaction_id: str, value: float):
         f"&api_secret={config.GOOGLE_ADS_API_SECRET}"
     )
 
+    # 🔥 Użyj prawdziwego GA4 client_id z frontend zamiast transaction_id!
     payload = {
-        "client_id": transaction_id,
+        "client_id": client_id or transaction_id,  # Priorytet: frontend client_id
         "events": [
             {
                 "name": "purchase",
@@ -40,6 +45,6 @@ def send_google_conversion(email: str, transaction_id: str, value: float):
 
     try:
         response = requests.post(url, json=payload, timeout=5)
-        print(f"[GOOGLE ADS] Status: {response.status_code}")
+        print(f"[GOOGLE ADS] Status: {response.status_code}, client_id: {client_id or 'transaction_id'}")
     except Exception as e:
         print(f"[GOOGLE ADS ERROR] {e}")
