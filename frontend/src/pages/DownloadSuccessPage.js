@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Button, Typography, ThemeProvider, CssBaseline, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { darkTheme } from "../styles/theme";
@@ -12,30 +12,50 @@ const DownloadSuccessPage = () => {
   const { t } = useTranslation();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
-const downloadFromBackend = async () => {
-  const hash = window.location.hash;
+  // ✅ POPRAWIONA INDENTACJA - TYLKO download
+  const downloadFromBackend = async () => {
+    const hash = window.location.hash;
     const queryString = hash.split("?")[1];
     const urlParams = new URLSearchParams(queryString);
     const token = urlParams.get("token");
 
-  if (!token) return alert("Brak tokena pobierania.");
+    if (!token) return alert("Brak tokena pobierania.");
 
-  try {
-    const response = await fetch(`${BACKEND_URL}/api/download/${token}`);
-    if (!response.ok) throw new Error("Błąd serwera");
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/download/${token}`);
+      if (!response.ok) throw new Error("Błąd serwera");
 
-    const blob = await response.blob();
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "photo_sheet.jpg";
-    link.click();
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "photo_sheet.jpg";
+      link.click();
 
+      console.log('✅ Download complete:', token);
+    } catch (err) {
+      console.error(err);
+      alert("Nie udało się pobrać pliku.");
+    }
+  };
 
-  } catch (err) {
-    console.error(err);
-    alert("Nie udało się pobrać pliku.");
-  }
-};
+  // 🔥 GOOGLE ADS CONVERSION - TYLKO na ładowaniu strony
+  useEffect(() => {
+    if (window.gtag && localStorage.getItem("cookiesAccepted") === "true") {
+      const hash = window.location.hash;
+      const urlParams = new URLSearchParams(hash.split("?")[1] || "");
+      const token = urlParams.get("token");
+
+      if (token) {
+        window.gtag('event', 'conversion', {
+          send_to: 'AW-17550154396/_6-ECIjRr_kbEJy1yLBB',
+          value: 7.0,
+          currency: 'PLN',
+          transaction_id: token
+        });
+        console.log('✅ GOOGLE ADS conversion sent:', token);
+      }
+    }
+  }, []);
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -63,14 +83,7 @@ const downloadFromBackend = async () => {
         <Typography variant="body1" sx={{ mb: 2 }}>{t("success_page.not_downloaded")}</Typography>
         <Button variant="contained" onClick={downloadFromBackend} sx={{ mb: 2 }}>{t("success_page.download_btn")}</Button>
         <Button variant="outlined" onClick={() => navigate("/")} sx={{ mb: 2 }}>{t("success_page.main_page_btn")}</Button>
-        <Box sx={{
-          mt: 4,
-          width: "100%",
-          maxWidth: isSmallScreen ? "90%" : "600px",
-          mx: "auto"
-        }}>
-          <FeedbackForm />
-        </Box>
+        <Box sx={{ mt: 4 }}><FeedbackForm /></Box>
       </Box>
     </ThemeProvider>
   );
