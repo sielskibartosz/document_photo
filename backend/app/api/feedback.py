@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Request, HTTPException
+import logging
 from app.models import FeedbackResponse
 from app.config import config
 
 from app.services.feedback_service import save_feedback, load_feedbacks
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/feedback", tags=["feedback"])
 
 
@@ -21,11 +23,13 @@ async def submit_feedback(request: Request):
             raise HTTPException(status_code=400, detail=f"Wiadomość za długa (max {config.MAX_FEEDBACK_LENGTH} znaków)")
 
         save_feedback(message)
+        logger.info("Feedback saved successfully")
         return FeedbackResponse(status="ok")
 
     except HTTPException:
         raise
     except Exception as e:
+        logger.exception("Error processing feedback")
         raise HTTPException(status_code=500, detail="Błąd serwera")
 
 

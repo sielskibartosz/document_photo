@@ -2,8 +2,10 @@ from fastapi import APIRouter, UploadFile, File, Form, BackgroundTasks, HTTPExce
 from fastapi.responses import FileResponse
 import os
 import tempfile
+import logging
 from app.services.image_service import process_image
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/remove-background", tags=["background"])
 
 
@@ -24,6 +26,7 @@ async def remove_background(
             tmp_path = tmp.name
 
         process_image(contents, bg_color, tmp_path)
+        logger.info(f"Image processed successfully")
 
         def cleanup():
             try:
@@ -42,4 +45,5 @@ async def remove_background(
     except HTTPException:
         raise
     except Exception as e:
+        logger.exception("Error processing image")
         raise HTTPException(status_code=500, detail="Błąd przetwarzania obrazu")
