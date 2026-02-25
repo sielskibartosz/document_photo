@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#1976d2" />
 
     <title>PhotoIDCreator – zdjęcia do dowodu online</title>
+
     <meta
       name="description"
       content="Stwórz zdjęcia do dowodu, paszportu, legitymacji i wizy online. PhotoIDCreator automatycznie przytnie zdjęcie do wymiarów biometrycznych i przygotuje je do druku."
@@ -15,6 +16,7 @@
       content="zdjęcia do dowodu, zdjęcie do paszportu online, zdjęcia biometryczne, zdjęcia do legitymacji, generator zdjęć do dokumentów, PhotoIDCreator"
     />
 
+    <!-- GOOGLE TAG (GA4 + Google Ads) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4GGMXV1R1V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -24,12 +26,11 @@
       // GA4
       gtag('config', 'G-4GGMXV1R1V');
 
-      // Google Ads
+      // Google Ads (tylko konfiguracja – konwersja wysyłana z React)
       gtag('config', 'AW-17550154396');
     </script>
 
-
-    <!-- Open Graph dla lepszego udostępniania -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://photoidcreator.com/" />
     <meta property="og:title" content="PhotoIDCreator – zdjęcia do dowodu online" />
@@ -53,7 +54,7 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo_no_text.png" />
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- CSS i JS React -->
+    <!-- React CSS -->
     <link href="/static/css/main.e6c13ad2.css" rel="stylesheet" />
     <script defer src="/static/js/main.06e3d68a.js"></script>
   </head>
@@ -62,6 +63,7 @@
     <noscript>
       Musisz włączyć JavaScript, aby korzystać z tej aplikacji.
     </noscript>
+
     <div id="root"></div>
 
     <!-- Treść statyczna dla SEO -->
@@ -82,5 +84,6 @@
         <li>Generowanie gotowego arkusza do druku</li>
       </ul>
     </main>
-      </body>
+
+  </body>
 </html>

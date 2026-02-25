@@ -38,24 +38,25 @@ const DownloadSuccessPage = () => {
     }
   };
 
-  // 🔥 GOOGLE ADS CONVERSION - TYLKO na ładowaniu strony
-  useEffect(() => {
-    if (window.gtag && localStorage.getItem("cookiesAccepted") === "true") {
-      const hash = window.location.hash;
-      const urlParams = new URLSearchParams(hash.split("?")[1] || "");
-      const token = urlParams.get("token");
+  // 🔥 GOOGLE ADS CONVERSION - tylko przy wejściu na stronę
+useEffect(() => {
+  if (!window.gtag) return;
 
-      if (token) {
-        window.gtag('event', 'conversion', {
-          send_to: 'AW-17550154396/gwoSCO_jlv4bEJy1yLBB',
-          value: 7.0,
-          currency: 'PLN',
-          transaction_id: token
-        });
-        console.log('✅ GOOGLE ADS conversion sent:', token);
-      }
-    }
-  }, []);
+  const hash = window.location.hash;
+  const urlParams = new URLSearchParams(hash.split("?")[1] || "");
+  const token = urlParams.get("token");
+
+  if (token) {
+    window.gtag('event', 'conversion', {
+      send_to: 'AW-17550154396/gwoSCO_jlv4bEJy1yLBB',
+      value: 7.0,
+      currency: 'PLN',
+      transaction_id: token
+    });
+
+    console.log('✅ GOOGLE ADS conversion sent:', token);
+  }
+}, []);
 
   return (
     <ThemeProvider theme={darkTheme}>
