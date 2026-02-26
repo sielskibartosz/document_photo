@@ -16,7 +16,8 @@ def send_ga4_conversion(
     email: Optional[str] = None,
     value: float = 7.0,
     event_id: Optional[str] = None,
-    user_id: Optional[str] = None
+    user_id: Optional[str] = None,
+    gclid: Optional[str] = None
 ):
     """
     🔥 Wysyła purchase event do GA4 (Measurement Protocol v1).
@@ -80,6 +81,12 @@ def send_ga4_conversion(
         ]
     }
 
+    # jeżeli mamy gclid, dodajemy go do traffic_source by GA4 przekazało do Google Ads
+    if gclid:
+        payload_traffic = payload.get("traffic_source", {})
+        payload_traffic["gclid"] = gclid
+        payload["traffic_source"] = payload_traffic
+
     # Budowanie payload
     payload = {
         "client_id": ga_client_id,
@@ -119,7 +126,8 @@ def send_ga4_conversion(
                 f"| client_id={ga_client_id} "
                 f"| event_id={event_id} "
                 f"| email={email or 'N/A'} "
-                f"| value={value}PLN"
+                f"| value={value}PLN "
+                f"| gclid={gclid or 'none'}"
             )
             return True
         else:

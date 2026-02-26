@@ -122,6 +122,18 @@ const SheetManager = ({
     return null;
   }, []);
 
+  // ---------------- CAPTURE gclid param and persist ----------------
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    // Support both hash-based routing and query params
+    const params = new URLSearchParams(window.location.search || window.location.hash.split('?')[1]);
+    const gclidParam = params.get('gclid');
+    if (gclidParam) {
+      localStorage.setItem('gclid', gclidParam);
+      console.log('💡 gclid stored:', gclidParam);
+    }
+  }, []);
+
   // ---------------- BUTTON HANDLERS ----------------
   const onClearSheetClick = () => {
     if (clearSheet) clearSheet();
@@ -176,13 +188,18 @@ const SheetManager = ({
         console.log("💡 GA Client ID:", ga_client_id);
       }
 
-      // 4️⃣ Wywołujemy Stripe link z GA client_id
-      const redirect_url = `${window.location.origin}/#/download-success?token=${token}`;
+      // 4️⃣ Wywołujemy Stripe link z GA client_id i gclid
+      const gclid = localStorage.getItem('gclid');
+      let redirect_url = `${window.location.origin}/#/download-success?token=${token}`;
+      if (gclid) {
+        redirect_url += `&gclid=${encodeURIComponent(gclid)}`;
+      }
       const bodyData = {
         price_id: priceId,
         token,
         redirect_url,
-        ga_client_id: ga_client_id  // 🔥 Tylko jeśli istnieje, backend obsłuży None
+        ga_client_id: ga_client_id,  // 🔥 Tylko jeśli istnieje, backend obsłuży None
+        gclid: localStorage.getItem('gclid') || null
       };
       console.log("💡 Sending to /create-link:", bodyData);
 
@@ -206,7 +223,7 @@ const SheetManager = ({
 
       // ADMIN BYPASS
       if (paymentData.url === "ADMIN_BYPASS") {
-        window.location.href = `${window.location.origin}/#/download-success?token=${token}`;
+        window.location.href = redirect_url;
         return;
       }
 

@@ -15,6 +15,7 @@ class CreateLinkRequest(BaseModel):
     token: str
     redirect_url: str
     ga_client_id: Optional[str] = None  # Opcjonalnie GA client_id z frontend
+    gclid: Optional[str] = None        # Opcjonalnie identyfikator gclid pochodzący z kampanii Google Ads
 
 class CreateDownloadRequest(BaseModel):
     image_base64: str

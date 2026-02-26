@@ -6,7 +6,7 @@ stripe.api_key = config.STRIPE_SECRET_KEY
 logger = logging.getLogger(__name__)
 
 
-def create_payment_link(price_id: str, token: str, redirect_url: str, ga_client_id: str = None):
+def create_payment_link(price_id: str, token: str, redirect_url: str, ga_client_id: str = None, gclid: str = None):
     """
     Tworzy payment link ze wszystkimi potrzebnymi metadanymi do śledzenia konwersji.
 
@@ -15,6 +15,7 @@ def create_payment_link(price_id: str, token: str, redirect_url: str, ga_client_
         token: Token pobierania (ID transakcji dla GA4)
         redirect_url: URL do przekierowania po płatności
         ga_client_id: GA4 client_id z frontendu (KRYTYCZNE!)
+        gclid: parametr gclid automatycznie dopisywany przez Google Ads (opcjonalny)
     """
     metadata = {
         "token": token,
@@ -26,6 +27,11 @@ def create_payment_link(price_id: str, token: str, redirect_url: str, ga_client_
         logger.info(f"[Stripe] ✅ GA client_id dodany do metadanych: {ga_client_id}")
     else:
         logger.warning(f"[Stripe] ⚠️  Brak GA client_id! Konwersja może NIE być policzona w GA4")
+
+    # Dodaj gclid jeżeli przekazano (przyda się do atrybucji Google Ads)
+    if gclid:
+        metadata["gclid"] = gclid
+        logger.info(f"[Stripe] ✅ gclid dodany do metadanych: {gclid}")
 
     link = stripe.PaymentLink.create(
         line_items=[{"price": price_id, "quantity": 1}],

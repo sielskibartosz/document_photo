@@ -38,19 +38,37 @@ const DownloadSuccessPage = () => {
     }
   };
 
-  // 🔥 GA4 PURCHASE CONVERSION
-  // ⚠️ WYŁĄCZONE - Backend wysyła via Stripe webhook (bardziej niezawodne)
-  // Frontend wysyłał by duplikat event'u
-  //useEffect(() => {
-    // Deduplication: Backend wysyła event z Stripe webhook
-    // Ten event jest bardziej niezawodny bo:
-    // - Wysyła się TYLKO jeśli płatność rzeczywiście powiodła się
-    // - Ma email i user_id
-    // - Jest gwarantowany przez Stripe
-    //
-    // Frontend backup event nie potrzebny
-    //console.log('✅ Purchase conversion będzie wysłana przez backend (Stripe webhook)');
-  //}, []);
+  // 🔥 GOOGLE ADS CONVERSION TRACKING
+  useEffect(() => {
+    // Tylko jeśli użytkownik wyraził zgodę na cookies
+    if (localStorage.getItem('cookiesAccepted') !== 'true') {
+      console.log('⚠️ Cookies nie zaakceptowane, pomijam konwersję Google Ads');
+      return;
+    }
+
+    const hash = window.location.hash;
+    const queryString = hash.split("?")[1];
+    const urlParams = new URLSearchParams(queryString);
+    const token = urlParams.get("token");
+    const gclid = urlParams.get("gclid");
+
+    if (!token) {
+      console.log('❌ Brak tokena w URL, pomijam konwersję');
+      return;
+    }
+
+    // 🎯 Wysyłamy Google Ads conversion event
+    if (window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17550154396/gwoSCO_jlv4bEJy1yLBB',
+        'transaction_id': token,
+        ...(gclid && { 'gclid': gclid })
+      });
+      console.log('✅ Google Ads conversion event wysłany | token=' + token + ' | gclid=' + (gclid || 'none'));
+    } else {
+      console.warn('⚠️ gtag nie dostępny');
+    }
+  }, []);
 
   return (
     <ThemeProvider theme={darkTheme}>

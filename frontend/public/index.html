@@ -24,14 +24,19 @@
 
       // Domyślnie deny - user musi zaakceptować na banerze
       gtag('consent', 'default', {
-        'ad_storage': 'denied',
-        'analytics_storage': 'denied'
+        'ad_storage': 'granted',
+        'analytics_storage': 'granted'
       });
 
       gtag('js', new Date());
 
       // GA4
-      gtag('config', 'G-4GGMXV1R1V');
+      gtag('config', 'G-4GGMXV1R1V', {
+        debug_mode: true
+        });
+
+      // Google Ads (tylko konfiguracja – konwersja wysyłana z React)
+      gtag('config', 'AW-17550154396');
     </script>
 
     <!-- Open Graph -->
