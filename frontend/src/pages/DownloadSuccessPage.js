@@ -39,32 +39,18 @@ const DownloadSuccessPage = () => {
   };
 
   // 🔥 GA4 PURCHASE CONVERSION
-  useEffect(() => {
-    if (!window.gtag) return;
-
-    const hash = window.location.hash;
-    const urlParams = new URLSearchParams(hash.split("?")[1] || "");
-    const token = urlParams.get("token");
-
-    if (token) {
-      // ✅ GA4 Purchase Event (única źródło prawdy)
-      window.gtag('event', 'purchase', {
-        transaction_id: token,
-        value: 7.0,
-        currency: 'PLN',
-        event_id: `purchase_${token}`,
-        items: [
-          {
-            item_id: 'photo-sheet',
-            item_name: 'Photo Sheet',
-            price: 7.0,
-            quantity: 1,
-          }
-        ]
-      });
-      console.log('✅ GA4 purchase event sent:', token);
-    }
-  }, []);
+  // ⚠️ WYŁĄCZONE - Backend wysyła via Stripe webhook (bardziej niezawodne)
+  // Frontend wysyłał by duplikat event'u
+  //useEffect(() => {
+    // Deduplication: Backend wysyła event z Stripe webhook
+    // Ten event jest bardziej niezawodny bo:
+    // - Wysyła się TYLKO jeśli płatność rzeczywiście powiodła się
+    // - Ma email i user_id
+    // - Jest gwarantowany przez Stripe
+    //
+    // Frontend backup event nie potrzebny
+    //console.log('✅ Purchase conversion będzie wysłana przez backend (Stripe webhook)');
+  //}, []);
 
   return (
     <ThemeProvider theme={darkTheme}>

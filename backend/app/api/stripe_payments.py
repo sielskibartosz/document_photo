@@ -75,25 +75,34 @@ async def stripe_webhook(request: Request):
 
             # Dane dla konwersji
             customer_email = session.get("customer_email")
+            customer_id = session.get("customer")  # Stripe customer ID jako user_id
 
             # 🔥 Wysyłaj konwersję GA4 (Measurement Protocol) na backend
             # Frontend już wysyła event z gtag, ale backend ensures double-tracking na wypadek błędu
             # ✅ event_id zapobiega duplikatom
+            # ✅ user_id dla GA Conversion Tracking (linking z Google Ads)
             if customer_email:
                 try:
-                    send_ga4_conversion(
+                    success = send_ga4_conversion(
                         transaction_id=token,
                         client_id=ga_client_id,
                         email=customer_email,
+                        user_id=customer_id,  # User ID dla GA linking
                         value=7.0,
                         event_id=f"purchase_{token}"  # ✅ event_id dla deduplicacji
                     )
-                    logger.info(
-                        f"[Stripe → GA4] ✅ Backend conversion sent "
-                        f"| token={token} "
-                        f"| client_id={ga_client_id or 'none'} "
-                        f"| email={customer_email}"
-                    )
+                    if success:
+                        logger.info(
+                            f"[Stripe → GA4] ✅ Backend conversion sent "
+                            f"| token={token} "
+                            f"| client_id={ga_client_id or 'none'} "
+                            f"| user_id={customer_id or 'none'} "
+                            f"| email={customer_email}"
+                        )
+                    else:
+                        logger.warning(
+                            f"[Stripe → GA4] ⚠️  Conversion returned False (non-204 response)"
+                        )
                 except Exception as e:
                     logger.error(f"[Stripe → GA4] ❌ Failed to send conversion: {str(e)}")
             else:
