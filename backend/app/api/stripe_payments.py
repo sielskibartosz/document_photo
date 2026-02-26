@@ -5,6 +5,7 @@ from app.config import config
 from app.models import CreateLinkRequest
 from app.services.stripe_service import create_payment_link
 from app.services.download_service import mark_paid
+from app.services.google_ads_service import send_ga4_conversion, send_google_ads_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,12 @@ async def create_link(
         return {"url": "ADMIN_BYPASS"}
 
     logger.info(f"Creating payment link for price_id: {body.price_id}")
-    url = create_payment_link(body.price_id, body.token, body.redirect_url)
+    url = create_payment_link(
+        body.price_id,
+        body.token,
+        body.redirect_url,
+        ga_client_id=body.ga_client_id  # Pobierz z obiektu request
+    )
     return {"url": url}
 
 
@@ -53,17 +59,46 @@ async def stripe_webhook(request: Request):
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
 
-        # ✅ Poprawnie z session metadata
+        # ✅ Pobierz token i GA client_id z session metadata
         token = session.metadata.get("token") if session.metadata else None
+        ga_client_id = session.metadata.get("ga_client_id") if session.metadata else None
 
         # Fallback PaymentIntent
         if not token and session.get("payment_intent"):
             pi = stripe.PaymentIntent.retrieve(session["payment_intent"])
             token = pi.metadata.get("token")
+            ga_client_id = ga_client_id or pi.metadata.get("ga_client_id")
 
         if token:
             mark_paid(token)
-            logger.info(f"Payment marked as completed")
+            logger.info(f"Payment marked as completed for token: {token}")
+
+            # Dane dla konwersji
+            customer_email = session.get("customer_email")
+
+            # 🔥 1️⃣ Wysyłaj konwersję GA4 (Measurement Protocol)
+            try:
+                send_ga4_conversion(
+                    transaction_id=token,
+                    client_id=ga_client_id,
+                    email=customer_email,
+                    value=7.0
+                )
+                logger.info(f"✅ GA4 conversion sent for token: {token}")
+            except Exception as e:
+                logger.error(f"❌ Failed to send GA4 conversion: {str(e)}")
+
+            # 🔥 2️⃣ Wysyłaj konwersję Google Ads (AW) - Conversion API
+            try:
+                send_google_ads_conversion(
+                    transaction_id=token,
+                    email=customer_email,
+                    value=7.0,
+                    currency='PLN'
+                )
+                logger.info(f"✅ Google Ads (AW) conversion sent for token: {token}")
+            except Exception as e:
+                logger.error(f"❌ Failed to send Google Ads conversion: {str(e)}")
         else:
             logger.warning(f"Webhook received but no token found")
 

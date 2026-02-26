@@ -38,25 +38,41 @@ const DownloadSuccessPage = () => {
     }
   };
 
-  // 🔥 GOOGLE ADS CONVERSION - tylko przy wejściu na stronę
-useEffect(() => {
-  if (!window.gtag) return;
+  // 🔥 GOOGLE ADS CONVERSION - Zarówno AW jak i GA4
+  useEffect(() => {
+    if (!window.gtag) return;
 
-  const hash = window.location.hash;
-  const urlParams = new URLSearchParams(hash.split("?")[1] || "");
-  const token = urlParams.get("token");
+    const hash = window.location.hash;
+    const urlParams = new URLSearchParams(hash.split("?")[1] || "");
+    const token = urlParams.get("token");
 
-  if (token) {
-    window.gtag('event', 'conversion', {
-      send_to: 'AW-17550154396/gwoSCO_jlv4bEJy1yLBB',
-      value: 7.0,
-      currency: 'PLN',
-      transaction_id: token
-    });
+    if (token) {
+      // 1️⃣ Google Ads Conversion (AW) - stary system
+      window.gtag('event', 'conversion', {
+        send_to: 'AW-17550154396/gwoSCO_jlv4bEJy1yLBB',
+        value: 7.0,
+        currency: 'PLN',
+        transaction_id: token
+      });
+      console.log('✅ Google Ads (AW) conversion sent:', token);
 
-    console.log('✅ GOOGLE ADS conversion sent:', token);
-  }
-}, []);
+      // 2️⃣ GA4 Purchase Event - nowy system
+      window.gtag('event', 'purchase', {
+        value: 7.0,
+        currency: 'PLN',
+        transaction_id: token,
+        items: [
+          {
+            item_id: 'photo-sheet',
+            item_name: 'Photo Sheet',
+            price: 7.0,
+            quantity: 1,
+          }
+        ]
+      });
+      console.log('✅ GA4 purchase event sent:', token);
+    }
+  }, []);
 
   return (
     <ThemeProvider theme={darkTheme}>

@@ -14,6 +14,7 @@ class CreateLinkRequest(BaseModel):
     price_id: str
     token: str
     redirect_url: str
+    ga_client_id: Optional[str] = None  # Opcjonalnie GA client_id z frontend
 
 class CreateDownloadRequest(BaseModel):
     image_base64: str

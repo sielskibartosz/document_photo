@@ -16,11 +16,18 @@
       content="zdjęcia do dowodu, zdjęcie do paszportu online, zdjęcia biometryczne, zdjęcia do legitymacji, generator zdjęć do dokumentów, PhotoIDCreator"
     />
 
-    <!-- GOOGLE TAG (GA4 + Google Ads) -->
+     <!-- GOOGLE TAG (GA4 + Google Ads) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4GGMXV1R1V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+
+      // Wymuszamy pełną zgodę (żadne npa)
+      gtag('consent', 'default', {
+        'ad_storage': 'granted',
+        'analytics_storage': 'granted'
+      });
+
       gtag('js', new Date());
 
       // GA4
