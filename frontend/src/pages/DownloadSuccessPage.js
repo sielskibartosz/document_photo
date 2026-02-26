@@ -38,7 +38,7 @@ const DownloadSuccessPage = () => {
     }
   };
 
-  // 🔥 GOOGLE ADS CONVERSION - Zarówno AW jak i GA4
+  // 🔥 GA4 PURCHASE CONVERSION
   useEffect(() => {
     if (!window.gtag) return;
 
@@ -47,20 +47,12 @@ const DownloadSuccessPage = () => {
     const token = urlParams.get("token");
 
     if (token) {
-      // 1️⃣ Google Ads Conversion (AW) - stary system
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-17550154396/gwoSCO_jlv4bEJy1yLBB',
-        value: 7.0,
-        currency: 'PLN',
-        transaction_id: token
-      });
-      console.log('✅ Google Ads (AW) conversion sent:', token);
-
-      // 2️⃣ GA4 Purchase Event - nowy system
+      // ✅ GA4 Purchase Event (única źródło prawdy)
       window.gtag('event', 'purchase', {
+        transaction_id: token,
         value: 7.0,
         currency: 'PLN',
-        transaction_id: token,
+        event_id: `purchase_${token}`,
         items: [
           {
             item_id: 'photo-sheet',

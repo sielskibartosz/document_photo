@@ -5,7 +5,7 @@ from app.config import config
 from app.models import CreateLinkRequest
 from app.services.stripe_service import create_payment_link
 from app.services.download_service import mark_paid
-from app.services.google_ads_service import send_ga4_conversion, send_google_ads_conversion
+from app.services.google_ads_service import send_ga4_conversion
 
 logger = logging.getLogger(__name__)
 
@@ -71,35 +71,34 @@ async def stripe_webhook(request: Request):
 
         if token:
             mark_paid(token)
-            logger.info(f"Payment marked as completed for token: {token}")
+            logger.info(f"[Stripe] ✅ Payment marked as completed for token: {token}")
 
             # Dane dla konwersji
             customer_email = session.get("customer_email")
 
-            # 🔥 1️⃣ Wysyłaj konwersję GA4 (Measurement Protocol)
-            try:
-                send_ga4_conversion(
-                    transaction_id=token,
-                    client_id=ga_client_id,
-                    email=customer_email,
-                    value=7.0
-                )
-                logger.info(f"✅ GA4 conversion sent for token: {token}")
-            except Exception as e:
-                logger.error(f"❌ Failed to send GA4 conversion: {str(e)}")
-
-            # 🔥 2️⃣ Wysyłaj konwersję Google Ads (AW) - Conversion API
-            try:
-                send_google_ads_conversion(
-                    transaction_id=token,
-                    email=customer_email,
-                    value=7.0,
-                    currency='PLN'
-                )
-                logger.info(f"✅ Google Ads (AW) conversion sent for token: {token}")
-            except Exception as e:
-                logger.error(f"❌ Failed to send Google Ads conversion: {str(e)}")
+            # 🔥 Wysyłaj konwersję GA4 (Measurement Protocol) na backend
+            # Frontend już wysyła event z gtag, ale backend ensures double-tracking na wypadek błędu
+            # ✅ event_id zapobiega duplikatom
+            if customer_email:
+                try:
+                    send_ga4_conversion(
+                        transaction_id=token,
+                        client_id=ga_client_id,
+                        email=customer_email,
+                        value=7.0,
+                        event_id=f"purchase_{token}"  # ✅ event_id dla deduplicacji
+                    )
+                    logger.info(
+                        f"[Stripe → GA4] ✅ Backend conversion sent "
+                        f"| token={token} "
+                        f"| client_id={ga_client_id or 'none'} "
+                        f"| email={customer_email}"
+                    )
+                except Exception as e:
+                    logger.error(f"[Stripe → GA4] ❌ Failed to send conversion: {str(e)}")
+            else:
+                logger.warning(f"[Stripe → GA4] ⚠️  No email in session, skipping backend conversion")
         else:
-            logger.warning(f"Webhook received but no token found")
+            logger.warning(f"[Stripe] ⚠️  Webhook received but no token found")
 
     return {"status": "success"}

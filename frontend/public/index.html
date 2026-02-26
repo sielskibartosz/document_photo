@@ -22,19 +22,16 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
 
-      // Wymuszamy pełną zgodę (żadne npa)
+      // Domyślnie deny - user musi zaakceptować na banerze
       gtag('consent', 'default', {
-        'ad_storage': 'granted',
-        'analytics_storage': 'granted'
+        'ad_storage': 'denied',
+        'analytics_storage': 'denied'
       });
 
       gtag('js', new Date());
 
       // GA4
       gtag('config', 'G-4GGMXV1R1V');
-
-      // Google Ads (tylko konfiguracja – konwersja wysyłana z React)
-      gtag('config', 'AW-17550154396');
     </script>
 
     <!-- Open Graph -->
