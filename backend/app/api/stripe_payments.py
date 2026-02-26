@@ -75,6 +75,16 @@ async def stripe_webhook(request: Request):
 
             # Dane dla konwersji
             customer_email = session.get("customer_email")
+            
+            # ✅ Fallback: jeśli brak customer_email w session, spróbuj pobrać z customer object
+            if not customer_email and session.get("customer"):
+                try:
+                    customer = stripe.Customer.retrieve(session["customer"])
+                    customer_email = customer.get("email")
+                    logger.info(f"[Stripe] ℹ️ Email retrieved from customer object: {customer_email}")
+                except Exception as e:
+                    logger.warning(f"[Stripe] ⚠️ Failed to retrieve customer object: {str(e)}")
+            
             customer_id = session.get("customer")  # Stripe customer ID jako user_id
 
             # 🔥 Wysyłaj konwersję GA4 (Measurement Protocol) na backend
@@ -106,7 +116,7 @@ async def stripe_webhook(request: Request):
                 except Exception as e:
                     logger.error(f"[Stripe → GA4] ❌ Failed to send conversion: {str(e)}")
             else:
-                logger.warning(f"[Stripe → GA4] ⚠️  No email in session, skipping backend conversion")
+                logger.warning(f"[Stripe → GA4] ⚠️  No email in session or customer object, skipping backend conversion")
         else:
             logger.warning(f"[Stripe] ⚠️  Webhook received but no token found")
 
