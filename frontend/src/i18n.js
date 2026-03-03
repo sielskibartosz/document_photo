@@ -7,6 +7,7 @@ import translationPL from "./locales/pl/translation.json";
 import translationDE from "./locales/de/translation.json";
 import translationES from "./locales/es/translation.json";
 import translationFR from "./locales/fr/translation.json";
+import translationUA from "./locales/ua/translation.json";
 
 const resources = {
   en: { translation: translationEN },
@@ -14,6 +15,7 @@ const resources = {
   de: { translation: translationDE },
   es: { translation: translationES },
   fr: { translation: translationFR},
+  ua: { translation: translationUA},
 };
 
 // --- funkcja wykrywająca język na start
@@ -27,7 +29,7 @@ function detectInitialLanguage() {
   const shortLang = browserLang.split("-")[0]; // "pl", "de", "en", "es"
 
   // 3️⃣ jeśli obsługiwany → użyj, jeśli nie → fallback
-  if (["pl", "de", "en", "es", "fr"].includes(shortLang)) return shortLang;
+  if (["pl", "de", "en", "es", "fr", "ua"].includes(shortLang)) return shortLang;
 
   return "pl"; // domyślnie polski
 }
