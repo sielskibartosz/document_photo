@@ -28,20 +28,22 @@ class Config:
 
     @property
     def FEEDBACK_FILE(self) -> str:
-        """Zwraca pełną ścieżkę do pliku feedback"""
+        """Zwraca pelna sciezke do pliku feedback"""
         return self.FEEDBACK_FILE_ENV
 
     @property
     def FEEDBACK_DIR(self) -> Path:
-        """Zwraca katalog, w którym przechowywany jest plik feedback"""
+        """Zwraca katalog, w ktorym przechowywany jest plik feedback"""
         return Path(self.FEEDBACK_FILE_ENV).parent
 
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:
-        """Dynamicznie parsuje ALLOWED_ORIGIN lub fallback do *"""
+        """Dynamicznie parsuje ALLOWED_ORIGIN lub fallback do lokalnych originow dev."""
         if self.ALLOWED_ORIGIN:
             return [o.strip() for o in self.ALLOWED_ORIGIN.split(",") if o.strip()]
-        return ["*"]  # Development fallback
+        if self.FRONTEND_URL:
+            return [self.FRONTEND_URL]
+        return ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     # ---------------- DOWNLOAD ----------------
     DOWNLOAD_DIR: str = "downloads"
@@ -49,13 +51,12 @@ class Config:
 
     @property
     def DOWNLOAD_PATH(self) -> Path:
-        """Folder do przechowywania wygenerowanych plików"""
+        """Folder do przechowywania wygenerowanych plikow"""
         return Path(self.DOWNLOAD_DIR)
 
 
 config = Config()
 
 # ---------------- CREATE FOLDERS ----------------
-# Tworzymy folder na feedback i pobrane pliki, jeśli nie istnieją
 config.FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
 config.DOWNLOAD_PATH.mkdir(parents=True, exist_ok=True)

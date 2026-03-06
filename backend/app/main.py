@@ -30,10 +30,10 @@ app = FastAPI(
 # ---------------- CORS ----------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=config.ALLOWED_ORIGINS or ["*"],
+    allow_origins=config.ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_credentials=True,
+    allow_credentials=bool(config.ALLOWED_ORIGINS),
 )
 
 # ---------------- ROUTERY ----------------
@@ -54,3 +54,4 @@ if __name__ == "__main__":
     port = config.PORT
     print(f"Starting server on 0.0.0.0:{port}")
     uvicorn.run("app.main:app", host="0.0.0.0", port=port, log_level="info", reload=True)
+

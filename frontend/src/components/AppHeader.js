@@ -8,7 +8,7 @@ export default function AppHeader({ i18n }) {
     i18n.changeLanguage(e.target.value);
   };
 
-  // normalizacja: pl-PL → pl
+  // normalizacja: pl-PL -> pl
   const currentLang = i18n.language?.split("-")[0] || "pl";
 
   return (
@@ -47,6 +47,7 @@ export default function AppHeader({ i18n }) {
         <MenuItem value="de">DE</MenuItem>
         <MenuItem value="es">ES</MenuItem>
         <MenuItem value="fr">FR</MenuItem>
+        <MenuItem value="ua">UA</MenuItem>
       </Select>
     </Box>
   );

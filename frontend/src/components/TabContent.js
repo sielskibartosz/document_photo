@@ -1,10 +1,6 @@
 // TabContent.js - Komputer: zdjęcia bliżej + BEZ strzałek
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import {
-  KeyboardArrowLeft as ArrowLeftIcon,
-  KeyboardArrowRight as ArrowRightIcon
-} from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { TABS, TAB_DESCRIPTION } from "../constants/tabs";
@@ -12,6 +8,8 @@ import AspectInput from "./AspectInput";
 import FormatSelector from "./FormatSelector";
 import ImageUploader from "./ImageUploader";
 import FotoBackgroundColor from "./FotoBackgroundColor";
+
+
 
 const TabContent = ({
   tabKey,
@@ -53,40 +51,11 @@ const TabContent = ({
           overflow: "visible",
           mb: { xs: tabKey === "custom" ? 4 : 2, sm: 2 }
         }}>
-          {/* STRZĄŁKA LEWA - TYLKO MOBILE (md+) */}
+          {/* Poprzednie zdjęcie */}
           <Box
             sx={{
               position: "absolute",
-              left: { xs: 8, md: 16 },
-              top: "50%",
-              transform: "translateY(-50%)",
-              bgcolor: "transparent",
-              color: "rgba(25, 118, 210, 0.9)",
-              width: { xs: 28, md: 36 },
-              height: { xs: 42, md: 52 },
-              borderRadius: "24px",
-              display: { xs: "none", md: "none" }, // ❌ BEZ STRZŁEK NA KOMPUTERZE
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              zIndex: 5,
-              "&:hover": {
-                color: "primary.main",
-                bgcolor: "rgba(25, 118, 210, 0.1)",
-                transform: "translateY(-50%) scale(1.2)"
-              }
-            }}
-            onClick={() => setActiveStep((activeStep - 1 + steps.length) % steps.length)}
-          >
-            <ArrowLeftIcon sx={{ fontSize: { xs: 28, md: 36 } }} />
-          </Box>
-
-          {/* POPRZEDNIE - LEWA - BLIŻEJ NA md+ */}
-          <Box
-            sx={{
-              position: "absolute",
-              left: { xs: "-2%", md: "-0.5%" }, // BLIŻEJ na komputerze
+              left: { xs: "-2%", md: "-0.5%" },
               top: "50%",
               transform: `translateY(-50%) scale(${tabKey === "id" || tabKey === "custom" ? "0.85" : "0.9"})`,
               opacity: 0.6,
@@ -116,7 +85,7 @@ const TabContent = ({
             />
           </Box>
 
-          {/* AKTYWNE - ŚRODEK - WIĘKSZE NA md+ */}
+          {/* Aktywne zdjęcie - środek */}
           <Box sx={{
             position: "relative",
             zIndex: 3,
@@ -133,7 +102,7 @@ const TabContent = ({
               src={steps[activeStep].src}
               alt={steps[activeStep].alt}
               sx={{
-                maxWidth: { xs: "180px", md: "280px" }, // WIĘKSZE na komputerze
+                maxWidth: { xs: "180px", md: "280px" },
                 maxHeight: { xs: "220px", md: "340px" },
                 width: "auto",
                 height: "auto",
@@ -146,11 +115,11 @@ const TabContent = ({
             />
           </Box>
 
-          {/* NASTĘPNE - PRAWA - BLIŻEJ NA md+ */}
+          {/* Następne zdjęcie */}
           <Box
             sx={{
               position: "absolute",
-              right: { xs: "-2%", md: "-0.5%" }, // BLIŻEJ na komputerze
+              right: { xs: "-2%", md: "-0.5%" },
               top: "50%",
               transform: `translateY(-50%) scale(${tabKey === "id" || tabKey === "custom" ? "0.85" : "0.9"})`,
               opacity: 0.6,
@@ -179,38 +148,8 @@ const TabContent = ({
               }}
             />
           </Box>
-
-          {/* STRZĄŁKA PRAWA - TYLKO MOBILE (md+) - UKRYTA */}
-          <Box
-            sx={{
-              position: "absolute",
-              right: { xs: 8, md: 16 },
-              top: "50%",
-              transform: "translateY(-50%)",
-              bgcolor: "transparent",
-              color: "rgba(25, 118, 210, 0.9)",
-              width: { xs: 28, md: 36 },
-              height: { xs: 42, md: 52 },
-              borderRadius: "24px",
-              display: { xs: "none", md: "none" }, // ❌ BEZ STRZŁEK NA KOMPUTERZE
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              zIndex: 5,
-              "&:hover": {
-                color: "primary.main",
-                bgcolor: "rgba(25, 118, 210, 0.1)",
-                transform: "translateY(-50%) scale(1.2)"
-              }
-            }}
-            onClick={() => setActiveStep((activeStep + 1) % steps.length)}
-          >
-            <ArrowRightIcon sx={{ fontSize: { xs: 28, md: 36 } }} />
-          </Box>
         </Box>
       ) : (
-        // ... reszta bez zmian
         tab.image && (
           <Box sx={{
             width: "100%",
@@ -240,36 +179,46 @@ const TabContent = ({
         )
       )}
 
-      {/* Reszta komponentów bez zmian */}
+      {/* Tytuł i linki */}
       {tab.title && (
         <Typography variant="body1" sx={{ mb: 0.5, mt: 0.5, fontWeight: "normal", textAlign: "center", lineHeight: 1.2 }}>
           {tab.title}
         </Typography>
       )}
 
-      {tab.link && (
-        <Box sx={{
-          display: "inline-flex",
-          alignItems: "center",
-          mt: { xs: 1.5, sm: 0.5 },
-          cursor: "pointer",
-          color: "primary.main",
-          fontWeight: 500,
-          textDecoration: "underline",
-          mx: "auto",
-          gap: 0.5,
-          fontSize: 14
-        }}>
+      {/* Linki: tab link / How it Works / FotoTips */}
+      <Box sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        mt: { xs: 1.5, sm: 0.5 },
+        cursor: "pointer",
+        color: "primary.main",
+        fontWeight: 500,
+        textDecoration: "underline",
+        mx: "auto",
+        gap: 0.5,
+        fontSize: 14
+      }}>
+        {tab.link && (
           <Box onClick={() => navigate(tab.link)} sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
             {t("id_link")}
           </Box>
-          <Typography sx={{ mx: 1, color: "text.primary" }}>|</Typography>
-          <Box onClick={() => navigate("/how-it-works")} sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-            {t("how_it_works.link_text", "Jak działa aplikacja")}
-          </Box>
-        </Box>
-      )}
+        )}
 
+        <Typography sx={{ mx: 1, color: "text.primary" }}>|</Typography>
+
+        <Box onClick={() => navigate("/how-it-works")} sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+          {t("how_it_works.link_text", "Jak działa aplikacja")}
+        </Box>
+
+        <Typography sx={{ mx: 1, color: "text.primary" }}>|</Typography>
+
+        <Box onClick={() => navigate("/foto-tips")} sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+          {t("foto_tips.link_text", "Wskazówki do zdjęcia")}
+        </Box>
+      </Box>
+
+      {/* Selektory i uploader */}
       <Box sx={{
         display: "flex",
         flexDirection: "column",
@@ -298,3 +247,5 @@ const TabContent = ({
 };
 
 export default TabContent;
+
+

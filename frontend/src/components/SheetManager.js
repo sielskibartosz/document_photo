@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import { cmToPx, createImage } from "../utils/cropImage.js";
 import { PAPER_FORMATS } from "../constants/paperFormats";
 import FrameBox from "../styles/imagesStyles";
@@ -6,6 +6,7 @@ import { Box, Typography, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { BACKEND_URL } from "../constants/backendConfig";
 import apiFetch from "../utils/apiFetch";
+import HintBubble from "./HintBubble";
 
 const SheetManager = ({
   sheetImages,
@@ -19,28 +20,32 @@ const SheetManager = ({
 }) => {
   const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  const previewUrlRef = useRef(null);
 
   const dpi = 300;
   const margin = 20;
   const photoWidthCm = 3.5;
   const maxPhotoHeightCm = 4.5;
 
-  // ---------------- GENERATE SHEET ----------------
-  const generateSheet = async () => {
+  const generateSheet = useCallback(async () => {
     if (!sheetImages.length) return { blob: null, visibleCount: 0 };
 
     const format = PAPER_FORMATS[selectedFormat];
     const widthPx = Math.round(cmToPx(format.width, dpi));
     const heightPx = Math.round(cmToPx(format.height, dpi));
+
     const canvas = document.createElement("canvas");
     canvas.width = widthPx;
     canvas.height = heightPx;
+
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, widthPx, heightPx);
 
-    let imgWidth = Math.round(cmToPx(photoWidthCm, dpi));
-    const cols = Math.floor((widthPx + margin) / (imgWidth + margin));
+    const baseImgWidth = Math.round(cmToPx(photoWidthCm, dpi));
+    const cols = Math.floor((widthPx + margin) / (baseImgWidth + margin));
+
     let currentY = margin;
     let currentRowHeight = 0;
     let colIndex = 0;
@@ -48,27 +53,35 @@ const SheetManager = ({
 
     for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio } = sheetImages[i];
-      const img = await createImage(image);
-      if (!img) continue;
-
-      let imgHeight = Math.round(imgWidth / aspectRatio);
-      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
-      if (imgHeight > maxHeightPx) {
-        imgHeight = maxHeightPx;
-        imgWidth = Math.round(imgHeight * aspectRatio);
+      let img;
+      try {
+        img = await createImage(image);
+      } catch {
+        continue;
       }
 
-      const x = margin + colIndex * (imgWidth + margin);
-      const y = currentY;
-      if (y + imgHeight + margin > heightPx) break;
+      let currentImgWidth = baseImgWidth;
+      let currentImgHeight = Math.round(currentImgWidth / aspectRatio);
 
-      ctx.drawImage(img, x, y, imgWidth, imgHeight);
+      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
+      if (currentImgHeight > maxHeightPx) {
+        currentImgHeight = maxHeightPx;
+        currentImgWidth = Math.round(currentImgHeight * aspectRatio);
+      }
+
+      const x = margin + colIndex * (baseImgWidth + margin);
+      const y = currentY;
+
+      if (y + currentImgHeight + margin > heightPx) break;
+
+      ctx.drawImage(img, x, y, currentImgWidth, currentImgHeight);
       ctx.strokeStyle = "black";
       ctx.lineWidth = 2;
-      ctx.strokeRect(x, y, imgWidth, imgHeight);
+      ctx.strokeRect(x, y, currentImgWidth, currentImgHeight);
 
       actualCount++;
-      currentRowHeight = Math.max(currentRowHeight, imgHeight);
+      currentRowHeight = Math.max(currentRowHeight, currentImgHeight);
+
       colIndex++;
       if (colIndex >= cols) {
         colIndex = 0;
@@ -79,41 +92,69 @@ const SheetManager = ({
 
     const blob = await new Promise((resolve) => canvas.toBlob(resolve));
     return { blob, visibleCount: actualCount };
-  };
+  }, [sheetImages, selectedFormat]);
 
-  // ---------------- CREATE SHEET IMAGE ----------------
   const createSheetImage = useCallback(async () => {
-    const result = await generateSheet();
-    if (result && result.blob) {
-      const url = URL.createObjectURL(result.blob);
-      setSheetUrl(url);
-      setVisibleCount(result.visibleCount);
-    } else {
+    try {
+      const result = await generateSheet();
+
+      if (result && result.blob) {
+        const url = URL.createObjectURL(result.blob);
+        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = url;
+        setSheetUrl(url);
+        setVisibleCount(result.visibleCount);
+      } else {
+        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = null;
+        setSheetUrl(null);
+        setVisibleCount(0);
+      }
+    } catch {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
       setSheetUrl(null);
       setVisibleCount(0);
     }
-  }, [sheetImages, selectedFormat, setSheetUrl]);
+  }, [generateSheet, setSheetUrl]);
+
+  useEffect(() => {
+    const seen = localStorage.getItem("sheetHintSeen");
+
+    if (sheetImages.length === 1 && !seen) {
+      setShowHint(true);
+      localStorage.setItem("sheetHintSeen", "true");
+    }
+  }, [sheetImages]);
 
   useEffect(() => {
     if (sheetImages.length > 0) createSheetImage();
-    else setSheetUrl(null);
-  }, [sheetImages, createSheetImage]);
+    else {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+      setSheetUrl(null);
+    }
+  }, [sheetImages, createSheetImage, setSheetUrl]);
 
-  // ---------------- UTILITY: Pobierz GA client_id ----------------
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
+
   const getGAClientId = useCallback(async () => {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
 
-    // Metoda 1: Cookie _ga (najpierw synchronicznie)
     const gaCookie = document.cookie.match(/(_ga_[A-Z0-9]+)=([^;]+)/);
-    if (gaCookie) {  // 🔥 Poprawka: gaCookie zamiast gaCookies
-      const parts = gaCookie[2].split('.');
-      return parts.slice(-2).join('.');
+
+    if (gaCookie) {
+      const parts = gaCookie[2].split(".");
+      return parts.slice(-2).join(".");
     }
 
-    // Metoda 2: gtag API (asynchronicznie)
     if (window.gtag) {
       return new Promise((resolve) => {
-        window.gtag('get', 'G-4GGMXV1R1V', 'client_id', (clientId) => {
+        window.gtag("get", "G-4GGMXV1R1V", "client_id", (clientId) => {
           resolve(clientId);
         });
       });
@@ -122,19 +163,21 @@ const SheetManager = ({
     return null;
   }, []);
 
-  // ---------------- CAPTURE gclid param and persist ----------------
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    // Support both hash-based routing and query params
-    const params = new URLSearchParams(window.location.search || window.location.hash.split('?')[1]);
-    const gclidParam = params.get('gclid');
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(
+      window.location.search || window.location.hash.split("?")[1]
+    );
+
+    const gclidParam = params.get("gclid");
+
     if (gclidParam) {
-      localStorage.setItem('gclid', gclidParam);
-      console.log('💡 gclid stored:', gclidParam);
+      localStorage.setItem("gclid", gclidParam);
+      console.log("gclid stored:", gclidParam);
     }
   }, []);
 
-  // ---------------- BUTTON HANDLERS ----------------
   const onClearSheetClick = () => {
     if (clearSheet) clearSheet();
     else setSheetImages([]);
@@ -142,16 +185,17 @@ const SheetManager = ({
 
   const duplicateImage = () => {
     if (!sheetImages.length) return;
-    setSheetImages((prev) => [...prev, prev[0]]);
+
+    setSheetImages((prev) => [...prev, prev[prev.length - 1]]);
+    setShowHint(false);
   };
 
-  // ---------------- HANDLE PAYMENT ----------------
   const handleDownloadClick = async () => {
     if (!sheetImages.length) return;
 
     try {
-      // 1️⃣ Generowanie arkusza i konwersja na base64
       const { blob } = await generateSheet();
+
       if (!blob) {
         alert("Nie udało się wygenerować arkusza.");
         return;
@@ -164,106 +208,123 @@ const SheetManager = ({
         reader.readAsDataURL(blob);
       });
 
-      // 2️⃣ Wysyłamy do /api/download/create
-      const downloadResp = await apiFetch(`${BACKEND_URL}/api/download/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_base64: base64Image }),
-      });
+      const downloadResp = await apiFetch(
+        `${BACKEND_URL}/api/download/create`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image_base64: base64Image }),
+        }
+      );
 
       if (!downloadResp.ok) {
         const errorText = await downloadResp.text();
-        console.error("Błąd /download/create:", downloadResp.status, errorText);
-        alert("Błąd backendu przy tworzeniu tokena:\n" + errorText);
+        alert("Błąd backendu:\n" + errorText);
         return;
       }
 
-      const downloadData = await downloadResp.json();
-      const token = downloadData.token;
+      const { token } = await downloadResp.json();
 
-      // 3️⃣ Pobieramy GA client_id (TYLKO jeśli cookies zaakceptowane)
       let ga_client_id = null;
+
       if (localStorage.getItem("cookiesAccepted") === "true") {
         ga_client_id = await getGAClientId();
-        console.log("💡 GA Client ID:", ga_client_id);
       }
 
-      // 4️⃣ Wywołujemy Stripe link z GA client_id i gclid
-      const gclid = localStorage.getItem('gclid');
+      const gclid = localStorage.getItem("gclid");
+
       let redirect_url = `${window.location.origin}/#/download-success?token=${token}`;
+
       if (gclid) {
         redirect_url += `&gclid=${encodeURIComponent(gclid)}`;
       }
-      const bodyData = {
-        price_id: priceId,
-        token,
-        redirect_url,
-        ga_client_id: ga_client_id,  // 🔥 Tylko jeśli istnieje, backend obsłuży None
-        gclid: localStorage.getItem('gclid') || null
-      };
-      console.log("💡 Sending to /create-link:", bodyData);
 
-      const paymentResp = await apiFetch(`${BACKEND_URL}/api/payments/create-link`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyData),
-      });
+      const paymentResp = await apiFetch(
+        `${BACKEND_URL}/api/payments/create-link`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            price_id: priceId,
+            token,
+            redirect_url,
+            ga_client_id,
+            gclid: gclid || null,
+          }),
+        }
+      );
 
-      console.log("💡 /create-link status:", paymentResp.status);
-      const responseText = await paymentResp.text();
-      console.log("💡 /create-link raw response:", responseText);
+      const paymentData = await paymentResp.json();
 
-      if (!paymentResp.ok) {
-        alert("Błąd backendu przy tworzeniu linku płatności:\n" + responseText);
-        return;
-      }
-
-      const paymentData = JSON.parse(responseText);
-      console.log("💡 /create-link parsed response:", paymentData);
-
-      // ADMIN BYPASS
       if (paymentData.url === "ADMIN_BYPASS") {
         window.location.href = redirect_url;
         return;
       }
 
-      // 💳 Normalny Stripe flow
-      if (!paymentData.url) {
-        alert("Brak URL do przekierowania ze Stripe.");
-        return;
-      }
-
       window.location.href = paymentData.url;
-
     } catch (err) {
-      console.error("Błąd przy tworzeniu linku płatności:", err);
-      alert(err.message || "Nie udało się utworzyć linku płatności.");
+      console.error(err);
+      alert("Nie udało się utworzyć linku płatności.");
     }
   };
 
-  // ---------------- RENDER ----------------
   if (!showSheetPreview || !sheetUrl) return null;
 
   return (
-    <FrameBox sx={{ maxWidth: "none", width: { xs: "90%", md: "70%" }, mx: "auto" }}>
-      <Typography variant="h6" fontWeight={600} color="text.primary" mb={2} textAlign="center">
-        {t("sheet_header")}: {visibleCount} ({selectedFormat})
-      </Typography>
+    <>
+      <HintBubble open={showHint} onClose={() => setShowHint(false)} />
 
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, flexWrap: "wrap", mb: 3 }}>
-        <Button variant="contained" onClick={duplicateImage}>{t("duplicate_photo", "Duplicate Photo")}</Button>
-        <Button variant="outlined" color="error" onClick={onClearSheetClick}>{t("clear_sheet", "Clear Sheet")}</Button>
-        <Button variant="contained" color="success" onClick={handleDownloadClick}>{t("download_sheet", "Download Sheet")}</Button>
-      </Box>
+      <FrameBox
+        sx={{
+          maxWidth: "none",
+          width: { xs: "90%", md: "70%" },
+          mx: "auto",
+        }}
+      >
+        <Typography variant="h6" fontWeight={600} color="text.primary" mb={2} textAlign="center">
+          {t("sheet_header")}: {visibleCount} ({selectedFormat})
+        </Typography>
 
-      <Box
-        component="img"
-        src={sheetUrl}
-        alt="sheet"
-        sx={{ maxWidth: "100%", borderRadius: 2, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", border: "1px solid #ddd", display: "block", mx: "auto" }}
-      />
-    </FrameBox>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+            flexWrap: "wrap",
+            mb: 3,
+          }}
+        >
+          <Button variant="contained" onClick={duplicateImage}>
+            {t("duplicate_photo", "Duplicate Photo")}
+          </Button>
+
+          <Button variant="outlined" color="error" onClick={onClearSheetClick}>
+            {t("clear_sheet", "Clear Sheet")}
+          </Button>
+
+          <Button variant="contained" color="success" onClick={handleDownloadClick}>
+            {t("download_sheet", "Download Sheet")}
+          </Button>
+        </Box>
+
+        <Box
+          component="img"
+          src={sheetUrl}
+          alt="sheet"
+          sx={{
+            maxWidth: "100%",
+            borderRadius: 2,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+            border: "1px solid #ddd",
+            display: "block",
+            mx: "auto",
+          }}
+        />
+      </FrameBox>
+    </>
   );
 };
 
 export default SheetManager;
+

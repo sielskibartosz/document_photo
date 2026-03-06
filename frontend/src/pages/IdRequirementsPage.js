@@ -1,14 +1,23 @@
 import React from 'react';
-import { Box, Typography, List, ListItem, ListItemText, Divider, IconButton } from '@mui/material';
-import { darkTheme } from '../styles/theme';
-import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useTranslation } from 'react-i18next';
+import {
+  Box,
+  Typography,
+  ThemeProvider,
+  CssBaseline,
+  useMediaQuery,
+  IconButton,
+  Divider
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { darkTheme } from "../styles/theme";
+import { useTranslation } from "react-i18next";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SEO from "../components/SEO";
 
 const IdRequirementsPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const title = t('idRequirements.title');
   const header = t('idRequirements.header');
@@ -16,103 +25,106 @@ const IdRequirementsPage = () => {
   const footer = t('idRequirements.footer');
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        p: { xs: 2, sm: 4 },
-        width: { xs: '95vw', sm: '80vw', md: '60vw' },
-        mx: 'auto',
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        color: darkTheme.palette.text.primary,
-        background:
-          darkTheme.palette.mode === 'dark'
-            ? 'linear-gradient(135deg, #1f2937 0%, #374151 100%)'
-            : 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        borderRadius: 3,
-        boxShadow: darkTheme.shadows[3],
-      }}
-    >
-    {/* SEO */}
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      {/* SEO */}
       <SEO
         title="PhotoIDCreator – Wymagania zdjęcia do dowodu"
         description="Dowiedz się, jakie są wymagania zdjęcia do dowodu, paszportu i legitymacji. Z PhotoIDCreator przygotujesz zdjęcie idealne do dokumentów."
         url="https://photoidcreator.com/id-requirements"
       />
-      {/* Górny pasek: strzałka + tytuł */}
-        <Box sx={{ position: 'relative', mb: 3, textAlign: 'center' }}>
-          {/* Strzałka wstecz */}
-          <IconButton
-            onClick={() => navigate(-1)}
-            sx={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', color: 'primary.main' }}
-            aria-label="back"
-          >
-            <ArrowBackIcon fontSize="medium" />
-          </IconButton>
 
-          {/* Tytuł wyśrodkowany */}
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 'bold',
-              lineHeight: 1.2,
-              display: 'inline-block', // żeby textAlign center działał
-            }}
-          >
-            {title}
-          </Typography>
-        </Box>
-
-
-      {/* Wstęp / nagłówek */}
-      <Typography variant="body2" paragraph sx={{ mb: 3, lineHeight: 1.5 }}>
-        {header}
-      </Typography>
-
-      {/* Zdjęcia pod tytułem */}
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          gap: 2,
-          mb: 3,
-          justifyContent: 'center',
-          alignItems: 'center',
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          p: isSmallScreen ? 2 : 4,
+          width: isSmallScreen ? "95vw" : "80vw",
+          margin: "20px auto",
+          color: darkTheme.palette.text.primary,
+          background:
+            darkTheme.palette.mode === "dark"
+              ? "linear-gradient(135deg, #1f2937 0%, #374151 100%)"
+              : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+          borderRadius: 3,
+          boxShadow: darkTheme.shadows[4],
+          gap: 3,
+          position: "relative",
         }}
       >
+        {/* Strzałka wstecz */}
+        <IconButton
+          onClick={() => navigate(-1)}
+          sx={{ position: "absolute", top: 12, left: 12, color: "primary.main" }}
+          aria-label="back"
+        >
+          <ArrowBackIcon fontSize="medium" />
+        </IconButton>
+
+        {/* Tytuł */}
+        <Typography variant={isSmallScreen ? "h5" : "h4"} fontWeight={600}>
+          {title}
+        </Typography>
+
+        {/* Wstęp / nagłówek */}
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ maxWidth: 700, mt: 1 }}
+        >
+          {header}
+        </Typography>
+
+        {/* Zdjęcia */}
         <Box
-          component="img"
-          src="/images/correct_id_photo.png"
-          sx={{ width: { xs: '100%', sm: '180px' }, borderRadius: 2, boxShadow: 3 }}
-        />
-        <Box
-          component="img"
-          src="/images/incorrect_id_photo.png"
-          sx={{ width: { xs: '100%', sm: '180px' }, borderRadius: 2, boxShadow: 3 }}
-        />
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            justifyContent: "center",
+            alignItems: "center",
+            mt: 3
+          }}
+        >
+          <Box
+            component="img"
+            src="/images/correct_id_photo.png"
+            sx={{ width: { xs: "100%", sm: 180 }, borderRadius: 2, boxShadow: 3 }}
+          />
+          <Box
+            component="img"
+            src="/images/incorrect_id_photo.png"
+            sx={{ width: { xs: "100%", sm: 180 }, borderRadius: 2, boxShadow: 3 }}
+          />
+        </Box>
+
+        {/* Lista wymagań w stylu kroków */}
+        <Box sx={{ maxWidth: 700, mt: 3, textAlign: "left" }}>
+          {list.map((item, index) => (
+            <Box key={index} sx={{ display: "flex", alignItems: "flex-start", mb: 2 }}>
+              <Typography sx={{ fontWeight: 600, mr: 1, color: "primary.main" }}>
+                {index + 1}.
+              </Typography>
+              <Box>
+                <Typography variant="body1" fontWeight={500}>{item.primary}</Typography>
+                {item.secondary && (
+                  <Typography variant="body2" color="text.secondary">{item.secondary}</Typography>
+                )}
+              </Box>
+            </Box>
+          ))}
+        </Box>
+
+        {/* Stopka */}
+        <Divider sx={{ my: 2, maxWidth: 700 }} />
+        <Typography variant="body1" fontWeight={600} sx={{ maxWidth: 700 }}>
+          {footer}
+        </Typography>
       </Box>
-
-      {/* Lista wymagań */}
-      <List sx={{ mb: 0 }}>
-        {list.map((item, index) => (
-          <React.Fragment key={index}>
-            <ListItem sx={{ display: 'block', pl: 0 }}>
-              <ListItemText
-                primary={item.primary}
-                secondary={item.secondary}
-                primaryTypographyProps={{ fontWeight: 500, fontSize: '0.95rem' }}
-                secondaryTypographyProps={{ lineHeight: 1.4, fontSize: '0.85rem' }}
-              />
-            </ListItem>
-            {index < list.length - 1 && <Divider sx={{ my: 0.5 }} />}
-          </React.Fragment>
-        ))}
-      </List>
-
-      {/* Stopka */}
-      <Typography variant="body2" paragraph sx={{ lineHeight: 1.6, mt: 3 }}>
-        {footer}
-      </Typography>
-    </Box>
+    </ThemeProvider>
   );
 };
 

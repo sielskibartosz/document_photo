@@ -12,21 +12,20 @@ import IdRequirementsPage from "./pages/IdRequirementsPage";
 import DownloadSuccessPage from "./pages/DownloadSuccessPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import FeedbackViewPage from "./pages/FeedbackViewPage";
+import FotoTipsPage from "./pages/FotoTipsPage";
+import { SheetProvider } from "./context/SheetContext";
 
 import { HashRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
-// Wrapper do śledzenia page_view dla HashRouter
 function ScrollAndTrack() {
   const location = useLocation();
 
   useEffect(() => {
-    // GA4 Page View
     if (window.gtag) {
-      window.gtag('event', 'page_view', {
-        page_path: location.hash || '/'
+      window.gtag("event", "page_view", {
+        page_path: `${location.pathname}${location.search || ""}`,
       });
     }
-    // Scroll do góry przy zmianie strony
     window.scrollTo(0, 0);
   }, [location]);
 
@@ -37,29 +36,27 @@ function App() {
   const { i18n } = useTranslation();
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Router>
-        {/* Header */}
-        <AppHeader i18n={i18n} />
+    <SheetProvider>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Router>
+          <AppHeader i18n={i18n} />
+          <ScrollAndTrack />
 
-        {/* Page View Tracking */}
-        <ScrollAndTrack />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/id-requirements" element={<IdRequirementsPage />} />
+            <Route path="/download-success" element={<DownloadSuccessPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/feedback/view/:key" element={<FeedbackViewPage />} />
+            <Route path="/foto-tips" element={<FotoTipsPage />} />
+          </Routes>
 
-        {/* Routes */}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="/id-requirements" element={<IdRequirementsPage />} />
-          <Route path="/download-success" element={<DownloadSuccessPage />} />
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/feedback/view/:key" element={<FeedbackViewPage />} />
-        </Routes>
-
-        {/* Cookies */}
-        <CookiesBanner />
-      </Router>
-    </ThemeProvider>
+          <CookiesBanner />
+        </Router>
+      </ThemeProvider>
+    </SheetProvider>
   );
 }
 

@@ -76,7 +76,7 @@
 
   "how_it_works": {
     "link_text": "Jak to działa?",
-    "title": "Jak działa PhotoIDCreator",
+    "title": "Instrukcja obsługi PhotoIDCreator",
     "subtitle": "Stwórz profesjonalne zdjęcia do dowodu i paszportu w kilka minut – bezpośrednio z telefonu lub komputera.",
     "steps": [
       "Wybierz format papieru (A4, 10×15 cm,...) na którym chcesz wydrukować zdjęcia",
@@ -88,10 +88,29 @@
     "final_step": "Możesz udać się do lokalnej drukarni, Rossmanna lub Cewe i wydrukować swoje zdjęcia",
     "video_title": "Jak działa PhotoIDCreator"
   },
-   "feedback": {
-     "header": "Pomóż mi ulepszyć tę aplikację. Napisz, co jest fajne, co nie działa idealnie i co warto dodać. Twoja opinia naprawdę pomaga.",
-     "send_btn": "Wyślij",
-     "thanks": "Dziękuję za Twoją opinię!",
-     "error": "Coś poszło nie tak. Spróbuj ponownie później."}
-}
 
+  "foto_tips": {
+    "link_text": "Wskazówki do zdjęcia",
+    "title": "Wskazówki, jak przygotować zdjęcie",
+    "subtitle": "To, jak wykonasz zdjęcie, ma wpływ na efekt końcowy. Oto kilka wskazówek, które pomogą Ci uzyskać najlepsze rezultaty:",
+    "steps": [
+      "Wybierz zdjęcie zrobione na jednolitym tle, najlepiej kontrastowym do koloru włosów i ubrań.",
+      "Jeżeli masz tryb portretowy, użyj go - rozmyje tło i ułatwi jego usunięcie.",
+      "Wykonaj zdjęcie w dobrej jakości, unikaj rozmazanych lub zbyt ciemnych zdjęć.",
+      "Zadbaj o dobre oświetlenie - najlepiej naturalne, bez cieni na twarzy."
+    ],
+    "final_step": "Eksperymentuj z różnymi zdjęciami, jeśli pierwsze nie spełnia wymagań - czasem inne ujęcie lub oświetlenie może dać lepszy efekt."
+  },
+
+  "feedback": {
+    "header": "Pomóż mi ulepszyć tę aplikację. Napisz, co jest fajne, co nie działa idealnie i co warto dodać. Twoja opinia naprawdę pomaga.",
+    "send_btn": "Wyślij",
+    "thanks": "Dziękuję za Twoją opinię!",
+    "error": "Coś poszło nie tak. Spróbuj ponownie później."
+  },
+
+  "hint_bubble": {
+    "text": "Chcesz poprawić przycięcie zdjęcia?",
+    "link": "Sprawdź wskazówki"
+  }
+}

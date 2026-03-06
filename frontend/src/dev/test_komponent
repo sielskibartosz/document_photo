@@ -1,0 +1,5 @@
+import Playground from "./dev/playground";
+
+function App() {
+  return <Playground />;
+}

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 
 import { TABS } from "../constants/tabs";
-import { buttonBaseStyle } from "../styles/buttonStyles";
 import FrameBox from "../styles/imagesStyles";
 import { parseAspectRatio } from "../utils/cropImage";
 import { darkTheme } from "../styles/theme";
@@ -13,32 +12,24 @@ import TabSelector from "../components/TabSelector";
 import TabContent from "../components/TabContent";
 import SheetManager from "../components/SheetManager";
 
-import useSheetManager from "../hooks/useSheetManager";
 import useImageCrop from "../hooks/useImageCrop";
+import { useSheet } from "../context/SheetContext";
 
 import { STRIPE_PRICE_ID_PROD_PLN, STRIPE_PRICE_ID_PROD_EUR } from "../constants/payments";
 import { useTranslation } from "react-i18next";
 
 const HomePage = () => {
   const { i18n } = useTranslation();
+
   const [activeTab, setActiveTab] = useState("id");
   const [aspectInput, setAspectInput] = useState(TABS[0].aspect);
   const [selectedFormat, setSelectedFormat] = useState("10x15 cm Rossmann");
   const [bgColors, setBgColors] = useState({ id: "#fefcfb", custom: "#ffffff" });
-
-  const aspectRatio = parseAspectRatio(aspectInput);
+  const [shouldScrollToSheet, setShouldScrollToSheet] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const aspectRatio = parseAspectRatio(aspectInput);
 
-  const {
-    imageSrc,
-    crop,
-    setCrop,
-    zoom,
-    setZoom,
-    setNoBgImage,
-    onFileChange,
-    reset,
-  } = useImageCrop();
+  const { imageSrc, crop, setCrop, zoom, setZoom, setNoBgImage, onFileChange, reset } = useImageCrop();
 
   const {
     sheetImages,
@@ -48,11 +39,48 @@ const HomePage = () => {
     showFullSheet,
     addToSheet,
     clearSheet,
-    toggleSheet,
-  } = useSheetManager();
+    hideSheet,
+  } = useSheet();
+
+  const sheetRef = useRef(null);
+  const cropperRef = useRef(null);
+  const wasCropperVisibleRef = useRef(false);
+  const wasSheetVisibleRef = useRef(false);
+
+  const isCropperVisible = Boolean(imageSrc);
+  const isSheetVisible = sheetImages.length > 0 && showFullSheet;
+  const isSheetReady = isSheetVisible && Boolean(selectedSheetUrl);
+
+  const scrollToRef = (ref) => {
+    if (ref?.current) {
+      requestAnimationFrame(() => {
+        ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isCropperVisible && !wasCropperVisibleRef.current) {
+      scrollToRef(cropperRef);
+    }
+    wasCropperVisibleRef.current = isCropperVisible;
+  }, [isCropperVisible]);
+
+  useEffect(() => {
+    if (isSheetReady && !wasSheetVisibleRef.current) {
+      scrollToRef(sheetRef);
+    }
+    wasSheetVisibleRef.current = isSheetReady;
+  }, [isSheetReady]);
+
+  useEffect(() => {
+    if (shouldScrollToSheet && isSheetReady) {
+      scrollToRef(sheetRef);
+      setShouldScrollToSheet(false);
+    }
+  }, [shouldScrollToSheet, isSheetReady]);
 
   const currentBgColor = bgColors[activeTab];
-
   const handleBgColorChange = (color) => {
     if (activeTab === "id") return;
     setBgColors((prev) => ({ ...prev, [activeTab]: color }));
@@ -61,24 +89,10 @@ const HomePage = () => {
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
     const tab = TABS.find((t) => t.key === tabKey);
-    setAspectInput(tab.aspect);
+    if (tab) setAspectInput(tab.aspect);
     reset();
   };
 
-  // ---------------- responsive columns ----------------
-  const [cols, setCols] = useState(3);
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) setCols(1);
-      else if (window.innerWidth < 900) setCols(2);
-      else setCols(3);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // ---------------- Stripe priceId w zależności od języka ----------------
   const currentLang = i18n.language?.split("-")[0] || "pl";
   const priceId = currentLang === "pl" ? STRIPE_PRICE_ID_PROD_PLN : STRIPE_PRICE_ID_PROD_EUR;
 
@@ -114,46 +128,49 @@ const HomePage = () => {
         setSelectedFormat={setSelectedFormat}
         onFileChange={(file) => {
           onFileChange(file);
-          toggleSheet(false);
+          hideSheet();
         }}
         bgColor={currentBgColor}
         setBgColor={handleBgColorChange}
       />
 
       {sheetImages.length > 0 && showFullSheet && (
-        <SheetManager
-          sheetImages={sheetImages}
-          setSheetImages={setSheetImages}
-          sheetUrl={selectedSheetUrl}
-          setSheetUrl={setSelectedSheetUrl}
-          selectedFormat={selectedFormat}
-          showSheetPreview={showFullSheet}
-          clearSheet={clearSheet}
-          cols={cols}
-          buttonBaseStyle={buttonBaseStyle}
-          priceId={priceId} // <-- dynamiczny priceId w zależności od języka
-        />
+        <div ref={sheetRef}>
+          <SheetManager
+            sheetImages={sheetImages}
+            setSheetImages={setSheetImages}
+            sheetUrl={selectedSheetUrl}
+            setSheetUrl={setSelectedSheetUrl}
+            selectedFormat={selectedFormat}
+            showSheetPreview={showFullSheet}
+            clearSheet={clearSheet}
+            priceId={priceId}
+          />
+        </div>
       )}
 
       {imageSrc && (
-        <FrameBox>
-          <CropperPanel
-            imageSrc={imageSrc}
-            crop={crop}
-            setCrop={setCrop}
-            zoom={zoom}
-            setZoom={setZoom}
-            aspectRatio={aspectRatio}
-            setNoBgImage={setNoBgImage}
-            onAddToSheet={(img) => {
-              addToSheet(img, aspectRatio);
-              reset();
-            }}
-            onClear={reset}
-            activeTab={activeTab}
-            bgColor={currentBgColor}
-          />
-        </FrameBox>
+        <div ref={cropperRef}>
+          <FrameBox>
+            <CropperPanel
+              imageSrc={imageSrc}
+              crop={crop}
+              setCrop={setCrop}
+              zoom={zoom}
+              setZoom={setZoom}
+              aspectRatio={aspectRatio}
+              setNoBgImage={setNoBgImage}
+              onAddToSheet={(img) => {
+                addToSheet(img, aspectRatio);
+                reset();
+                setShouldScrollToSheet(true);
+              }}
+              onClear={reset}
+              activeTab={activeTab}
+              bgColor={currentBgColor}
+            />
+          </FrameBox>
+        </div>
       )}
     </Box>
   );
