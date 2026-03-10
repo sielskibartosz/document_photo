@@ -1,8 +1,10 @@
 // TabContent.js - Komputer: zdjęcia bliżej + BEZ strzałek
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, IconButton, Link } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TABS, TAB_DESCRIPTION } from "../constants/tabs";
 import AspectInput from "./AspectInput";
 import FormatSelector from "./FormatSelector";
@@ -22,7 +24,6 @@ const TabContent = ({
   setBgColor,
 }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(1);
 
   const tab = TAB_DESCRIPTION[tabKey] || {};
@@ -35,6 +36,9 @@ const TabContent = ({
     { src: tabKey === "id" ? "/images/ai_ID_solo.jpg" : "/images/custom_solo.jpg", alt: "Przycięte bez tła" },
     { src: tab.image || (tabKey === "id" ? "/images/ai_ID_final.jpg" : "/images/custom_final.jpg"), alt: "Gotowy arkusz" }
   ];
+
+  const goPrev = () => setActiveStep((activeStep - 1 + steps.length) % steps.length);
+  const goNext = () => setActiveStep((activeStep + 1) % steps.length);
 
   return (
     <Box sx={{ textAlign: "center", mb: 0, "& > *": { mb: 0 } }}>
@@ -49,8 +53,16 @@ const TabContent = ({
           alignItems: "center",
           justifyContent: "center",
           overflow: "visible",
-          mb: { xs: tabKey === "custom" ? 4 : 2, sm: 2 }
-        }}>
+          mb: { xs: tabKey === "custom" ? 3 : 2, sm: 2 }
+        }}
+        role="region"
+        aria-label="Karuzela przykładów"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowLeft") goPrev();
+          if (e.key === "ArrowRight") goNext();
+        }}
+        >
           {/* Poprzednie zdjęcie */}
           <Box
             sx={{
@@ -66,7 +78,7 @@ const TabContent = ({
               alignItems: "center",
               justifyContent: "center"
             }}
-            onClick={() => setActiveStep((activeStep - 1 + steps.length) % steps.length)}
+            onClick={goPrev}
           >
             <Box
               component="img"
@@ -95,7 +107,7 @@ const TabContent = ({
             alignItems: "center",
             justifyContent: "center"
           }}
-            onClick={() => setActiveStep((activeStep + 1) % steps.length)}
+            onClick={goNext}
           >
             <Box
               component="img"
@@ -130,7 +142,7 @@ const TabContent = ({
               alignItems: "center",
               justifyContent: "center"
             }}
-            onClick={() => setActiveStep((activeStep + 1) % steps.length)}
+            onClick={goNext}
           >
             <Box
               component="img"
@@ -148,6 +160,42 @@ const TabContent = ({
               }}
             />
           </Box>
+
+          <IconButton
+            aria-label="Poprzednie zdjęcie"
+            onClick={goPrev}
+            size="small"
+            sx={{
+              position: "absolute",
+              left: { xs: -6, sm: -10 },
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 4,
+              backgroundColor: "rgba(255,255,255,0.8)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+              "&:hover": { backgroundColor: "rgba(255,255,255,0.95)" }
+            }}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+
+          <IconButton
+            aria-label="Następne zdjęcie"
+            onClick={goNext}
+            size="small"
+            sx={{
+              position: "absolute",
+              right: { xs: -6, sm: -10 },
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 4,
+              backgroundColor: "rgba(255,255,255,0.8)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+              "&:hover": { backgroundColor: "rgba(255,255,255,0.95)" }
+            }}
+          >
+            <ChevronRightIcon />
+          </IconButton>
         </Box>
       ) : (
         tab.image && (
@@ -179,6 +227,38 @@ const TabContent = ({
         )
       )}
 
+      {hasCarouselAssets && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 1,
+            mb: 1
+          }}
+          aria-label="Nawigacja karuzeli"
+        >
+          {steps.map((_, idx) => (
+            <Box
+              key={idx}
+              component="button"
+              type="button"
+              aria-label={`Przejdź do slajdu ${idx + 1}`}
+              onClick={() => setActiveStep(idx)}
+              sx={{
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                backgroundColor: idx === activeStep ? "primary.main" : "grey.400"
+              }}
+            />
+          ))}
+        </Box>
+      )}
+
       {/* Tytuł i linki */}
       {tab.title && (
         <Typography variant="body1" sx={{ mb: 0.5, mt: 0.5, fontWeight: "normal", textAlign: "center", lineHeight: 1.2 }}>
@@ -191,31 +271,43 @@ const TabContent = ({
         display: "inline-flex",
         alignItems: "center",
         mt: { xs: 1.5, sm: 0.5 },
-        cursor: "pointer",
-        color: "primary.main",
         fontWeight: 500,
-        textDecoration: "underline",
         mx: "auto",
         gap: 0.5,
         fontSize: 14
       }}>
         {tab.link && (
-          <Box onClick={() => navigate(tab.link)} sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+          <Link
+            component={RouterLink}
+            to={tab.link}
+            underline="hover"
+            sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}
+          >
             {t("id_link")}
-          </Box>
+          </Link>
         )}
 
         <Typography sx={{ mx: 1, color: "text.primary" }}>|</Typography>
 
-        <Box onClick={() => navigate("/how-it-works")} sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+        <Link
+          component={RouterLink}
+          to="/how-it-works"
+          underline="hover"
+          sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}
+        >
           {t("how_it_works.link_text", "Jak działa aplikacja")}
-        </Box>
+        </Link>
 
         <Typography sx={{ mx: 1, color: "text.primary" }}>|</Typography>
 
-        <Box onClick={() => navigate("/foto-tips")} sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+        <Link
+          component={RouterLink}
+          to="/foto-tips"
+          underline="hover"
+          sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}
+        >
           {t("foto_tips.link_text", "Wskazówki do zdjęcia")}
-        </Box>
+        </Link>
       </Box>
 
       {/* Selektory i uploader */}
@@ -247,5 +339,3 @@ const TabContent = ({
 };
 
 export default TabContent;
-
-
