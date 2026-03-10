@@ -292,7 +292,7 @@ const SheetManager = ({
       <FrameBox
         sx={{
           maxWidth: "none",
-          width: { xs: "90%", md: "70%" },
+          width: { xs: "90%", md: "50%" },
           mx: "auto",
         }}
       >
@@ -328,7 +328,7 @@ const SheetManager = ({
           src={sheetUrl}
           alt="sheet"
           sx={{
-            maxWidth: "100%",
+            maxWidth: { xs: "100%", md: "90%" },
             borderRadius: 2,
             boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
             border: "1px solid #ddd",
