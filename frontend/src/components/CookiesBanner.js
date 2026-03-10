@@ -16,7 +16,9 @@ const CookiesBanner = () => {
     if (window.gtag) {
       window.gtag('consent', 'update', {
         'ad_storage': 'granted',
-        'analytics_storage': 'granted'
+        'analytics_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted'
       });
       
       window.gtag('event', 'cookies_accepted', {
