@@ -21,6 +21,7 @@ const SheetManager = ({
   const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const previewUrlRef = useRef(null);
 
   const dpi = 300;
@@ -194,6 +195,7 @@ const SheetManager = ({
     if (!sheetImages.length) return;
 
     try {
+      setIsUploading(true);
       const { blob } = await generateSheet();
 
       if (!blob) {
@@ -201,21 +203,27 @@ const SheetManager = ({
         return;
       }
 
-      const base64Image = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
+      const formData = new FormData();
+      formData.append("image", blob, "photo_sheet.jpg");
 
-      const downloadResp = await apiFetch(
-        `${BACKEND_URL}/api/download/create`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image_base64: base64Image }),
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      let downloadResp = null;
+      const maxAttempts = 2;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          downloadResp = await apiFetch(
+            `${BACKEND_URL}/api/download/create`,
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+          break;
+        } catch (err) {
+          if (attempt === maxAttempts) throw err;
+          await sleep(600);
         }
-      );
+      }
 
       if (!downloadResp.ok) {
         const errorText = await downloadResp.text();
@@ -264,7 +272,14 @@ const SheetManager = ({
       window.location.href = paymentData.url;
     } catch (err) {
       console.error(err);
-      alert("Nie udało się utworzyć linku płatności.");
+      const msg = String(err?.message || "");
+      if (msg.includes("HTTP 413")) {
+        alert("Plik jest zbyt duży do wysłania. Spróbuj ponownie lub skontaktuj się z supportem.");
+      } else {
+        alert("Nie udało się utworzyć linku płatności.");
+      }
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -303,8 +318,8 @@ const SheetManager = ({
             {t("clear_sheet", "Clear Sheet")}
           </Button>
 
-          <Button variant="contained" color="success" onClick={handleDownloadClick}>
-            {t("download_sheet", "Download Sheet")}
+          <Button variant="contained" color="success" onClick={handleDownloadClick} disabled={isUploading}>
+            {isUploading ? t("uploading", "Wysyłam...") : t("download_sheet", "Download Sheet")}
           </Button>
         </Box>
 
@@ -327,4 +342,3 @@ const SheetManager = ({
 };
 
 export default SheetManager;
-

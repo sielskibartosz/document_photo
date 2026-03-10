@@ -1,12 +1,7 @@
-import base64
-import uuid
-from datetime import datetime, timezone, timedelta
-
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, UploadFile, File
 from fastapi.responses import FileResponse
 from app.services.download_service import get_file, save_file
 import os
-from app.models import CreateDownloadRequest
 from starlette.responses import JSONResponse
 from app.config import config
 
@@ -33,17 +28,14 @@ async def download_file(
 
 @router.post("/create")
 async def create_download(
-    body: CreateDownloadRequest,
+    image: UploadFile = File(...),
     x_admin_token: str | None = Header(None, alias="X-Admin-Token")  # ✅ alias!
 ):
     """Zapisuje plik i generuje token do pobrania"""
     try:
-        # dekodowanie base64
-        if "," in body.image_base64:
-            _, encoded = body.image_base64.split(",", 1)
-        else:
-            encoded = body.image_base64
-        file_bytes = base64.b64decode(encoded)
+        file_bytes = await image.read()
+        if not file_bytes:
+            raise HTTPException(status_code=400, detail="Brak danych pliku")
 
         # 🔥 ADMIN BYPASS – TEN SAM klucz!
         is_admin = x_admin_token == config.ADMIN_DOWNLOAD_KEY
