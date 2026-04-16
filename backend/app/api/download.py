@@ -24,7 +24,13 @@ async def download_file(
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Plik nie istnieje")
 
-    return FileResponse(path, media_type="image/jpeg", filename="photo_sheet.jpg")
+    # ✅ Fix: Explicitly set headers for better browser compatibility
+    return FileResponse(
+        path, 
+        media_type="image/jpeg", 
+        headers={"Content-Disposition": 'attachment; filename="photo_sheet.jpg"'},
+        filename="photo_sheet.jpg"
+    )
 
 @router.post("/create")
 async def create_download(

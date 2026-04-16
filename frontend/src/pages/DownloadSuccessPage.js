@@ -12,7 +12,7 @@ const DownloadSuccessPage = () => {
   const { t } = useTranslation();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
-  // ✅ POPRAWIONA INDENTACJA - TYLKO download
+  // ✅ IMPROVED DOWNLOAD - Better browser compatibility
   const downloadFromBackend = async () => {
     const hash = window.location.hash;
     const queryString = hash.split("?")[1];
@@ -22,19 +22,46 @@ const DownloadSuccessPage = () => {
     if (!token) return alert("Brak tokena pobierania.");
 
     try {
+      console.log('📥 Starting download for token:', token);
       const response = await fetch(`${BACKEND_URL}/api/download/${token}`);
-      if (!response.ok) throw new Error("Błąd serwera");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Błąd serwera (${response.status}): ${errorText}`);
+      }
 
       const blob = await response.blob();
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "photo_sheet.jpg";
-      link.click();
+      console.log('📦 Blob received, size:', blob.size, 'bytes');
 
-      console.log('✅ Download complete:', token);
+      // ✅ Better approach: Use URL.createObjectURL with proper cleanup
+      const url = URL.createObjectURL(blob);
+      
+      try {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "photo_sheet.jpg";
+        
+        // ✅ Append to DOM before clicking (fixes on some PCs)
+        document.body.appendChild(link);
+        console.log('📎 Link appended to DOM');
+        
+        // ✅ Trigger click
+        link.click();
+        console.log('✅ Download triggered');
+        
+        // ✅ Cleanup after a short delay to ensure download starts
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          console.log('🧹 Cleanup completed');
+        }, 100);
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        throw err;
+      }
+
     } catch (err) {
-      console.error(err);
-      alert("Nie udało się pobrać pliku.");
+      console.error('❌ Download error:', err);
+      alert(`Nie udało się pobrać pliku: ${err.message}`);
     }
   };
 
