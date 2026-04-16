@@ -26,8 +26,8 @@ async def download_file(
 
     # ✅ Fix: Explicitly set headers for better browser compatibility
     return FileResponse(
-        path, 
-        media_type="image/jpeg", 
+        path,
+        media_type="application/octet-stream",
         headers={"Content-Disposition": 'attachment; filename="photo_sheet.jpg"'},
         filename="photo_sheet.jpg"
     )

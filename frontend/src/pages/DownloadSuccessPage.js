@@ -39,21 +39,32 @@ const DownloadSuccessPage = () => {
         const link = document.createElement("a");
         link.href = url;
         link.download = "photo_sheet.jpg";
-        
-        // ✅ Append to DOM before clicking (fixes on some PCs)
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.style.display = "none";
+
+        // ✅ Append to DOM before clicking (fixes on some browsers)
         document.body.appendChild(link);
         console.log('📎 Link appended to DOM');
-        
-        // ✅ Trigger click
-        link.click();
-        console.log('✅ Download triggered');
-        
+
+        const isIos = /iP(ad|hone|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        if (isIos) {
+          console.log('📱 iOS detected – using window.open fallback');
+          window.open(url, "_blank");
+        } else {
+          // ✅ Trigger click for normal browsers
+          link.click();
+          console.log('✅ Download triggered');
+        }
+
         // ✅ Cleanup after a short delay to ensure download starts
         setTimeout(() => {
-          document.body.removeChild(link);
+          if (document.body.contains(link)) {
+            document.body.removeChild(link);
+          }
           URL.revokeObjectURL(url);
           console.log('🧹 Cleanup completed');
-        }, 100);
+        }, 150);
       } catch (err) {
         URL.revokeObjectURL(url);
         throw err;
