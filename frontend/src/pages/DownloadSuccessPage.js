@@ -12,7 +12,7 @@ const DownloadSuccessPage = () => {
   const { t } = useTranslation();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
-  // ✅ IMPROVED DOWNLOAD - Better browser compatibility
+  // ✅ IMPROVED DOWNLOAD - Direct link for best mobile compatibility
   const downloadFromBackend = async () => {
     const hash = window.location.hash;
     const queryString = hash.split("?")[1];
@@ -23,52 +23,32 @@ const DownloadSuccessPage = () => {
 
     try {
       console.log('📥 Starting download for token:', token);
-      const response = await fetch(`${BACKEND_URL}/api/download/${token}`);
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Błąd serwera (${response.status}): ${errorText}`);
-      }
-
-      const blob = await response.blob();
-      console.log('📦 Blob received, size:', blob.size, 'bytes');
-
-      // ✅ Better approach: Use URL.createObjectURL with proper cleanup
-      const url = URL.createObjectURL(blob);
       
-      try {
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "photo_sheet.jpg";
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.style.display = "none";
-
-        // ✅ Append to DOM before clicking (fixes on some browsers)
-        document.body.appendChild(link);
-        console.log('📎 Link appended to DOM');
-
-        const isIos = /iP(ad|hone|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-        if (isIos) {
-          console.log('📱 iOS detected – using window.open fallback');
-          window.open(url, "_blank");
-        } else {
-          // ✅ Trigger click for normal browsers
-          link.click();
-          console.log('✅ Download triggered');
+      // ✅ Use direct link instead of blob for better mobile compatibility
+      // The server will handle Content-Disposition header properly
+      const downloadUrl = `${BACKEND_URL}/api/download/${token}`;
+      console.log('🔗 Direct download URL:', downloadUrl);
+      
+      // ✅ Create hidden link for desktop/mobile compatibility
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = "photo_sheet.jpg";
+      link.style.display = "none";
+      
+      document.body.appendChild(link);
+      console.log('📎 Link appended to DOM');
+      
+      // ✅ Trigger download
+      link.click();
+      console.log('✅ Download triggered via direct link');
+      
+      // ✅ Cleanup
+      setTimeout(() => {
+        if (document.body.contains(link)) {
+          document.body.removeChild(link);
         }
-
-        // ✅ Cleanup after a short delay to ensure download starts
-        setTimeout(() => {
-          if (document.body.contains(link)) {
-            document.body.removeChild(link);
-          }
-          URL.revokeObjectURL(url);
-          console.log('🧹 Cleanup completed');
-        }, 150);
-      } catch (err) {
-        URL.revokeObjectURL(url);
-        throw err;
-      }
+        console.log('🧹 Cleanup completed');
+      }, 100);
 
     } catch (err) {
       console.error('❌ Download error:', err);
