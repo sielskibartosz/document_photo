@@ -31,7 +31,7 @@ const HowItWorksPage = () => {
       <SEO
         title="PhotoIDCreator – Jak działa aplikacja"
         description="Dowiedz się, jak w prostych krokach przygotować zdjęcia do dowodu, paszportu, legitymacji lub wizy online z PhotoIDCreator."
-        url="https://photoidcreator.com/how-it-works"
+        url="https://photoidcreator.com/#/how-it-works"
       />
       <Box
         sx={{

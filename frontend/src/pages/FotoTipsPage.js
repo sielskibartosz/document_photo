@@ -25,7 +25,7 @@ const FotoTipsPage = () => {
       <SEO
         title="PhotoIDCreator – Wskazówki do zdjęcia"
         description="Dowiedz się, jak wykonać zdjęcie do dowodu lub legitymacji, aby aplikacja poprawnie je przycięła."
-        url="https://photoidcreator.com/foto-tips"
+        url="https://photoidcreator.com/#/foto-tips"
       />
       <Box
         sx={{

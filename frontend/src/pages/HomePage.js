@@ -17,6 +17,7 @@ import { useSheet } from "../context/SheetContext";
 
 import { STRIPE_PRICE_ID_PROD_PLN, STRIPE_PRICE_ID_PROD_EUR } from "../constants/payments";
 import { useTranslation } from "react-i18next";
+import SEO from "../components/SEO";
 
 const HomePage = () => {
   const { i18n } = useTranslation();
@@ -112,6 +113,11 @@ const HomePage = () => {
         boxShadow: darkTheme.shadows[4],
       }}
     >
+      <SEO
+        title="PhotoIDCreator – Szybkie zdjęcie do dokumentu"
+        description="Przygotuj zdjęcie do dowodu, paszportu lub legitymacji online szybko i profesjonalnie z PhotoIDCreator."
+        url="https://photoidcreator.com/#/"
+      />
       <AppTitle />
 
       <TabSelector

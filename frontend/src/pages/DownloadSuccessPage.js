@@ -91,7 +91,7 @@ const DownloadSuccessPage = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <SEO title="Pobranie zakończone" description="Twoje zdjęcie jest gotowe do pobrania" url="/#/download-success" />
+      <SEO title="Pobranie zakończone" description="Twoje zdjęcie jest gotowe do pobrania" url="https://photoidcreator.com/#/download-success" />
       <Box sx={{
         minHeight: "100vh",
         display: "flex",

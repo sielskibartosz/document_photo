@@ -31,7 +31,7 @@ const IdRequirementsPage = () => {
       <SEO
         title="PhotoIDCreator – Wymagania zdjęcia do dowodu"
         description="Dowiedz się, jakie są wymagania zdjęcia do dowodu, paszportu i legitymacji. Z PhotoIDCreator przygotujesz zdjęcie idealne do dokumentów."
-        url="https://photoidcreator.com/id-requirements"
+        url="https://photoidcreator.com/#/id-requirements"
       />
 
       <Box
