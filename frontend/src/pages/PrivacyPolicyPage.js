@@ -36,6 +36,10 @@ export default function PrivacyPolicyPage() {
         title="PhotoIDCreator – Polityka prywatności"
         description="Poznaj politykę prywatności PhotoIDCreator. Dowiedz się, jakie dane zbieramy, jak je przetwarzamy i jak dbamy o Twoją prywatność."
         url="https://photoidcreator.com/#/privacy-policy"
+      />
+
+      {/* Strzałka wstecz */}
+      <IconButton
         onClick={() => navigate("/")}
         sx={{ position: "absolute", top: 12, left: 12, color: "primary.main" }}
         aria-label="back"
