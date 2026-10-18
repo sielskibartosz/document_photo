@@ -22,6 +22,21 @@ class Config:
 
     MAX_DIMENSION: int = 5000
     MAX_FEEDBACK_LENGTH: int = 1000
+    MAX_UPLOAD_BYTES: int = int(os.getenv("MAX_UPLOAD_BYTES", str(25 * 1024 * 1024)))
+
+    # Dozwolone ceny Stripe - klient nie moze podstawic dowolnego price_id
+    STRIPE_PRICE_IDS_ENV: str = os.getenv(
+        "STRIPE_PRICE_IDS",
+        "price_1T1vNZC6i4TNfy0r8UIsp0Wb,price_1T1vPyC6i4TNfy0rfML1cFZx,price_1S1WQXC6i4TNfy0rDJQFSeSC",
+    )
+
+    @property
+    def ALLOWED_PRICE_IDS(self) -> List[str]:
+        return [p.strip() for p in self.STRIPE_PRICE_IDS_ENV.split(",") if p.strip()]
+
+    def is_admin(self, token: str | None) -> bool:
+        """Bypass admina tylko gdy klucz jest skonfigurowany (pusty klucz != dostep)."""
+        return bool(self.ADMIN_DOWNLOAD_KEY) and token == self.ADMIN_DOWNLOAD_KEY
 
     # ---------------- FEEDBACK ----------------
     FEEDBACK_FILE_ENV: str = os.getenv("FEEDBACK_FILE", "data/feedback.txt")
@@ -47,7 +62,9 @@ class Config:
 
     # ---------------- DOWNLOAD ----------------
     DOWNLOAD_DIR: str = "downloads"
-    TOKEN_EXPIRE_MINUTES: int = 10
+    # czas na oplacenie (link do Stripe) oraz waznosc pliku po oplaceniu
+    TOKEN_EXPIRE_MINUTES: int = int(os.getenv("TOKEN_EXPIRE_MINUTES", "60"))
+    PAID_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("PAID_TOKEN_EXPIRE_MINUTES", str(24 * 60)))
 
     @property
     def DOWNLOAD_PATH(self) -> Path:

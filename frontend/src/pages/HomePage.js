@@ -3,7 +3,7 @@ import { Box, useMediaQuery } from "@mui/material";
 
 import { TABS } from "../constants/tabs";
 import FrameBox from "../styles/imagesStyles";
-import { parseAspectRatio } from "../utils/cropImage";
+import { parseSizeMm } from "../utils/cropImage";
 import { darkTheme } from "../styles/theme";
 
 import CropperPanel from "../components/CropperPanel";
@@ -28,7 +28,12 @@ const HomePage = () => {
   const [bgColors, setBgColors] = useState({ id: "#fefcfb", custom: "#ffffff" });
   const [shouldScrollToSheet, setShouldScrollToSheet] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
-  const aspectRatio = parseAspectRatio(aspectInput);
+  // podczas wpisywania wymiarów ("50/") trzymamy ostatni poprawny rozmiar, żeby cropper się nie psuł
+  const parsedSize = parseSizeMm(aspectInput);
+  const lastValidSizeRef = useRef(parseSizeMm(TABS[0].aspect));
+  if (parsedSize) lastValidSizeRef.current = parsedSize;
+  const sizeMm = parsedSize || lastValidSizeRef.current;
+  const aspectRatio = sizeMm.widthMm / sizeMm.heightMm;
 
   const { imageSrc, crop, setCrop, zoom, setZoom, setNoBgImage, onFileChange, reset } = useImageCrop();
 
@@ -165,9 +170,11 @@ const HomePage = () => {
               zoom={zoom}
               setZoom={setZoom}
               aspectRatio={aspectRatio}
+              sizeMm={sizeMm}
+              isSizeValid={Boolean(parsedSize)}
               setNoBgImage={setNoBgImage}
               onAddToSheet={(img) => {
-                addToSheet(img, aspectRatio);
+                addToSheet(img, aspectRatio, sizeMm);
                 reset();
                 setShouldScrollToSheet(true);
               }}

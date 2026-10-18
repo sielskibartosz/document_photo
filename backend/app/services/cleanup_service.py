@@ -2,28 +2,20 @@
 # CLEANUP SERVICE
 # -------------------------
 import asyncio
-import os
-from datetime import datetime, timezone
-from fastapi import FastAPI
+import logging
 
-from app.services.download_service import download_tokens
+from fastapi import FastAPI
+from starlette.concurrency import run_in_threadpool
+
+from app.services.download_service import remove_expired
+
+logger = logging.getLogger(__name__)
 
 
 async def cleanup_expired_files(app: FastAPI):
     while True:
-        now = datetime.now(timezone.utc)
-        expired_tokens = []
-        for token, data in list(download_tokens.items()):
-            if now > data["expires"]:
-                path = data["path"]
-                if os.path.exists(path):
-                    try:
-                        os.remove(path)
-                    except Exception as e:
-                        print(f"[cleanup] Failed to remove {path}: {e}")
-                expired_tokens.append(token)
-
-        for token in expired_tokens:
-            download_tokens.pop(token, None)
-
+        try:
+            await run_in_threadpool(remove_expired)
+        except Exception:
+            logger.exception("[cleanup] Unexpected error")
         await asyncio.sleep(60)

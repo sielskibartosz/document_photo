@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 const SheetContext = createContext();
 
@@ -11,6 +11,18 @@ const normalizeSavedImages = (raw) => {
     if (typeof item.aspectRatio !== "number" || Number.isNaN(item.aspectRatio)) return false;
     return true;
   });
+};
+
+// blob: URL-e nie przetrwają przeładowania strony, więc ich nie zapisujemy;
+// localStorage może też rzucić QuotaExceededError dla dużych data URL
+const persistImages = (images) => {
+  try {
+    const persistable = images.filter((item) => !item.image.startsWith("blob:"));
+    if (persistable.length) localStorage.setItem("sheetImages", JSON.stringify(persistable));
+    else localStorage.removeItem("sheetImages");
+  } catch {
+    // brak miejsca / zablokowany storage - arkusz działa dalej w pamięci
+  }
 };
 
 export const useSheet = () => {
@@ -44,33 +56,30 @@ export const SheetProvider = ({ children }) => {
   const hideSheet = useCallback(() => setShowFullSheet(false), []);
   const toggleSheet = useCallback(() => setShowFullSheet((prev) => !prev), []);
 
-  const addToSheet = useCallback((image, aspectRatio) => {
+  const addToSheet = useCallback((image, aspectRatio, sizeMm) => {
     if (!image) return;
-    setSheetImages((prev) => {
-      const newSheet = [...prev, { image, aspectRatio }];
-      localStorage.setItem("sheetImages", JSON.stringify(newSheet));
-      return newSheet;
-    });
+    setSheetImages((prev) => [...prev, { image, aspectRatio, sizeMm }]);
     showSheet();
   }, [showSheet]);
 
   const duplicateLastImage = useCallback(() => {
-    setSheetImages((prev) => {
-      if (!prev.length) return prev;
-      const newSheet = [...prev, prev[prev.length - 1]];
-      localStorage.setItem("sheetImages", JSON.stringify(newSheet));
-      return newSheet;
-    });
+    setSheetImages((prev) => (prev.length ? [...prev, prev[prev.length - 1]] : prev));
     showSheet();
   }, [showSheet]);
 
   const clearSheet = useCallback(() => {
+    sheetImages.forEach(({ image }) => {
+      if (image.startsWith("blob:")) URL.revokeObjectURL(image);
+    });
     setSheetImages([]);
     setSelectedSheetUrl(null);
     setThumbnailUrl(null);
     setShowFullSheet(false);
-    localStorage.removeItem("sheetImages");
-  }, []);
+  }, [sheetImages]);
+
+  useEffect(() => {
+    persistImages(sheetImages);
+  }, [sheetImages]);
 
   return (
     <SheetContext.Provider

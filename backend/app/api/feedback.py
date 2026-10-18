@@ -14,7 +14,8 @@ async def submit_feedback(request: Request):
     """Submit user feedback."""
     try:
         data = await request.json()
-        message = data.get("message", "").strip()
+        message = data.get("message") if isinstance(data, dict) else None
+        message = message.strip() if isinstance(message, str) else ""
 
         if not message:
             raise HTTPException(status_code=400, detail="Brak wiadomości")
@@ -36,7 +37,7 @@ async def submit_feedback(request: Request):
 @router.get("/view/{key}", response_model=FeedbackResponse)
 async def view_feedback(key: str):
     """View feedback entries (admin only)."""
-    if key != config.ADMIN_KEY:
+    if not config.ADMIN_KEY or key != config.ADMIN_KEY:
         raise HTTPException(status_code=401, detail="Brak dostępu")
 
     feedbacks = load_feedbacks()

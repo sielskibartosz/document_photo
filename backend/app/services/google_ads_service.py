@@ -81,12 +81,6 @@ def send_ga4_conversion(
         ]
     }
 
-    # jeżeli mamy gclid, dodajemy go do traffic_source by GA4 przekazało do Google Ads
-    if gclid:
-        payload_traffic = payload.get("traffic_source", {})
-        payload_traffic["gclid"] = gclid
-        payload["traffic_source"] = payload_traffic
-
     # Budowanie payload
     payload = {
         "client_id": ga_client_id,
@@ -98,6 +92,10 @@ def send_ga4_conversion(
             }
         ],
     }
+
+    # jeżeli mamy gclid, dodajemy go do traffic_source by GA4 przekazało do Google Ads
+    if gclid:
+        payload["traffic_source"] = {"gclid": gclid}
 
     # ✅ User Data (PII hashed dla matching w GA4 → Google Ads)
     if email or user_id:

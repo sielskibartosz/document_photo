@@ -22,19 +22,28 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
 
-      // Domyślnie deny - user musi zaakceptować na banerze
+      // Domyślnie deny - user musi zaakceptować na banerze (CookiesBanner robi consent update)
+      var consentAccepted = false;
+      try { consentAccepted = localStorage.getItem('cookiesAccepted') === 'true'; } catch (e) {}
+      var consentValue = consentAccepted ? 'granted' : 'denied';
       gtag('consent', 'default', {
-        'ad_storage': 'granted',
-        'analytics_storage': 'granted'
+        'ad_storage': consentValue,
+        'analytics_storage': consentValue,
+        'ad_user_data': consentValue,
+        'ad_personalization': consentValue
       });
 
       gtag('js', new Date());
 
-      // GA4
-      gtag('config', 'G-4GGMXV1R1V');
+      // Nie wysyłamy do GA adresów zawierających klucze admina
+      var isAdminUrl = /[?&]admin=/.test(location.search) || location.hash.indexOf('#/feedback/view') === 0;
+      if (!isAdminUrl) {
+        // GA4
+        gtag('config', 'G-4GGMXV1R1V');
 
-      // Google Ads (tylko konfiguracja – konwersja wysyłana z React)
-      gtag('config', 'AW-17550154396');
+        // Google Ads (tylko konfiguracja – konwersja wysyłana z React)
+        gtag('config', 'AW-17550154396');
+      }
     </script>
 
     <!-- Open Graph -->
@@ -60,10 +69,7 @@
     <link rel="icon" href="%PUBLIC_URL%/logo_no_text.png" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo_no_text.png" />
     <link rel="manifest" href="/manifest.json" />
-
-    <!-- React CSS -->
-    <link href="/static/css/main.e6c13ad2.css" rel="stylesheet" />
-    <script defer src="/static/js/main.06e3d68a.js"></script>
+    <!-- CSS/JS bundle wstrzykuje react-scripts podczas builda -->
   </head>
 
   <body>

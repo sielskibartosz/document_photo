@@ -28,6 +28,12 @@
   "duplicate_photo": "Powiel zdjęcie",
   "clear_sheet": "Wyczyść arkusz",
   "download_sheet": "Pobierz arkusz",
+  "uploading": "Wysyłam...",
+  "invalid_aspect": "Wpisz w formacie XX/YY",
+  "remove_bg_error": "Błąd przy usuwaniu tła",
+  "sheet_generate_error": "Nie udało się wygenerować arkusza.",
+  "file_too_large": "Plik jest zbyt duży do wysłania. Spróbuj ponownie lub skontaktuj się z supportem.",
+  "payment_link_error": "Nie udało się utworzyć linku płatności.",
   "sheetThumbnail": "Miniatura arkusza",
 
   "foto_upload_info": "Aby uzyskać najlepsze rezultaty, użyj zdjęcia zrobionego na jednolitym tle. Unikaj zdjęć z cieniami, odblaskami lub innymi obiektami w tle. Jeżeli przycięte zdjęcie nie spełnia wymagań, spróbuj ponownie z innym zdjęciem.",
@@ -67,6 +73,10 @@
   },
 
   "success_page": {
+    "waiting_for_payment": "Czekamy na potwierdzenie płatności...",
+    "no_token": "Brak tokena pobierania.",
+    "link_expired": "Link wygasł lub nie istnieje. Skontaktuj się z nami przez formularz poniżej.",
+    "payment_pending": "Płatność nie została jeszcze potwierdzona. Spróbuj ponownie za chwilę.",
     "not_downloaded": "Jeśli arkusz nie został automatycznie pobrany, kliknij pobierz:",
     "download_btn": "Pobierz arkusz",
     "gratitude": "Dziękuję za skorzystanie z PhotoIDCreator!",

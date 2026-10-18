@@ -23,6 +23,12 @@
     "duplicate_photo":  "Foto duplizieren",
     "clear_sheet":  "Blatt leeren",
     "download_sheet":  "Blatt herunterladen",
+    "uploading":  "Wird hochgeladen...",
+    "invalid_aspect":  "Format XX/YY verwenden",
+    "remove_bg_error":  "Fehler beim Entfernen des Hintergrunds",
+    "sheet_generate_error":  "Das Blatt konnte nicht erstellt werden.",
+    "file_too_large":  "Die Datei ist zu groß. Bitte erneut versuchen oder den Support kontaktieren.",
+    "payment_link_error":  "Der Zahlungslink konnte nicht erstellt werden.",
     "sheetThumbnail":  "Blattvorschau",
     "foto_upload_info":  "Für beste Ergebnisse verwenden Sie ein Foto vor einheitlichem Hintergrund. Vermeiden Sie Fotos mit Schatten, Spiegelungen oder anderen Objekten im Hintergrund. Wenn das zugeschnittene Foto die Anforderungen nicht erfüllt, versuchen Sie es mit einem anderen Foto erneut.",
     "donateHeader":  "Kaffee für mich",
@@ -84,6 +90,10 @@
                            "footer":  "Denken Sie daran, dass das Foto auf hochwertigem Fotopapier gedruckt werden muss. Wenn das Foto die Anforderungen nicht erfüllt, kann es vom Sachbearbeiter abgelehnt werden."
                        },
     "success_page":  {
+                         "waiting_for_payment": "Warten auf Zahlungsbestätigung...",
+                         "no_token": "Download-Token fehlt.",
+                         "link_expired": "Der Link ist abgelaufen oder existiert nicht. Bitte kontaktiere uns über das Formular unten.",
+                         "payment_pending": "Die Zahlung wurde noch nicht bestätigt. Bitte versuche es gleich noch einmal.",
                          "not_downloaded":  "Wenn der Download nicht automatisch startet, klicken Sie bitte hier, um den Download zu starten:",
                          "download_btn":  "Herunterladen",
                          "gratitude":  "Vielen Dank, dass Sie PhotoIDCreator verwendet haben! Wir hoffen, dass Sie mit dem Ergebnis zufrieden sind.",

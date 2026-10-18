@@ -21,7 +21,11 @@ function ScrollAndTrack() {
   const location = useLocation();
 
   useEffect(() => {
-    if (window.gtag) {
+    // nie wysyłamy do GA ścieżek / parametrów z kluczami admina
+    const isAdminUrl =
+      location.pathname.startsWith("/feedback/view") ||
+      new URLSearchParams(window.location.search).has("admin");
+    if (window.gtag && !isAdminUrl) {
       window.gtag("event", "page_view", {
         page_path: `${location.pathname}${location.search || ""}`,
       });

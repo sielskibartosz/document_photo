@@ -36,6 +36,10 @@ def create_payment_link(price_id: str, token: str, redirect_url: str, ga_client_
     link = stripe.PaymentLink.create(
         line_items=[{"price": price_id, "quantity": 1}],
         metadata=metadata,
+        # token trafia tez do PaymentIntent (fallback w webhooku)
+        payment_intent_data={"metadata": {"token": token}},
+        # link jest jednorazowy - po jednej oplaconej sesji przestaje dzialac
+        restrictions={"completed_sessions": {"limit": 1}},
         customer_creation="always",  # ✅ Enable email collection for GA4 tracking
         after_completion={
             "type": "redirect",

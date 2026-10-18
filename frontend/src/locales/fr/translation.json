@@ -24,6 +24,12 @@
     "duplicate_photo":  "Dupliquer la photo",
     "clear_sheet":  "Effacer la planche",
     "download_sheet":  "Télécharger la planche",
+    "uploading":  "Envoi en cours...",
+    "invalid_aspect":  "Utilisez le format XX/YY",
+    "remove_bg_error":  "Erreur lors de la suppression du fond",
+    "sheet_generate_error":  "Impossible de générer la planche.",
+    "file_too_large":  "Le fichier est trop volumineux. Réessayez ou contactez le support.",
+    "payment_link_error":  "Impossible de créer le lien de paiement.",
     "sheetThumbnail":  "Miniature de la planche",
     "foto_upload_info":  "Pour de meilleurs résultats, utilisez une photo prise sur un fond uni. Évitez les ombres, reflets ou objets visibles en arrière‑plan. Si la photo recadrée ne remplit pas les exigences officielles, essayez avec une autre image.",
     "donateHeader":  "Offrez‑moi un café",
@@ -85,6 +91,10 @@
                            "footer":  "Veillez à imprimer cette photo sur papier photo de haute qualité. Si les exigences ne sont pas respectées, la photo peut être refusée."
                        },
     "success_page":  {
+                         "waiting_for_payment": "En attente de la confirmation du paiement...",
+                         "no_token": "Jeton de téléchargement manquant.",
+                         "link_expired": "Le lien a expiré ou n'existe pas. Contactez-nous via le formulaire ci-dessous.",
+                         "payment_pending": "Le paiement n'est pas encore confirmé. Réessayez dans un instant.",
                          "not_downloaded":  "Si la planche n’a pas été téléchargée automatiquement, cliquez sur :",
                          "download_btn":  "Télécharger la planche",
                          "gratitude":  "Merci d’avoir utilisé PhotoIDCreator!",

@@ -7,7 +7,6 @@ const apiFetch = async (url, options = {}) => {
   const adminParam = urlParams.get('admin');
   if (adminParam) {
     opts.headers["X-Admin-Token"] = adminParam;
-    console.log("💎 X-Admin-Token added to request");
   }
 
   try {

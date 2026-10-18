@@ -23,10 +23,11 @@ const SheetManager = ({
   const [showHint, setShowHint] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const previewUrlRef = useRef(null);
+  const generationRef = useRef(0);
 
   const dpi = 300;
   const margin = 20;
-  const photoWidthCm = 3.5;
+  const defaultPhotoWidthCm = 3.5;
   const maxPhotoHeightCm = 4.5;
 
   const generateSheet = useCallback(async () => {
@@ -44,16 +45,13 @@ const SheetManager = ({
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, widthPx, heightPx);
 
-    const baseImgWidth = Math.round(cmToPx(photoWidthCm, dpi));
-    const cols = Math.floor((widthPx + margin) / (baseImgWidth + margin));
-
+    let x = margin;
     let currentY = margin;
     let currentRowHeight = 0;
-    let colIndex = 0;
     let actualCount = 0;
 
     for (let i = 0; i < sheetImages.length; i++) {
-      const { image, aspectRatio } = sheetImages[i];
+      const { image, aspectRatio, sizeMm } = sheetImages[i];
       let img;
       try {
         img = await createImage(image);
@@ -61,43 +59,53 @@ const SheetManager = ({
         continue;
       }
 
-      let currentImgWidth = baseImgWidth;
-      let currentImgHeight = Math.round(currentImgWidth / aspectRatio);
-
-      const maxHeightPx = Math.round(cmToPx(maxPhotoHeightCm, dpi));
-      if (currentImgHeight > maxHeightPx) {
-        currentImgHeight = maxHeightPx;
-        currentImgWidth = Math.round(currentImgHeight * aspectRatio);
+      let currentImgWidth;
+      let currentImgHeight;
+      if (sizeMm) {
+        // rzeczywisty wymiar podany w mm
+        currentImgWidth = cmToPx(sizeMm.widthMm / 10, dpi);
+        currentImgHeight = cmToPx(sizeMm.heightMm / 10, dpi);
+      } else {
+        // starsze wpisy bez wymiaru - 35 mm szerokości, max 45 mm wysokości
+        currentImgWidth = cmToPx(defaultPhotoWidthCm, dpi);
+        currentImgHeight = Math.round(currentImgWidth / aspectRatio);
+        const maxHeightPx = cmToPx(maxPhotoHeightCm, dpi);
+        if (currentImgHeight > maxHeightPx) {
+          currentImgHeight = maxHeightPx;
+          currentImgWidth = Math.round(currentImgHeight * aspectRatio);
+        }
       }
 
-      const x = margin + colIndex * (baseImgWidth + margin);
-      const y = currentY;
-
-      if (y + currentImgHeight + margin > heightPx) break;
-
-      ctx.drawImage(img, x, y, currentImgWidth, currentImgHeight);
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(x, y, currentImgWidth, currentImgHeight);
-
-      actualCount++;
-      currentRowHeight = Math.max(currentRowHeight, currentImgHeight);
-
-      colIndex++;
-      if (colIndex >= cols) {
-        colIndex = 0;
+      // nowy wiersz, jeśli zdjęcie nie mieści się w bieżącym
+      if (x > margin && x + currentImgWidth + margin > widthPx) {
+        x = margin;
         currentY += currentRowHeight + margin;
         currentRowHeight = 0;
       }
+
+      if (x + currentImgWidth + margin > widthPx || currentY + currentImgHeight + margin > heightPx) break;
+
+      ctx.drawImage(img, x, currentY, currentImgWidth, currentImgHeight);
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, currentY, currentImgWidth, currentImgHeight);
+
+      actualCount++;
+      currentRowHeight = Math.max(currentRowHeight, currentImgHeight);
+      x += currentImgWidth + margin;
     }
 
-    const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+    // JPEG - zgodny z nazwą pliku photo_sheet.jpg i dużo mniejszy niż PNG
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.95));
     return { blob, visibleCount: actualCount };
   }, [sheetImages, selectedFormat]);
 
   const createSheetImage = useCallback(async () => {
+    // tylko najnowsze generowanie może ustawić podgląd
+    const generation = ++generationRef.current;
     try {
       const result = await generateSheet();
+      if (generation !== generationRef.current) return;
 
       if (result && result.blob) {
         const url = URL.createObjectURL(result.blob);
@@ -112,6 +120,7 @@ const SheetManager = ({
         setVisibleCount(0);
       }
     } catch {
+      if (generation !== generationRef.current) return;
       if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
       previewUrlRef.current = null;
       setSheetUrl(null);
@@ -138,25 +147,34 @@ const SheetManager = ({
   }, [sheetImages, createSheetImage, setSheetUrl]);
 
   useEffect(() => {
+    const generation = generationRef;
     return () => {
+      generation.current++;
       if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+      // nie zostawiaj w kontekście unieważnionego URL-a
+      setSheetUrl(null);
     };
-  }, []);
+  }, [setSheetUrl]);
 
   const getGAClientId = useCallback(async () => {
     if (typeof window === "undefined") return null;
 
-    const gaCookie = document.cookie.match(/(_ga_[A-Z0-9]+)=([^;]+)/);
+    // cookie _ga ma postać GA1.1.<random>.<timestamp>; client_id to dwie ostatnie części
+    const gaCookie = document.cookie.match(/(?:^|;\s*)_ga=([^;]+)/);
 
     if (gaCookie) {
-      const parts = gaCookie[2].split(".");
-      return parts.slice(-2).join(".");
+      const parts = gaCookie[1].split(".");
+      if (parts.length >= 4) return parts.slice(-2).join(".");
     }
 
     if (window.gtag) {
+      // callback nigdy nie przyjdzie, gdy gtag.js jest zablokowany (adblock) - stąd timeout
       return new Promise((resolve) => {
+        const timer = setTimeout(() => resolve(null), 1500);
         window.gtag("get", "G-4GGMXV1R1V", "client_id", (clientId) => {
-          resolve(clientId);
+          clearTimeout(timer);
+          resolve(clientId || null);
         });
       });
     }
@@ -175,7 +193,6 @@ const SheetManager = ({
 
     if (gclidParam) {
       localStorage.setItem("gclid", gclidParam);
-      console.log("gclid stored:", gclidParam);
     }
   }, []);
 
@@ -183,6 +200,8 @@ const SheetManager = ({
     if (clearSheet) clearSheet();
     else setSheetImages([]);
   };
+
+  const closeHint = useCallback(() => setShowHint(false), []);
 
   const duplicateImage = () => {
     if (!sheetImages.length) return;
@@ -199,7 +218,7 @@ const SheetManager = ({
       const { blob } = await generateSheet();
 
       if (!blob) {
-        alert("Nie udało się wygenerować arkusza.");
+        alert(t("sheet_generate_error", "Nie udało się wygenerować arkusza."));
         return;
       }
 
@@ -220,15 +239,11 @@ const SheetManager = ({
           );
           break;
         } catch (err) {
-          if (attempt === maxAttempts) throw err;
+          // ponawiamy tylko błędy sieci / 5xx, nie odpowiedzi 4xx (np. 413)
+          const isClientError = /^HTTP 4\d\d/.test(String(err?.message || ""));
+          if (attempt === maxAttempts || isClientError) throw err;
           await sleep(600);
         }
-      }
-
-      if (!downloadResp.ok) {
-        const errorText = await downloadResp.text();
-        alert("Błąd backendu:\n" + errorText);
-        return;
       }
 
       const { token } = await downloadResp.json();
@@ -274,9 +289,9 @@ const SheetManager = ({
       console.error(err);
       const msg = String(err?.message || "");
       if (msg.includes("HTTP 413")) {
-        alert("Plik jest zbyt duży do wysłania. Spróbuj ponownie lub skontaktuj się z supportem.");
+        alert(t("file_too_large", "Plik jest zbyt duży do wysłania. Spróbuj ponownie lub skontaktuj się z supportem."));
       } else {
-        alert("Nie udało się utworzyć linku płatności.");
+        alert(t("payment_link_error", "Nie udało się utworzyć linku płatności."));
       }
     } finally {
       setIsUploading(false);
@@ -287,7 +302,7 @@ const SheetManager = ({
 
   return (
     <>
-      <HintBubble open={showHint} onClose={() => setShowHint(false)} />
+      <HintBubble open={showHint} onClose={closeHint} />
 
       <FrameBox
         sx={{

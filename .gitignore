@@ -17,3 +17,7 @@ node_modules/
 build/
 .DS_Store
 .env
+.env_dev
+.env.*
+backend/downloads/
+.venv*/

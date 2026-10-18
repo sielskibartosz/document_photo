@@ -1,9 +1,16 @@
 export const DPI = 300;
 
+// "35/45" -> { widthMm: 35, heightMm: 45 }; null dla niepełnych/niepoprawnych wartości
+export function parseSizeMm(value) {
+  if (typeof value !== "string" || !/^\d+\/\d+$/.test(value)) return null;
+  const [widthMm, heightMm] = value.split("/").map(Number);
+  if (!(widthMm > 0) || !(heightMm > 0)) return null;
+  return { widthMm, heightMm };
+}
+
 export function parseAspectRatio(value) {
-  const parts = value.split("/").map(Number);
-  if (parts.length !== 2 || parts.some(isNaN)) return null;
-  return parts[0] / parts[1];
+  const size = parseSizeMm(value);
+  return size ? size.widthMm / size.heightMm : null;
 }
 
 export function cmToPx(cm, dpi = 300) {
@@ -29,8 +36,9 @@ export async function getCroppedImg(imageSrc, crop, width, height) {
     height
   );
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
+      if (!blob) return reject(new Error("Nie udało się przyciąć zdjęcia"));
       resolve(URL.createObjectURL(blob));
     }, "image/png");
   });

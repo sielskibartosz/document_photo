@@ -23,6 +23,12 @@
     "duplicate_photo":  "Duplicar foto",
     "clear_sheet":  "Limpiar hoja",
     "download_sheet":  "Descargar hoja",
+    "uploading":  "Subiendo...",
+    "invalid_aspect":  "Usa el formato XX/YY",
+    "remove_bg_error":  "Error al eliminar el fondo",
+    "sheet_generate_error":  "No se pudo generar la hoja.",
+    "file_too_large":  "El archivo es demasiado grande. Inténtalo de nuevo o contacta con soporte.",
+    "payment_link_error":  "No se pudo crear el enlace de pago.",
     "sheetThumbnail":  "Miniatura de hoja",
     "foto_upload_info":  "Para obtener los mejores resultados, use una foto tomada sobre un fondo uniforme. Evite fotos con sombras, reflejos u otros objetos en el fondo. Si la foto recortada no cumple con los requisitos, intente nuevamente con otra foto.",
     "donateHeader":  "Invítame un café",
@@ -84,6 +90,10 @@
                            "footer":  "Recuerde que la foto debe imprimirse en papel fotográfico de alta calidad. Si la foto no cumple con los requisitos, puede ser rechazada por el funcionario."
                        },
     "success_page":  {
+                         "waiting_for_payment": "Esperando la confirmación del pago...",
+                         "no_token": "Falta el token de descarga.",
+                         "link_expired": "El enlace ha caducado o no existe. Contáctanos mediante el formulario de abajo.",
+                         "payment_pending": "El pago aún no se ha confirmado. Inténtalo de nuevo en un momento.",
                          "not_downloaded":  " Si la hoja no se descargó automáticamente, haga clic en:",
                          "download_btn":  "Descargar hoja",
                          "gratitude":  "¡Gracias por usar PhotoIDCreator!",

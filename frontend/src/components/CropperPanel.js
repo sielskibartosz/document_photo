@@ -1,11 +1,10 @@
 // CropperPanel.js
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Box, Button, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import CropperWrapper from "./CropperWrapper";
-import { getCroppedImg } from "../utils/cropImage";
-import ImagePreview from "./ImagePreview";
+import { getCroppedImg, cmToPx, DPI } from "../utils/cropImage";
 import { BACKEND_URL } from "../constants/backendConfig";
 
 export default function CropperPanel({
@@ -15,6 +14,8 @@ export default function CropperPanel({
   zoom,
   setZoom,
   aspectRatio,
+  sizeMm,
+  isSizeValid = true,
   setNoBgImage,
   onAddToSheet,
   onClear,
@@ -25,7 +26,12 @@ export default function CropperPanel({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [preview, setPreview] = useState(null);
+  const abortRef = useRef(null);
+  const imageSrcRef = useRef(imageSrc);
+  imageSrcRef.current = imageSrc;
+
+  // przerwij trwające usuwanie tła przy odmontowaniu (zmiana zakładki, usunięcie zdjęcia)
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const onCropComplete = useCallback((_, areaPixels) => {
     setCroppedAreaPixels(areaPixels);
@@ -45,16 +51,6 @@ export default function CropperPanel({
     }, 300);
     return () => clearInterval(interval);
   }, [loading]);
-
-  const dataURLtoBlob = (dataurl) => {
-    const arr = dataurl.split(",");
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) u8arr[n] = bstr.charCodeAt(n);
-    return new Blob([u8arr], { type: mime });
-  };
 
   const hexToRGBA = (hex) => {
     try {
@@ -77,47 +73,70 @@ export default function CropperPanel({
     }
   };
 
-  const handleCropAndRemoveBg = async () => {
-    if (!imageSrc || !croppedAreaPixels) return;
-    setLoading(true);
-    try {
-      const width = 350;
-      const height = width / aspectRatio;
-      const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
+  // Kadr w docelowej rozdzielczości druku (300 DPI), żeby zdjęcie na arkuszu nie było skalowane w górę
+  const getPrintSize = () => ({
+    width: cmToPx(sizeMm.widthMm / 10, DPI),
+    height: cmToPx(sizeMm.heightMm / 10, DPI),
+  });
 
-      const blob =
-        cropped.startsWith("data:") ? dataURLtoBlob(cropped) : await (await fetch(cropped)).blob();
+  const handleCropAndRemoveBg = async () => {
+    if (!imageSrc || !croppedAreaPixels || !isSizeValid) return;
+    const requestSrc = imageSrc;
+    const controller = new AbortController();
+    abortRef.current?.abort();
+    abortRef.current = controller;
+    setLoading(true);
+    let croppedUrl = null;
+    try {
+      const { width, height } = getPrintSize();
+      croppedUrl = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
+      const blob = await (await fetch(croppedUrl)).blob();
 
       const formData = new FormData();
       formData.append("image", blob, "cropped.png");
       formData.append("bg_color", JSON.stringify(hexToRGBA(bgColor)));
-//      console.log("Sending bg color:", hexToRGBA(bgColor));
 
       const response = await fetch(`${BACKEND_URL}/remove-background/`, {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
 
       if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(errText || t("remove_bg_error", "Błąd przy usuwaniu tła"));
+        throw new Error(t("remove_bg_error", "Błąd przy usuwaniu tła"));
       }
 
-      // --- NEW: read as blob instead of JSON ---
       const resultBlob = await response.blob();
-      const objectUrl = URL.createObjectURL(resultBlob);
+      // użytkownik w międzyczasie usunął / zmienił zdjęcie - wynik jest nieaktualny
+      if (controller.signal.aborted || imageSrcRef.current !== requestSrc) return;
 
+      const objectUrl = URL.createObjectURL(resultBlob);
       setNoBgImage(objectUrl);
       if (onAddToSheet) onAddToSheet(objectUrl);
     } catch (error) {
-      alert(error.message);
+      if (error.name !== "AbortError" && !controller.signal.aborted) alert(error.message);
     } finally {
-      setLoading(false);
+      if (croppedUrl) URL.revokeObjectURL(croppedUrl);
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleAddWithBg = async () => {
+    if (!imageSrc || !croppedAreaPixels || !isSizeValid) return;
+    try {
+      const { width, height } = getPrintSize();
+      const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
+      if (onAddToSheet) onAddToSheet(cropped);
+    } catch (error) {
+      alert(error.message);
     }
   };
 
   const handleClear = () => {
-    setPreview(null);
+    abortRef.current?.abort();
     setNoBgImage(null);
     if (onClear) onClear();
   };
@@ -133,53 +152,24 @@ export default function CropperPanel({
           gap: 1,
         }}
       >
-        {!preview ? (
-          <>
-            <Button
-              variant="contained"
-              onClick={handleCropAndRemoveBg}
-              disabled={loading}
-              sx={{ fontWeight: 500, width: 220 }}
-            >
-              {loading ? `${t("removing_bg")}${loadingProgress}%` : t("crop_and_remove")}
-            </Button>
+        <Button
+          variant="contained"
+          onClick={handleCropAndRemoveBg}
+          disabled={loading || !isSizeValid}
+          sx={{ fontWeight: 500, width: 220 }}
+        >
+          {loading ? `${t("removing_bg")}${loadingProgress}%` : t("crop_and_remove")}
+        </Button>
 
-            {activeTab === "custom" && (
-              <Button
-                variant="contained"
-                onClick={async () => {
-                  if (!imageSrc || !croppedAreaPixels) return;
-                  const width = 350;
-                  const height = width / aspectRatio;
-                  const cropped = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
-                  if (onAddToSheet) onAddToSheet(cropped);
-                }}
-                sx={{ fontWeight: 500, width: 220 }}
-              >
-                {t("add_with_bg")}
-              </Button>
-            )}
-          </>
-        ) : (
-          <>
-            <Button
-              variant="contained"
-              onClick={() => onAddToSheet && onAddToSheet(preview)}
-              sx={{ fontWeight: 500, width: 220 }}
-            >
-              {t("add_to_sheet")}
-            </Button>
-
-            {activeTab === "custom" && (
-              <Button
-                variant="outlined"
-                onClick={() => onAddToSheet && onAddToSheet(imageSrc)}
-                sx={{ fontWeight: 500, width: 220 }}
-              >
-                {t("add_without_bg", "Dodaj bez usuwania tła")}
-              </Button>
-            )}
-          </>
+        {activeTab === "custom" && (
+          <Button
+            variant="contained"
+            onClick={handleAddWithBg}
+            disabled={loading || !isSizeValid}
+            sx={{ fontWeight: 500, width: 220 }}
+          >
+            {t("add_with_bg")}
+          </Button>
         )}
       </Box>
 
@@ -208,12 +198,6 @@ export default function CropperPanel({
       />
 
       {renderButtons()}
-
-      {preview && (
-        <Box display="flex" flexDirection="column" alignItems="center" gap={2} width="100%">
-          <ImagePreview image={preview} aspectRatio={aspectRatio} />
-        </Box>
-      )}
     </Box>
   );
 }

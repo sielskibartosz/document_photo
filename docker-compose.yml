@@ -5,7 +5,7 @@ services:
     build: ./backend
     container_name: FotoCropper-fastAPI
     ports:
-      - "8000:8000"
+      - "8080:8080"
     volumes:
       - ./backend:/app
 

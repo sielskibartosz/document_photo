@@ -1,4 +1,4 @@
-﻿{
+{
     "language":  "Language",
     "title":  "PhotoIDCreator",
     "sub_title":  "Low cost document photos",
@@ -23,6 +23,12 @@
     "duplicate_photo":  "Duplicate Photo",
     "clear_sheet":  "Clear Sheet",
     "download_sheet":  "Download Sheet",
+    "uploading":  "Uploading...",
+    "invalid_aspect":  "Use the format XX/YY",
+    "remove_bg_error":  "Error while removing background",
+    "sheet_generate_error":  "Could not generate the sheet.",
+    "file_too_large":  "The file is too large to upload. Please try again or contact support.",
+    "payment_link_error":  "Could not create the payment link.",
     "sheetThumbnail":  "Sheet Thumbnail",
     "foto_upload_info":  "To achieve the best results, use a photo taken against a uniform background. Avoid photos with shadows, reflections, or other objects in the background. If the cropped photo does not meet the requirements, try again with a different one.",
     "donateHeader":  "Buy Me a Coffee",
@@ -84,6 +90,10 @@
                            "footer":  "Remember, the photo must be printed on high-quality photo paper. If the photo does not meet the requirements, it may be rejected by the officer."
                        },
     "success_page":  {
+                         "waiting_for_payment": "Waiting for payment confirmation...",
+                         "no_token": "Missing download token.",
+                         "link_expired": "The link has expired or does not exist. Please contact us using the form below.",
+                         "payment_pending": "Payment has not been confirmed yet. Please try again in a moment.",
                          "not_downloaded":  "If the download does not start automatically, please click download:",
                          "download_btn":  "Download Sheet",
                          "gratitude":  "Thank you for using PhotoIDCreator!",

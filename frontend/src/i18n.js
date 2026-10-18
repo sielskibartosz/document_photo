@@ -26,7 +26,9 @@ function detectInitialLanguage() {
 
   // 2️⃣ inaczej wykryj język z przeglądarki
   const browserLang = navigator.language || navigator.userLanguage; // np. "pl-PL"
-  const shortLang = browserLang.split("-")[0]; // "pl", "de", "en", "es"
+  let shortLang = (browserLang || "").split("-")[0].toLowerCase(); // "pl", "de", "en", "es"
+  // ISO 639-1 dla ukraińskiego to "uk", w aplikacji używamy klucza "ua"
+  if (shortLang === "uk") shortLang = "ua";
 
   // 3️⃣ jeśli obsługiwany → użyj, jeśli nie → fallback
   if (["pl", "de", "en", "es", "fr", "ua"].includes(shortLang)) return shortLang;

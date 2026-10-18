@@ -6,8 +6,9 @@ services:
       - "8080:8080"
     volumes:
       - ./data:/app/data
+      - ./downloads:/app/downloads
     environment:
       - ADMIN_KEY=admin
-      - ALLOWED_ORIGIN="http://localhost:3000,https://photoidcreator.com"
+      - ALLOWED_ORIGIN=http://localhost:3000,https://photoidcreator.com
       - FEEDBACK_FILE=/app/data/feedback.txt
     restart: unless-stopped

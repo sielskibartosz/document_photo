@@ -4,7 +4,8 @@ import logging
 from app.config import config
 from app.models import CreateLinkRequest
 from app.services.stripe_service import create_payment_link
-from app.services.download_service import mark_paid
+from app.services.download_service import mark_paid, get_file
+from starlette.concurrency import run_in_threadpool
 
 logger = logging.getLogger(__name__)
 
@@ -15,24 +16,42 @@ if not config.STRIPE_WEBHOOK_SECRET:
     logger.warning("STRIPE_WEBHOOK_SECRET not configured")
 
 
+def _is_allowed_redirect(url: str) -> bool:
+    """Przekierowanie po platnosci tylko na nasz frontend (bez open redirect)."""
+    return any(url == origin or url.startswith(origin.rstrip("/") + "/") for origin in config.ALLOWED_ORIGINS)
+
+
 @router.post("/create-link")
 async def create_link(
         body: CreateLinkRequest,
         x_admin_token: str | None = Header(None, alias="X-Admin-Token")
 ):
-    if x_admin_token == config.ADMIN_DOWNLOAD_KEY:
-        logger.info(f"Admin bypass for token")
+    if not get_file(body.token):
+        raise HTTPException(status_code=404, detail="Link nie istnieje")
+
+    if config.is_admin(x_admin_token):
+        logger.info("Admin bypass for token")
         mark_paid(body.token)
         return {"url": "ADMIN_BYPASS"}
 
+    if body.price_id not in config.ALLOWED_PRICE_IDS:
+        raise HTTPException(status_code=400, detail="Nieprawidłowa cena")
+    if not _is_allowed_redirect(body.redirect_url):
+        raise HTTPException(status_code=400, detail="Nieprawidłowy adres przekierowania")
+
     logger.info(f"Creating payment link for price_id: {body.price_id}")
-    url = create_payment_link(
-        body.price_id,
-        body.token,
-        body.redirect_url,
-        ga_client_id=body.ga_client_id,  # Pobierz z obiektu request
-        gclid=body.gclid
-    )
+    try:
+        url = await run_in_threadpool(
+            create_payment_link,
+            body.price_id,
+            body.token,
+            body.redirect_url,
+            ga_client_id=body.ga_client_id,
+            gclid=body.gclid,
+        )
+    except stripe.error.StripeError:
+        logger.exception("Stripe error while creating payment link")
+        raise HTTPException(status_code=502, detail="Błąd płatności")
     return {"url": url}
 
 
@@ -56,22 +75,28 @@ async def stripe_webhook(request: Request):
         logger.error(f"Invalid webhook signature: {str(e)}")
         raise HTTPException(status_code=400, detail="Invalid signature")
 
-    if event["type"] == "checkout.session.completed":
+    # checkout.session.completed przychodzi tez dla platnosci asynchronicznych,
+    # ktore jeszcze nie sa oplacone - wtedy czekamy na async_payment_succeeded
+    if event["type"] in ("checkout.session.completed", "checkout.session.async_payment_succeeded"):
         session = event["data"]["object"]
+
+        if session.get("payment_status") not in ("paid", "no_payment_required"):
+            logger.info(f"[Stripe] Session {session.get('id')} not paid yet ({session.get('payment_status')})")
+            return {"status": "pending"}
 
         # ✅ Pobierz token z session metadata
         token = session.metadata.get("token") if session.metadata else None
 
         # Fallback PaymentIntent
         if not token and session.get("payment_intent"):
-            pi = stripe.PaymentIntent.retrieve(session["payment_intent"])
+            pi = await run_in_threadpool(stripe.PaymentIntent.retrieve, session["payment_intent"])
             token = pi.metadata.get("token")
 
-        if token:
-            mark_paid(token)
+        if not token:
+            logger.warning("[Stripe] ⚠️  Webhook received but no token found")
+        elif await run_in_threadpool(mark_paid, token):
             logger.info(f"[Stripe] ✅ Payment marked as completed for token: {token}")
-            logger.info(f"[Stripe] ℹ️  Conversion tracking handled by frontend gtag event")
         else:
-            logger.warning(f"[Stripe] ⚠️  Webhook received but no token found")
+            logger.error(f"[Stripe] ❌ Paid, but token/file not found (expired?): {token}")
 
     return {"status": "success"}

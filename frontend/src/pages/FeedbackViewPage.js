@@ -14,7 +14,7 @@ const FeedbackViewPage = () => {
     const fetchFeedback = async () => {
       try {
         const res = await axios.get(
-          `${BACKEND_URL}/api/feedback/view/${key}/`  // ✅ SLASH NA KOŃCU
+          `${BACKEND_URL}/api/feedback/view/${encodeURIComponent(key)}`  // bez slasha - inaczej redirect 307
         );
 
         if (res.data.status === "ok") {
@@ -34,7 +34,7 @@ const FeedbackViewPage = () => {
 
     if (key) fetchFeedback();
     else setStatus("Brak klucza dostępu.");
-  }, [key, BACKEND_URL]);  // ✅ BACKEND_URL w deps
+  }, [key]);
 
   return (
     <Box
