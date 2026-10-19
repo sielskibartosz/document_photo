@@ -86,6 +86,7 @@ feedback.txt
 
 # Environment files (secrets)
 .env
+.env_dev
 .env.local
 .env.*.local
 Dockerfile.env
