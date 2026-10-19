@@ -42,6 +42,8 @@ const SheetManager = ({
     canvas.height = heightPx;
 
     const ctx = canvas.getContext("2d");
+    // zdjęcia po usuwaniu tła są większe niż wymiar druku - skalujemy je w dół z wysoką jakością
+    ctx.imageSmoothingQuality = "high";
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, widthPx, heightPx);
 

@@ -22,7 +22,9 @@ class Config:
 
     MAX_DIMENSION: int = 5000
     MAX_FEEDBACK_LENGTH: int = 1000
-    MAX_UPLOAD_BYTES: int = int(os.getenv("MAX_UPLOAD_BYTES", str(25 * 1024 * 1024)))
+    # model usuwania tla zuzywa ~5 GB RAM - uvicorn musi dzialac z 1 workerem
+    TORCH_NUM_THREADS: int = int(os.getenv("TORCH_NUM_THREADS", str(min(4, os.cpu_count() or 1))))
+    MAX_UPLOAD_BYTES: int =int(os.getenv("MAX_UPLOAD_BYTES", str(25 * 1024 * 1024)))
 
     # Dozwolone ceny Stripe - klient nie moze podstawic dowolnego price_id
     STRIPE_PRICE_IDS_ENV: str = os.getenv(

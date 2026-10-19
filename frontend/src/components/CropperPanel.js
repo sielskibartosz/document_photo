@@ -7,6 +7,9 @@ import CropperWrapper from "./CropperWrapper";
 import { getCroppedImg, cmToPx, DPI } from "../utils/cropImage";
 import { BACKEND_URL } from "../constants/backendConfig";
 
+// ile razy większy od wymiaru druku kadr wysyłamy do usuwania tła
+const BG_REMOVAL_SCALE = 2;
+
 export default function CropperPanel({
   imageSrc,
   crop,
@@ -79,6 +82,15 @@ export default function CropperPanel({
     height: cmToPx(sizeMm.heightMm / 10, DPI),
   });
 
+  // Do usuwania tła wysyłamy kadr do 2x większy niż do druku - model i tak pracuje na 1024 px,
+  // więc dostaje więcej szczegółów krawędzi (włosy) bez wydłużania przetwarzania.
+  // Nie powiększamy ponad rozdzielczość oryginału, bo to nie dodaje szczegółów.
+  const getBgRemovalSize = () => {
+    const print = getPrintSize();
+    const scale = Math.max(1, Math.min(BG_REMOVAL_SCALE, croppedAreaPixels.width / print.width));
+    return { width: Math.round(print.width * scale), height: Math.round(print.height * scale) };
+  };
+
   const handleCropAndRemoveBg = async () => {
     if (!imageSrc || !croppedAreaPixels || !isSizeValid) return;
     const requestSrc = imageSrc;
@@ -88,7 +100,7 @@ export default function CropperPanel({
     setLoading(true);
     let croppedUrl = null;
     try {
-      const { width, height } = getPrintSize();
+      const { width, height } = getBgRemovalSize();
       croppedUrl = await getCroppedImg(imageSrc, croppedAreaPixels, width, height);
       const blob = await (await fetch(croppedUrl)).blob();
 

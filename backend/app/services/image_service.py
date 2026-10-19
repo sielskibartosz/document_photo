@@ -5,10 +5,16 @@ import json
 import threading
 from PIL import Image
 import io
+import torch
 from app.config import config
 from transparent_background import Remover
 
-remover = Remover()
+# liczba watkow CPU dla modelu - domyslnie tyle, ile vCPU serwera
+torch.set_num_threads(config.TORCH_NUM_THREADS)
+
+# tryb "base" - "fast" jest ~5x szybszy, ale daje widoczne artefakty na krawedziach;
+# jit=True na CPU nie przyspiesza, a kompilacja trwa minuty i zuzywa duzo RAM
+remover = Remover(mode="base")
 # model nie jest bezpieczny do rownoleglego uzycia z wielu watkow
 _remover_lock = threading.Lock()
 
