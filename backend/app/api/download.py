@@ -14,6 +14,12 @@ router = APIRouter(prefix="/api/download", tags=["download"])
 _IMAGE_MAGIC = (b"\xff\xd8\xff", b"\x89PNG\r\n\x1a\n")
 
 
+@router.get("/admin-check")
+async def admin_check(x_admin_token: str | None = Header(None, alias="X-Admin-Token")):
+    """Pozwala frontendowi pokazać, czy kod admina jest poprawny (znaczek wersji darmowej)."""
+    return {"admin": config.is_admin(x_admin_token)}
+
+
 @router.get("/status/{token}")
 async def download_status(
     token: str,

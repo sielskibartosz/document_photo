@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Select, MenuItem } from "@mui/material";
 import PrivacyPolicy from "./PrivacyPolicy";
 import Donate from "./Donate";
+import AdminBadge from "./AdminBadge";
 
 export default function AppHeader({ i18n }) {
   const handleLanguageChange = (e) => {
@@ -25,6 +26,8 @@ export default function AppHeader({ i18n }) {
         fontSize: "0.875rem",
       }}
     >
+      <AdminBadge />
+
       <PrivacyPolicy sx={{ cursor: "pointer", fontSize: "0.875rem" }} />
 
       {/*<Donate paymentLink={paymentLink} />*/}

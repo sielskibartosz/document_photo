@@ -1,10 +1,11 @@
+import { getAdminToken } from "./adminToken";
+
 const apiFetch = async (url, options = {}) => {
   // Skopiuj opcje i nagłówki
   const opts = { ...options, headers: { ...(options.headers || {}) } };
 
-  // 🔥 Pobierz parametr ?admin z URL i wyślij jako nagłówek
-  const urlParams = new URLSearchParams(window.location.search);
-  const adminParam = urlParams.get('admin');
+  // 🔥 Kod admina (z ?admin= lub zapamiętany w karcie) wysyłamy jako nagłówek
+  const adminParam = getAdminToken();
   if (adminParam) {
     opts.headers["X-Admin-Token"] = adminParam;
   }
