@@ -15,7 +15,7 @@ import SheetManager from "../components/SheetManager";
 import useImageCrop from "../hooks/useImageCrop";
 import { useSheet } from "../context/SheetContext";
 
-import { STRIPE_PRICE_ID_PROD_PLN, STRIPE_PRICE_ID_PROD_EUR } from "../constants/payments";
+import { STRIPE_PRICE_ID_DEV, STRIPE_PRICE_ID_PROD_PLN, STRIPE_PRICE_ID_PROD_EUR } from "../constants/payments";
 import { useTranslation } from "react-i18next";
 import SEO from "../components/SEO";
 
@@ -100,7 +100,13 @@ const HomePage = () => {
   };
 
   const currentLang = i18n.language?.split("-")[0] || "pl";
-  const priceId = currentLang === "pl" ? STRIPE_PRICE_ID_PROD_PLN : STRIPE_PRICE_ID_PROD_EUR;
+  // lokalnie (npm start) backend dziala na kluczu testowym Stripe - ceny produkcyjne tam nie istnieja
+  const priceId =
+    process.env.NODE_ENV === "development"
+      ? STRIPE_PRICE_ID_DEV
+      : currentLang === "pl"
+        ? STRIPE_PRICE_ID_PROD_PLN
+        : STRIPE_PRICE_ID_PROD_EUR;
 
   return (
     <Box
