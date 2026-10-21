@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "PhotoIDCreator",
+  "name": "PhotoIDCreator – zdjęcia do dokumentów online",
   "icons": [
     {
       "src": "logo_no_text.png",
