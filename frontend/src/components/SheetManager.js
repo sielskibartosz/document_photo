@@ -51,6 +51,8 @@ const SheetManager = ({
     let currentY = margin;
     let currentRowHeight = 0;
     let actualCount = 0;
+    // najpierw układamy zdjęcia w wiersze, rysujemy dopiero po wyśrodkowaniu całego bloku
+    const rows = [{ items: [], width: 0, height: 0 }];
 
     for (let i = 0; i < sheetImages.length; i++) {
       const { image, aspectRatio, sizeMm } = sheetImages[i];
@@ -83,18 +85,35 @@ const SheetManager = ({
         x = margin;
         currentY += currentRowHeight + margin;
         currentRowHeight = 0;
+        rows.push({ items: [], width: 0, height: 0 });
       }
 
       if (x + currentImgWidth + margin > widthPx || currentY + currentImgHeight + margin > heightPx) break;
 
-      ctx.drawImage(img, x, currentY, currentImgWidth, currentImgHeight);
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(x, currentY, currentImgWidth, currentImgHeight);
+      const row = rows[rows.length - 1];
+      row.items.push({ img, x, width: currentImgWidth, height: currentImgHeight });
+      row.width = x + currentImgWidth - margin;
+      row.height = Math.max(row.height, currentImgHeight);
 
       actualCount++;
       currentRowHeight = Math.max(currentRowHeight, currentImgHeight);
       x += currentImgWidth + margin;
+    }
+
+    // wyśrodkowanie: każdy wiersz w poziomie, cały blok w pionie
+    const filledRows = rows.filter((row) => row.items.length);
+    const blockHeight =
+      filledRows.reduce((sum, row) => sum + row.height, 0) + margin * (filledRows.length - 1);
+    let y = Math.round((heightPx - blockHeight) / 2);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    for (const row of filledRows) {
+      const offsetX = Math.round((widthPx - row.width) / 2) - margin;
+      for (const item of row.items) {
+        ctx.drawImage(item.img, item.x + offsetX, y, item.width, item.height);
+        ctx.strokeRect(item.x + offsetX, y, item.width, item.height);
+      }
+      y += row.height + margin;
     }
 
     // JPEG - zgodny z nazwą pliku photo_sheet.jpg i dużo mniejszy niż PNG
