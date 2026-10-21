@@ -15,7 +15,7 @@ import FeedbackViewPage from "./pages/FeedbackViewPage";
 import FotoTipsPage from "./pages/FotoTipsPage";
 import { SheetProvider } from "./context/SheetContext";
 
-import { HashRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 function ScrollAndTrack() {
   const location = useLocation();

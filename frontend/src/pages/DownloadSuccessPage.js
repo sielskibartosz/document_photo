@@ -36,9 +36,7 @@ const DownloadSuccessPage = () => {
 
   // Direct link for best mobile compatibility
   const downloadFromBackend = async () => {
-    const hash = window.location.hash;
-    const queryString = hash.split("?")[1];
-    const urlParams = new URLSearchParams(queryString);
+    const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
 
     if (!token) return alert(t("success_page.no_token", "Brak tokena pobierania."));
@@ -78,9 +76,7 @@ const DownloadSuccessPage = () => {
       return;
     }
 
-    const hash = window.location.hash;
-    const queryString = hash.split("?")[1];
-    const urlParams = new URLSearchParams(queryString);
+    const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
     const gclid = urlParams.get("gclid");
 
@@ -105,7 +101,7 @@ const DownloadSuccessPage = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <SEO title="Pobranie zakończone" description="Twoje zdjęcie jest gotowe do pobrania" url="https://photoidcreator.com/#/download-success" />
+      <SEO path="/download-success" />
       <Box sx={{
         minHeight: "100vh",
         display: "flex",

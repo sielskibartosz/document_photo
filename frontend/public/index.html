@@ -36,7 +36,8 @@
       gtag('js', new Date());
 
       // Nie wysyłamy do GA adresów zawierających klucze admina
-      var isAdminUrl = /[?&]admin=/.test(location.search) || location.hash.indexOf('#/feedback/view') === 0;
+      var isAdminUrl = /[?&]admin=/.test(location.search) || location.hash.indexOf('#/feedback/view') === 0 ||
+        location.pathname.indexOf('/feedback/view') === 0;
       if (!isAdminUrl) {
         // GA4
         gtag('config', 'G-4GGMXV1R1V');
@@ -55,6 +56,10 @@
       content="Stwórz zdjęcia do dowodu, paszportu, legitymacji i wizy online. Szybko, łatwo i gotowe do druku z PhotoIDCreator."
     />
     <meta property="og:image" content="https://photoidcreator.com/preview.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="PhotoIDCreator" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -65,6 +70,21 @@
       content="Stwórz zdjęcia do dowodu, paszportu, legitymacji i wizy online. Szybko, łatwo i gotowe do druku z PhotoIDCreator."
     />
     <meta name="twitter:image" content="https://photoidcreator.com/preview.jpg" />
+
+    <!-- Dane strukturalne -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PhotoIDCreator",
+        "url": "https://photoidcreator.com/",
+        "image": "https://photoidcreator.com/preview.jpg",
+        "description": "Zdjęcia do dowodu, paszportu, legitymacji i wizy online: przycięcie do 35×45 mm, usuwanie tła i arkusz do druku.",
+        "applicationCategory": "PhotographyApplication",
+        "operatingSystem": "Any",
+        "inLanguage": ["pl", "en", "de", "es", "fr", "uk"]
+      }
+    </script>
 
     <link rel="icon" href="%PUBLIC_URL%/logo_no_text.png" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo_no_text.png" />
@@ -78,25 +98,6 @@
     </noscript>
 
     <div id="root"></div>
-
-    <!-- Treść statyczna dla SEO -->
-    <main style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
-      <h1>PhotoIDCreator – zdjęcia do dokumentów online</h1>
-      <p>
-        PhotoIDCreator to narzędzie online umożliwiające przygotowanie zdjęcia do dowodu osobistego, paszportu, legitymacji studenckiej lub wizy.
-        Aplikacja automatycznie przycina i dopasowuje zdjęcie do wymagań biometrycznych, usuwa tło i generuje gotowy arkusz do druku.
-      </p>
-      <h2>Jak działa PhotoIDCreator?</h2>
-      <p>
-        Wystarczy wgrać zdjęcie z telefonu lub komputera, a aplikacja zajmie się resztą: przycięciem, poprawą tła i przygotowaniem pliku do druku.
-      </p>
-      <h2>Zalety korzystania z PhotoIDCreator</h2>
-      <ul>
-        <li>Przygotowanie zdjęcia zgodnie z wymaganiami urzędowymi</li>
-        <li>Szybkie i wygodne wgrywanie zdjęć</li>
-        <li>Generowanie gotowego arkusza do druku</li>
-      </ul>
-    </main>
 
   </body>
 </html>

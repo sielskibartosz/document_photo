@@ -22,11 +22,7 @@ const FotoTipsPage = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <SEO
-        title="PhotoIDCreator – Wskazówki do zdjęcia"
-        description="Dowiedz się, jak wykonać zdjęcie do dowodu lub legitymacji, aby aplikacja poprawnie je przycięła."
-        url="https://photoidcreator.com/#/foto-tips"
-      />
+      <SEO path="/foto-tips" />
       <Box
         sx={{
           minHeight: "100vh",

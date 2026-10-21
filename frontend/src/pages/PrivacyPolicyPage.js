@@ -32,11 +32,7 @@ export default function PrivacyPolicyPage() {
       }}
     >
      {/* SEO */}
-      <SEO
-        title="PhotoIDCreator – Polityka prywatności"
-        description="Poznaj politykę prywatności PhotoIDCreator. Dowiedz się, jakie dane zbieramy, jak je przetwarzamy i jak dbamy o Twoją prywatność."
-        url="https://photoidcreator.com/#/privacy-policy"
-      />
+      <SEO path="/privacy-policy" />
 
       {/* Strzałka wstecz */}
       <IconButton

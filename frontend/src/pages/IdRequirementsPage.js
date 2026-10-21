@@ -28,11 +28,7 @@ const IdRequirementsPage = () => {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       {/* SEO */}
-      <SEO
-        title="PhotoIDCreator – Wymagania zdjęcia do dowodu"
-        description="Dowiedz się, jakie są wymagania zdjęcia do dowodu, paszportu i legitymacji. Z PhotoIDCreator przygotujesz zdjęcie idealne do dokumentów."
-        url="https://photoidcreator.com/#/id-requirements"
-      />
+      <SEO path="/id-requirements" />
 
       <Box
         sx={{

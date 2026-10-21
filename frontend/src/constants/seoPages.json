@@ -1,0 +1,54 @@
+{
+  "/": {
+    "title": "Zdjęcie do dowodu i paszportu online – PhotoIDCreator",
+    "description": "Zrób zdjęcie do dowodu, paszportu, legitymacji lub wizy online. PhotoIDCreator przytnie zdjęcie do wymiarów biometrycznych 35×45 mm, usunie tło i przygotuje arkusz do druku 10×15.",
+    "h1": "Zdjęcie do dowodu, paszportu i legitymacji online",
+    "paragraphs": [
+      "PhotoIDCreator to narzędzie online do przygotowania zdjęcia do dowodu osobistego, paszportu, legitymacji studenckiej lub wizy. Wgraj zdjęcie z telefonu lub komputera, a aplikacja przytnie je do wymiarów biometrycznych 35×45 mm, zamieni tło na jasne i jednolite oraz przygotuje arkusz do druku.",
+      "Gotowy arkusz 10×15 cm wydrukujesz w dowolnym punkcie foto, np. w Rossmannie, albo w domu. Możesz też podać własny rozmiar zdjęcia w milimetrach."
+    ],
+    "list": [
+      "Automatyczne przycięcie do wymiarów 35×45 mm",
+      "Usuwanie tła i zamiana na jasne, jednolite",
+      "Arkusz do druku 10×15, 13×18, A4 i innych formatów",
+      "Własny rozmiar zdjęcia w milimetrach"
+    ]
+  },
+  "/how-it-works": {
+    "title": "Jak zrobić zdjęcie do dowodu online – PhotoIDCreator",
+    "description": "Dowiedz się, jak w kilku krokach przygotować zdjęcie do dowodu, paszportu, legitymacji lub wizy online: wybór rozmiaru, wgranie zdjęcia, kadrowanie, usunięcie tła i druk.",
+    "h1": "Jak działa PhotoIDCreator",
+    "paragraphs": [
+      "Wybierz rodzaj dokumentu lub własny rozmiar, wgraj zdjęcie i dopasuj kadr. Aplikacja usunie tło, ułoży zdjęcia na arkuszu w wybranym formacie papieru, a po opłaceniu pobierzesz gotowy plik JPG do druku."
+    ]
+  },
+  "/id-requirements": {
+    "title": "Wymagania zdjęcia do dowodu i paszportu – PhotoIDCreator",
+    "description": "Wymagania zdjęcia do dowodu osobistego, paszportu i legitymacji: wymiary 35×45 mm, jasne tło, wyraźna twarz, neutralny wyraz twarzy. Zobacz przykłady poprawnych i błędnych zdjęć.",
+    "h1": "Wymagania zdjęcia do dowodu osobistego i paszportu",
+    "paragraphs": [
+      "Zdjęcie do dowodu osobistego i paszportu musi mieć wymiary 35×45 mm, jasne i jednolite tło, a twarz powinna być wyraźna, dobrze oświetlona i skierowana na wprost. Sprawdź przykłady poprawnych i niepoprawnych zdjęć."
+    ]
+  },
+  "/foto-tips": {
+    "title": "Jak zrobić dobre zdjęcie do dokumentu telefonem – PhotoIDCreator",
+    "description": "Wskazówki, jak zrobić telefonem zdjęcie do dowodu lub legitymacji: oświetlenie, tło, odległość i jakość zdjęcia, aby aplikacja poprawnie je przycięła.",
+    "h1": "Wskazówki: jak zrobić zdjęcie do dokumentu telefonem",
+    "paragraphs": [
+      "Stań przodem do okna lub źródła światła, na tle jasnej ściany. Trzymaj telefon na wysokości oczu, w odległości około 1–1,5 metra, i zrób zdjęcie w dobrej jakości, bez filtrów."
+    ]
+  },
+  "/privacy-policy": {
+    "title": "Polityka prywatności – PhotoIDCreator",
+    "description": "Polityka prywatności PhotoIDCreator: jakie dane zbieramy, jak je przetwarzamy i jak długo przechowujemy zdjęcia.",
+    "h1": "Polityka prywatności",
+    "paragraphs": [
+      "Dowiedz się, jakie dane zbiera PhotoIDCreator, w jakim celu je przetwarzamy i jak długo przechowujemy przesłane zdjęcia."
+    ]
+  },
+  "/download-success": {
+    "title": "Pobranie zakończone – PhotoIDCreator",
+    "description": "Twoje zdjęcie jest gotowe do pobrania.",
+    "noindex": true
+  }
+}
