@@ -29,7 +29,7 @@ class Config:
     # Dozwolone ceny Stripe - klient nie moze podstawic dowolnego price_id
     STRIPE_PRICE_IDS_ENV: str = os.getenv(
         "STRIPE_PRICE_IDS",
-        "price_1T1vNZC6i4TNfy0r8UIsp0Wb,price_1T1vPyC6i4TNfy0rfML1cFZx,price_1S1WQXC6i4TNfy0rDJQFSeSC",
+        "price_1UT5ceC6i4TNfy0rVPFYnVuZ,price_1T1vNZC6i4TNfy0r8UIsp0Wb,price_1T1vPyC6i4TNfy0rfML1cFZx,price_1S1WQXC6i4TNfy0rDJQFSeSC",
     )
 
     @property
