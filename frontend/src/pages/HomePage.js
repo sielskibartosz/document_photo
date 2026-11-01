@@ -15,7 +15,7 @@ import SheetManager from "../components/SheetManager";
 import useImageCrop from "../hooks/useImageCrop";
 import { useSheet } from "../context/SheetContext";
 
-import { STRIPE_PRICE_ID_DEV, STRIPE_PRICE_ID_PROD_PLN, STRIPE_PRICE_ID_PROD_EUR } from "../constants/payments";
+import { STRIPE_PRICE_ID_DEV, STRIPE_PRICE_ID_PROD_PLN, STRIPE_PRICE_ID_PROD_EUR, isPolishCustomer } from "../constants/payments";
 import { useTranslation } from "react-i18next";
 import SEO from "../components/SEO";
 
@@ -104,7 +104,7 @@ const HomePage = () => {
   const priceId =
     process.env.NODE_ENV === "development"
       ? STRIPE_PRICE_ID_DEV
-      : currentLang === "pl"
+      : isPolishCustomer(currentLang)
         ? STRIPE_PRICE_ID_PROD_PLN
         : STRIPE_PRICE_ID_PROD_EUR;
 
