@@ -1,5 +1,6 @@
 {
   "/": {
+    "group": "home",
     "title": "Zdjęcie do dowodu i paszportu online – PhotoIDCreator",
     "description": "Zrób zdjęcie do dowodu, paszportu, legitymacji lub wizy online. PhotoIDCreator przytnie zdjęcie do wymiarów biometrycznych 35×45 mm, usunie tło i przygotuje arkusz do druku 10×15.",
     "h1": "Zdjęcie do dowodu, paszportu i legitymacji online",
@@ -44,6 +45,72 @@
     "h1": "Polityka prywatności",
     "paragraphs": [
       "Dowiedz się, jakie dane zbiera PhotoIDCreator, w jakim celu je przetwarzamy i jak długo przechowujemy przesłane zdjęcia."
+    ]
+  },
+  "/karta-pobytu": {
+    "group": "residence-card",
+    "title": "Zdjęcie do karty pobytu online 35×45 – PhotoIDCreator",
+    "description": "Zrób zdjęcie do karty pobytu telefonem. Aplikacja przytnie je do 35×45 mm, wyrówna tło i przygotuje arkusz do druku 10×15 – bez wizyty u fotografa.",
+    "h1": "Zdjęcie do karty pobytu online",
+    "paragraphs": [
+      "Zdjęcie do wniosku o kartę pobytu musi spełniać te same wymagania co zdjęcie do polskiego dowodu osobistego: wymiary 35×45 mm, jasne i jednolite tło, twarz na wprost, neutralny wyraz twarzy, zdjęcie wykonane nie wcześniej niż 6 miesięcy przed złożeniem wniosku.",
+      "Zrób zdjęcie telefonem, a PhotoIDCreator przytnie je do wymaganego rozmiaru, usunie tło i ułoży na arkuszu 10×15 cm, który wydrukujesz w dowolnym punkcie foto."
+    ]
+  },
+  "/en/": {
+    "lang": "en",
+    "group": "home",
+    "title": "Passport and ID photo online (Poland, 35×45) – PhotoIDCreator",
+    "description": "Make a passport, ID card, residence card or visa photo online. PhotoIDCreator crops your phone photo to 35×45 mm, removes the background and prepares a 10×15 print sheet.",
+    "h1": "Passport, ID and residence card photo online",
+    "paragraphs": [
+      "PhotoIDCreator is an online tool for making document photos: Polish ID card (dowód osobisty), passport, residence card (karta pobytu), student ID or visa. Upload a photo from your phone or computer and the app will crop it to the biometric size of 35×45 mm, replace the background with a light, uniform one and prepare a sheet ready to print.",
+      "Print the 10×15 cm sheet at any photo print shop, for example in Rossmann, or at home. You can also set your own photo size in millimetres."
+    ],
+    "list": [
+      "Automatic cropping to 35×45 mm",
+      "Background removal and replacement with a light, uniform one",
+      "Print sheet 10×15, 13×18, A4 and other paper sizes",
+      "Custom photo size in millimetres"
+    ]
+  },
+  "/en/residence-card": {
+    "lang": "en",
+    "group": "residence-card",
+    "title": "Residence card photo online (karta pobytu, 35×45) – PhotoIDCreator",
+    "description": "Make a photo for your Polish residence card (karta pobytu) with your phone. Cropped to 35×45 mm, clean background, 10×15 sheet ready to print – no photo studio needed.",
+    "h1": "Photo for a Polish residence card (karta pobytu)",
+    "paragraphs": [
+      "The photo for a Polish residence card application must meet the same requirements as a photo for a Polish ID card: 35×45 mm, light and uniform background, face straight to the camera, neutral expression, taken no earlier than 6 months before the application.",
+      "Take a photo with your phone and PhotoIDCreator will crop it to the required size, remove the background and place it on a 10×15 cm sheet that you can print at any photo print shop."
+    ]
+  },
+  "/uk/": {
+    "lang": "uk",
+    "group": "home",
+    "title": "Фото на документи онлайн у Польщі (35×45) – PhotoIDCreator",
+    "description": "Зробіть фото на карту побиту, паспорт, посвідчення особи чи візу онлайн. PhotoIDCreator обріже фото з телефону до 35×45 мм, прибере фон і підготує аркуш для друку 10×15.",
+    "h1": "Фото на карту побиту, паспорт і документи онлайн",
+    "paragraphs": [
+      "PhotoIDCreator – онлайн-сервіс для фото на документи: карту побиту (karta pobytu), паспорт, польське посвідчення особи, студентський квиток або візу. Завантажте фото з телефону чи комп'ютера, і застосунок обріже його до біометричного розміру 35×45 мм, замінить фон на світлий однотонний і підготує аркуш для друку.",
+      "Аркуш 10×15 см можна надрукувати в будь-якому фотосалоні, наприклад у Rossmann, або вдома. Також можна вказати власний розмір фото в міліметрах."
+    ],
+    "list": [
+      "Автоматичне обрізання до 35×45 мм",
+      "Видалення фону та заміна на світлий однотонний",
+      "Аркуш для друку 10×15, 13×18, A4 та інших форматів",
+      "Власний розмір фото в міліметрах"
+    ]
+  },
+  "/uk/karta-pobytu": {
+    "lang": "uk",
+    "group": "residence-card",
+    "title": "Фото на карту побиту онлайн (35×45) – PhotoIDCreator",
+    "description": "Зробіть фото на карту побиту в Польщі телефоном. Обрізання до 35×45 мм, світлий фон, аркуш 10×15 для друку – без походу до фотографа.",
+    "h1": "Фото на карту побиту в Польщі онлайн",
+    "paragraphs": [
+      "Фото для заяви на карту побиту (karta pobytu) має відповідати тим самим вимогам, що й фото на польське посвідчення особи: розмір 35×45 мм, світлий однотонний фон, обличчя прямо, нейтральний вираз, фото зроблене не раніше ніж за 6 місяців до подання заяви.",
+      "Сфотографуйтеся телефоном, і PhotoIDCreator обріже фото до потрібного розміру, прибере фон і розмістить його на аркуші 10×15 см, який можна надрукувати в будь-якому фотосалоні."
     ]
   },
   "/download-success": {

@@ -1,12 +1,20 @@
 import React from "react";
 import { Box, Select, MenuItem } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 import PrivacyPolicy from "./PrivacyPolicy";
 import Donate from "./Donate";
 import AdminBadge from "./AdminBadge";
+import { localizedPath } from "../utils/localizedRoutes";
 
 export default function AppHeader({ i18n }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const handleLanguageChange = (e) => {
     i18n.changeLanguage(e.target.value);
+    // jeśli strona ma wersję w wybranym języku (np. /uk/karta-pobytu -> /karta-pobytu), przechodzimy na nią
+    const target = localizedPath(location.pathname, e.target.value);
+    if (target && target !== location.pathname) navigate(target + location.search);
   };
 
   // normalizacja: pl-PL -> pl

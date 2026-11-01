@@ -135,5 +135,32 @@
     "hint_bubble":  {
                         "text":  "¿Quieres mejorar el recorte de la foto?",
                         "link":  "Ver consejos"
-                    }
+                    },
+  "residenceCard": {
+    "title": "Foto para la tarjeta de residencia polaca (karta pobytu)",
+    "header": "La foto para solicitar la tarjeta de residencia en Polonia debe cumplir los mismos requisitos que la del documento de identidad polaco. Hazla online: tómate una foto con el móvil y la aplicación la recortará a 35×45 mm, limpiará el fondo y la colocará en una hoja lista para imprimir.",
+    "list": [
+      {
+        "primary": "Tamaño 35×45 mm",
+        "secondary": "Foto en color tomada como máximo 6 meses antes de la solicitud."
+      },
+      {
+        "primary": "Fondo claro y uniforme",
+        "secondary": "Sin sombras, estampados ni otras personas en el fondo."
+      },
+      {
+        "primary": "Rostro de frente, ojos abiertos",
+        "secondary": "Expresión neutra, boca cerrada, cejas y ojos visibles."
+      },
+      {
+        "primary": "Sin gorro ni gafas oscuras",
+        "secondary": "Excepción: prenda religiosa, si el rostro es completamente visible."
+      },
+      {
+        "primary": "Impresión en papel fotográfico",
+        "secondary": "Imprime la hoja de 10×15 cm en cualquier tienda de fotografía."
+      }
+    ],
+    "cta": "Hacer la foto para la tarjeta de residencia"
+  }
 }

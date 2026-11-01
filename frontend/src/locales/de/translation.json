@@ -135,5 +135,32 @@
     "hint_bubble":  {
                         "text":  "Möchtest du den Zuschnitt verbessern?",
                         "link":  "Tipps ansehen"
-                    }
+                    },
+  "residenceCard": {
+    "title": "Foto für die polnische Aufenthaltskarte (karta pobytu)",
+    "header": "Das Foto für den Antrag auf eine polnische Aufenthaltskarte muss dieselben Anforderungen erfüllen wie ein Foto für den polnischen Personalausweis. Erstelle es online: Fotografiere dich mit dem Handy, die App schneidet das Bild auf 35×45 mm zu, bereinigt den Hintergrund und legt es auf einem Druckbogen an.",
+    "list": [
+      {
+        "primary": "Größe 35×45 mm",
+        "secondary": "Farbfoto, nicht älter als 6 Monate zum Zeitpunkt des Antrags."
+      },
+      {
+        "primary": "Heller, einfarbiger Hintergrund",
+        "secondary": "Keine Schatten, Muster oder anderen Personen im Hintergrund."
+      },
+      {
+        "primary": "Gesicht frontal, Augen geöffnet",
+        "secondary": "Neutraler Gesichtsausdruck, Mund geschlossen, Augen und Augenbrauen sichtbar."
+      },
+      {
+        "primary": "Keine Kopfbedeckung und keine dunkle Brille",
+        "secondary": "Ausnahme: religiöse Kopfbedeckung, wenn das Gesicht vollständig sichtbar ist."
+      },
+      {
+        "primary": "Druck auf Fotopapier",
+        "secondary": "Den 10×15-cm-Bogen kannst du in jedem Fotoladen drucken."
+      }
+    ],
+    "cta": "Foto für die Aufenthaltskarte erstellen"
+  }
 }

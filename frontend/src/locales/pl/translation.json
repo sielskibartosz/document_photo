@@ -122,5 +122,32 @@
   "hint_bubble": {
     "text": "Chcesz poprawić przycięcie zdjęcia?",
     "link": "Sprawdź wskazówki"
+  },
+  "residenceCard": {
+    "title": "Zdjęcie do karty pobytu",
+    "header": "Zdjęcie do wniosku o kartę pobytu musi spełniać te same wymagania co zdjęcie do polskiego dowodu osobistego. Przygotujesz je online: zrób zdjęcie telefonem, a aplikacja przytnie je do 35×45 mm, wyrówna tło i ułoży na arkuszu do druku.",
+    "list": [
+      {
+        "primary": "Wymiary 35×45 mm",
+        "secondary": "Zdjęcie kolorowe, wykonane nie wcześniej niż 6 miesięcy przed złożeniem wniosku."
+      },
+      {
+        "primary": "Jasne, jednolite tło",
+        "secondary": "Bez cieni, wzorów i innych osób w tle."
+      },
+      {
+        "primary": "Twarz na wprost, oczy otwarte",
+        "secondary": "Neutralny wyraz twarzy, usta zamknięte, widoczne brwi i oczy."
+      },
+      {
+        "primary": "Bez nakrycia głowy i ciemnych okularów",
+        "secondary": "Wyjątek: nakrycie głowy noszone ze względów religijnych, jeśli twarz jest w pełni widoczna."
+      },
+      {
+        "primary": "Wydruk na papierze fotograficznym",
+        "secondary": "Arkusz 10×15 cm wydrukujesz w dowolnym punkcie foto."
+      }
+    ],
+    "cta": "Zrób zdjęcie do karty pobytu"
   }
 }

@@ -136,5 +136,32 @@
     "hint_bubble":  {
                         "text":  "Vous voulez améliorer le recadrage ?",
                         "link":  "Voir les conseils"
-                    }
+                    },
+  "residenceCard": {
+    "title": "Photo pour la carte de séjour polonaise (karta pobytu)",
+    "header": "La photo pour une demande de carte de séjour en Pologne doit respecter les mêmes exigences que celle de la carte d'identité polonaise. Créez-la en ligne : prenez une photo avec votre téléphone, l'application la recadre en 35×45 mm, nettoie le fond et la place sur une planche prête à imprimer.",
+    "list": [
+      {
+        "primary": "Format 35×45 mm",
+        "secondary": "Photo en couleur prise au plus 6 mois avant la demande."
+      },
+      {
+        "primary": "Fond clair et uniforme",
+        "secondary": "Sans ombres, motifs ni autres personnes en arrière-plan."
+      },
+      {
+        "primary": "Visage de face, yeux ouverts",
+        "secondary": "Expression neutre, bouche fermée, sourcils et yeux visibles."
+      },
+      {
+        "primary": "Sans couvre-chef ni lunettes sombres",
+        "secondary": "Exception : couvre-chef religieux si le visage reste entièrement visible."
+      },
+      {
+        "primary": "Impression sur papier photo",
+        "secondary": "Imprimez la planche 10×15 cm dans n'importe quel point photo."
+      }
+    ],
+    "cta": "Créer ma photo pour la carte de séjour"
+  }
 }

@@ -8,6 +8,7 @@ import translationDE from "./locales/de/translation.json";
 import translationES from "./locales/es/translation.json";
 import translationFR from "./locales/fr/translation.json";
 import translationUA from "./locales/ua/translation.json";
+import { appLangFromPath } from "./utils/localizedRoutes";
 
 const resources = {
   en: { translation: translationEN },
@@ -20,6 +21,10 @@ const resources = {
 
 // --- funkcja wykrywająca język na start
 function detectInitialLanguage() {
+  // 0️⃣ adres z językiem (/en/..., /uk/...) ma pierwszeństwo - tak trafiają ludzie z Google
+  const urlLang = appLangFromPath(window.location.pathname);
+  if (urlLang) return urlLang;
+
   // 1️⃣ najpierw sprawdź, czy użytkownik wybrał język wcześniej
   const savedLang = localStorage.getItem("i18nextLng");
   if (savedLang) return savedLang;

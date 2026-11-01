@@ -13,7 +13,9 @@ import DownloadSuccessPage from "./pages/DownloadSuccessPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import FeedbackViewPage from "./pages/FeedbackViewPage";
 import FotoTipsPage from "./pages/FotoTipsPage";
+import ResidenceCardPage from "./pages/ResidenceCardPage";
 import { SheetProvider } from "./context/SheetContext";
+import { appLangFromPath } from "./utils/localizedRoutes";
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
@@ -36,6 +38,20 @@ function ScrollAndTrack() {
   return null;
 }
 
+// Wejście na /en/... lub /uk/... (np. z Google) przełącza język aplikacji.
+// Późniejszy wybór języka w nagłówku nie jest nadpisywany, dopóki adres nie zmieni języka.
+function LanguageFromUrl() {
+  const { pathname } = useLocation();
+  const { i18n } = useTranslation();
+  const lang = appLangFromPath(pathname);
+
+  useEffect(() => {
+    if (lang && i18n.language !== lang) i18n.changeLanguage(lang);
+  }, [lang, i18n]);
+
+  return null;
+}
+
 function App() {
   const { i18n } = useTranslation();
 
@@ -46,6 +62,7 @@ function App() {
         <Router>
           <AppHeader i18n={i18n} />
           <ScrollAndTrack />
+          <LanguageFromUrl />
 
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -55,6 +72,11 @@ function App() {
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/feedback/view/:key" element={<FeedbackViewPage />} />
             <Route path="/foto-tips" element={<FotoTipsPage />} />
+            <Route path="/karta-pobytu" element={<ResidenceCardPage />} />
+            <Route path="/en" element={<HomePage />} />
+            <Route path="/en/residence-card" element={<ResidenceCardPage />} />
+            <Route path="/uk" element={<HomePage />} />
+            <Route path="/uk/karta-pobytu" element={<ResidenceCardPage />} />
           </Routes>
 
           <CookiesBanner />

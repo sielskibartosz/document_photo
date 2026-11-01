@@ -135,5 +135,32 @@
     "hint_bubble":  {
                         "text":  "Want to improve your photo crop?",
                         "link":  "Check the tips"
-                    }
+                    },
+  "residenceCard": {
+    "title": "Photo for a Polish residence card (karta pobytu)",
+    "header": "The photo for a Polish residence card application must meet the same requirements as a photo for a Polish ID card. Make it online: take a picture with your phone, and the app will crop it to 35×45 mm, clean up the background and lay it out on a sheet ready to print.",
+    "list": [
+      {
+        "primary": "Size 35×45 mm",
+        "secondary": "Colour photo taken no earlier than 6 months before the application."
+      },
+      {
+        "primary": "Light, uniform background",
+        "secondary": "No shadows, patterns or other people in the background."
+      },
+      {
+        "primary": "Face straight to the camera, eyes open",
+        "secondary": "Neutral expression, mouth closed, eyebrows and eyes visible."
+      },
+      {
+        "primary": "No head covering or dark glasses",
+        "secondary": "Exception: religious head covering, as long as the face is fully visible."
+      },
+      {
+        "primary": "Printed on photo paper",
+        "secondary": "Print the 10×15 cm sheet at any photo print shop."
+      }
+    ],
+    "cta": "Make your residence card photo"
+  }
 }
