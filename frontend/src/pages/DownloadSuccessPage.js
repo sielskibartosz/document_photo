@@ -58,7 +58,7 @@ const DownloadSuccessPage = () => {
       // The server sets Content-Disposition: attachment, so the page is not replaced
       const link = document.createElement("a");
       link.href = `${BACKEND_URL}/api/download/${token}`;
-      link.download = "photo_sheet.jpg";
+      link.download = urlParams.get("type") === "photo" ? "photo.jpg" : "photo_sheet.jpg";
       link.style.display = "none";
       document.body.appendChild(link);
       link.click();

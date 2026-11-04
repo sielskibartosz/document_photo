@@ -1,8 +1,8 @@
 {
   "/": {
     "group": "home",
-    "title": "Zdjęcie do dowodu i paszportu online – PhotoIDCreator",
-    "description": "Zrób zdjęcie do dowodu, paszportu, legitymacji lub wizy online. PhotoIDCreator przytnie zdjęcie do wymiarów biometrycznych 35×45 mm, usunie tło i przygotuje arkusz do druku 10×15.",
+    "title": "Zdjęcie do dowodu online 35×45 – kreator i szablon 10×15 | PhotoIDCreator",
+    "description": "Wgraj zdjęcie z telefonu – przytniemy je do 35×45 mm, usuniemy tło i przygotujemy arkusz 10×15 do druku lub plik JPG do wniosku przez gov.pl. Bez rejestracji.",
     "h1": "Zdjęcie do dowodu, paszportu i legitymacji online",
     "paragraphs": [
       "PhotoIDCreator to narzędzie online do przygotowania zdjęcia do dowodu osobistego, paszportu, legitymacji studenckiej lub wizy. Wgraj zdjęcie z telefonu lub komputera, a aplikacja przytnie je do wymiarów biometrycznych 35×45 mm, zamieni tło na jasne i jednolite oraz przygotuje arkusz do druku.",
@@ -12,6 +12,7 @@
       "Automatyczne przycięcie do wymiarów 35×45 mm",
       "Usuwanie tła i zamiana na jasne, jednolite",
       "Arkusz do druku 10×15, 13×18, A4 i innych formatów",
+      "Pojedyncze zdjęcie JPG do wniosku online (np. gov.pl)",
       "Własny rozmiar zdjęcia w milimetrach"
     ]
   },

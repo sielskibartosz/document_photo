@@ -23,6 +23,8 @@
     "duplicate_photo":  "Duplicar foto",
     "clear_sheet":  "Limpiar hoja",
     "download_sheet":  "Descargar hoja",
+    "download_single_photo": "Descargar solo la foto (archivo para solicitud en línea)",
+    "download_single_photo_info": "Una sola foto JPG sin la hoja de impresión, p. ej. para una solicitud en línea.",
     "uploading":  "Subiendo...",
     "invalid_aspect":  "Usa el formato XX/YY",
     "remove_bg_error":  "Error al eliminar el fondo",
@@ -95,7 +97,7 @@
                          "link_expired": "El enlace ha caducado o no existe. Contáctanos mediante el formulario de abajo.",
                          "payment_pending": "El pago aún no se ha confirmado. Inténtalo de nuevo en un momento.",
                          "not_downloaded":  " Si la hoja no se descargó automáticamente, haga clic en:",
-                         "download_btn":  "Descargar hoja",
+                         "download_btn":  "Descargar",
                          "gratitude":  "¡Gracias por usar PhotoIDCreator!",
                          "main_page_btn":  "Volver a la página principal",
                          "download_problems":  "¿No puedes descargar la hoja? Intenta nuevamente o contáctanos: barteksdepot@gmail.com"

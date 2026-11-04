@@ -23,6 +23,8 @@
     "duplicate_photo":  "Duplicate Photo",
     "clear_sheet":  "Clear Sheet",
     "download_sheet":  "Download Sheet",
+    "download_single_photo": "Download single photo (file for online application)",
+    "download_single_photo_info": "A single JPG photo without the print sheet, e.g. for an online application.",
     "uploading":  "Uploading...",
     "invalid_aspect":  "Use the format XX/YY",
     "remove_bg_error":  "Error while removing background",
@@ -95,7 +97,7 @@
                          "link_expired": "The link has expired or does not exist. Please contact us using the form below.",
                          "payment_pending": "Payment has not been confirmed yet. Please try again in a moment.",
                          "not_downloaded":  "If the download does not start automatically, please click download:",
-                         "download_btn":  "Download Sheet",
+                         "download_btn":  "Download",
                          "gratitude":  "Thank you for using PhotoIDCreator!",
                          "main_page_btn":  "Main Page",
                          "download_problems":  "Having trouble downloading the sheet? Try again or contact us: barteksdepot@gmail.com"

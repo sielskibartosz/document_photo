@@ -43,8 +43,8 @@ def _read_meta(token: str) -> Optional[dict]:
         return None
 
 
-def save_file(image_bytes: bytes, is_admin: bool = False) -> str:
-    """Zapisuje plik i generuje token do pobrania"""
+def save_file(image_bytes: bytes, is_admin: bool = False, filename: str = "photo_sheet.jpg") -> str:
+    """Zapisuje plik i generuje token do pobrania. filename - nazwa pliku przy pobieraniu."""
     token = str(uuid.uuid4())
     path = _image_path(token)
 
@@ -55,6 +55,7 @@ def save_file(image_bytes: bytes, is_admin: bool = False) -> str:
         "path": path,
         "expires": (datetime.now(timezone.utc) + timedelta(minutes=config.TOKEN_EXPIRE_MINUTES)).isoformat(),
         "paid": is_admin,  # jeśli admin, od razu oznaczone jako opłacone
+        "filename": filename,
     })
     logger.info("Created download token: %s", token)
     return token

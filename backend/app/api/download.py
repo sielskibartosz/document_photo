@@ -10,6 +10,9 @@ from app.config import config
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/download", tags=["download"])
 
+# nazwy plików, które może wybrać frontend: arkusz do druku albo samo zdjęcie do wniosku online
+_DOWNLOAD_NAMES = {"photo_sheet.jpg", "photo.jpg"}
+
 # sygnatury JPEG / PNG
 _IMAGE_MAGIC = (b"\xff\xd8\xff", b"\x89PNG\r\n\x1a\n")
 
@@ -51,7 +54,7 @@ async def download_file(
     return FileResponse(
         path,
         media_type="application/octet-stream",
-        filename="photo_sheet.jpg"
+        filename=data.get("filename", "photo_sheet.jpg")
     )
 
 
@@ -70,7 +73,8 @@ async def create_download(
         raise HTTPException(status_code=400, detail="Nieprawidłowy typ pliku")
 
     try:
-        token = await run_in_threadpool(save_file, file_bytes, config.is_admin(x_admin_token))
+        filename = image.filename if image.filename in _DOWNLOAD_NAMES else "photo_sheet.jpg"
+        token = await run_in_threadpool(save_file, file_bytes, config.is_admin(x_admin_token), filename)
     except Exception:
         logger.exception("Error saving download file")
         raise HTTPException(status_code=500, detail="Błąd zapisu pliku")

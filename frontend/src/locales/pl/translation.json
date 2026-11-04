@@ -28,6 +28,8 @@
   "duplicate_photo": "Powiel zdjęcie",
   "clear_sheet": "Wyczyść arkusz",
   "download_sheet": "Pobierz arkusz",
+  "download_single_photo": "Pobierz samo zdjęcie (plik do wniosku online)",
+  "download_single_photo_info": "Pojedyncze zdjęcie JPG bez arkusza, np. do wniosku przez gov.pl.",
   "uploading": "Wysyłam...",
   "invalid_aspect": "Wpisz w formacie XX/YY",
   "remove_bg_error": "Błąd przy usuwaniu tła",
@@ -78,7 +80,7 @@
     "link_expired": "Link wygasł lub nie istnieje. Skontaktuj się z nami przez formularz poniżej.",
     "payment_pending": "Płatność nie została jeszcze potwierdzona. Spróbuj ponownie za chwilę.",
     "not_downloaded": "Jeśli arkusz nie został automatycznie pobrany, kliknij pobierz:",
-    "download_btn": "Pobierz arkusz",
+    "download_btn": "Pobierz",
     "gratitude": "Dziękuję za skorzystanie z PhotoIDCreator!",
     "main_page_btn": "Strona główna",
     "download_problems": "Nie udało Ci się pobrać arkusza? Spróbuj ponownie lub napisz na: barteksdepot@gmail.com"

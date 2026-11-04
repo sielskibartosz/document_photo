@@ -24,6 +24,8 @@
     "duplicate_photo":  "Dupliquer la photo",
     "clear_sheet":  "Effacer la planche",
     "download_sheet":  "Télécharger la planche",
+    "download_single_photo": "Télécharger uniquement la photo (fichier pour demande en ligne)",
+    "download_single_photo_info": "Une seule photo JPG sans la planche d'impression, par ex. pour une demande en ligne.",
     "uploading":  "Envoi en cours...",
     "invalid_aspect":  "Utilisez le format XX/YY",
     "remove_bg_error":  "Erreur lors de la suppression du fond",
@@ -96,7 +98,7 @@
                          "link_expired": "Le lien a expiré ou n'existe pas. Contactez-nous via le formulaire ci-dessous.",
                          "payment_pending": "Le paiement n'est pas encore confirmé. Réessayez dans un instant.",
                          "not_downloaded":  "Si la planche n’a pas été téléchargée automatiquement, cliquez sur :",
-                         "download_btn":  "Télécharger la planche",
+                         "download_btn":  "Télécharger",
                          "gratitude":  "Merci d’avoir utilisé PhotoIDCreator!",
                          "main_page_btn":  "Page principale",
                          "download_problems":  "Vous n’arrivez pas à télécharger la planche? Essayez à nouveau ou contactez‑nous: barteksdepot@gmail.com"

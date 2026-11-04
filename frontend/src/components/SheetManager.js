@@ -231,12 +231,37 @@ const SheetManager = ({
     setShowHint(false);
   };
 
-  const handleDownloadClick = async () => {
+  // Pojedyncze zdjęcie (ostatnie dodane) jako plik do wniosku online, np. przez gov.pl:
+  // 600 DPI -> 35×45 mm daje 827×1063 px (minimum urzędowe to 492×633 px, limit pliku 2,5 MB)
+  const generateSinglePhoto = useCallback(async () => {
+    const last = sheetImages[sheetImages.length - 1];
+    if (!last) return null;
+    const img = await createImage(last.image);
+    const photoDpi = 600;
+    const widthMm = last.sizeMm?.widthMm || 35;
+    const heightMm = last.sizeMm?.heightMm || Math.round(widthMm / last.aspectRatio);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(cmToPx(widthMm / 10, photoDpi));
+    canvas.height = Math.round(cmToPx(heightMm / 10, photoDpi));
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingQuality = "high";
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
+  }, [sheetImages]);
+
+  const handleDownloadClick = () => startPayment(generateSheet().then((r) => r.blob), "sheet");
+  const handleSinglePhotoClick = () => startPayment(generateSinglePhoto(), "photo");
+
+  // kind: "sheet" (arkusz do druku) albo "photo" (samo zdjęcie) - przekazywany do strony po płatności,
+  // żeby plik dostał właściwą nazwę
+  const startPayment = async (blobPromise, kind) => {
     if (!sheetImages.length) return;
 
     try {
       setIsUploading(true);
-      const { blob } = await generateSheet();
+      const blob = await blobPromise;
 
       if (!blob) {
         alert(t("sheet_generate_error", "Nie udało się wygenerować arkusza."));
@@ -244,7 +269,7 @@ const SheetManager = ({
       }
 
       const formData = new FormData();
-      formData.append("image", blob, "photo_sheet.jpg");
+      formData.append("image", blob, kind === "photo" ? "photo.jpg" : "photo_sheet.jpg");
 
       const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       let downloadResp = null;
@@ -278,6 +303,7 @@ const SheetManager = ({
       const gclid = localStorage.getItem("gclid");
 
       let redirect_url = `${window.location.origin}/#/download-success?token=${token}`;
+      if (kind === "photo") redirect_url += "&type=photo";
 
       if (gclid) {
         redirect_url += `&gclid=${encodeURIComponent(gclid)}`;
@@ -357,6 +383,15 @@ const SheetManager = ({
           <Button variant="contained" color="success" onClick={handleDownloadClick} disabled={isUploading}>
             {isUploading ? t("uploading", "Wysyłam...") : t("download_sheet", "Download Sheet")}
           </Button>
+        </Box>
+
+        <Box sx={{ textAlign: "center", mb: 3 }}>
+          <Button variant="outlined" color="success" onClick={handleSinglePhotoClick} disabled={isUploading}>
+            {t("download_single_photo", "Pobierz samo zdjęcie (plik do wniosku online)")}
+          </Button>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            {t("download_single_photo_info", "Pojedyncze zdjęcie JPG bez arkusza, np. do wniosku przez gov.pl.")}
+          </Typography>
         </Box>
 
         <Box

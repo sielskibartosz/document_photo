@@ -23,6 +23,8 @@
     "duplicate_photo":  "Foto duplizieren",
     "clear_sheet":  "Blatt leeren",
     "download_sheet":  "Blatt herunterladen",
+    "download_single_photo": "Nur das Foto herunterladen (Datei für Online-Antrag)",
+    "download_single_photo_info": "Ein einzelnes JPG-Foto ohne Druckbogen, z. B. für einen Online-Antrag.",
     "uploading":  "Wird hochgeladen...",
     "invalid_aspect":  "Format XX/YY verwenden",
     "remove_bg_error":  "Fehler beim Entfernen des Hintergrunds",

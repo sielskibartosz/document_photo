@@ -15,6 +15,7 @@ import FeedbackViewPage from "./pages/FeedbackViewPage";
 import FotoTipsPage from "./pages/FotoTipsPage";
 import ResidenceCardPage from "./pages/ResidenceCardPage";
 import DocumentLandingPage from "./pages/DocumentLandingPage";
+import SiteFooter from "./components/SiteFooter";
 import { SheetProvider } from "./context/SheetContext";
 import { appLangFromPath } from "./utils/localizedRoutes";
 
@@ -83,6 +84,8 @@ function App() {
             <Route path="/uk" element={<HomePage />} />
             <Route path="/uk/karta-pobytu" element={<ResidenceCardPage />} />
           </Routes>
+
+          <SiteFooter lang={i18n.language?.split("-")[0]} />
 
           <CookiesBanner />
         </Router>
