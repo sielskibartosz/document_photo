@@ -14,6 +14,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import FeedbackViewPage from "./pages/FeedbackViewPage";
 import FotoTipsPage from "./pages/FotoTipsPage";
 import ResidenceCardPage from "./pages/ResidenceCardPage";
+import DocumentLandingPage from "./pages/DocumentLandingPage";
 import { SheetProvider } from "./context/SheetContext";
 import { appLangFromPath } from "./utils/localizedRoutes";
 
@@ -73,6 +74,10 @@ function App() {
             <Route path="/feedback/view/:key" element={<FeedbackViewPage />} />
             <Route path="/foto-tips" element={<FotoTipsPage />} />
             <Route path="/karta-pobytu" element={<ResidenceCardPage />} />
+            <Route path="/zdjecie-do-paszportu" element={<DocumentLandingPage />} />
+            <Route path="/szablon-zdjecia-do-dowodu" element={<DocumentLandingPage />} />
+            <Route path="/zdjecie-do-legitymacji" element={<DocumentLandingPage />} />
+            <Route path="/zdjecie-do-prawa-jazdy" element={<DocumentLandingPage />} />
             <Route path="/en" element={<HomePage />} />
             <Route path="/en/residence-card" element={<ResidenceCardPage />} />
             <Route path="/uk" element={<HomePage />} />

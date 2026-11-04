@@ -21,7 +21,8 @@
     "h1": "Jak działa PhotoIDCreator",
     "paragraphs": [
       "Wybierz rodzaj dokumentu lub własny rozmiar, wgraj zdjęcie i dopasuj kadr. Aplikacja usunie tło, ułoży zdjęcia na arkuszu w wybranym formacie papieru, a po opłaceniu pobierzesz gotowy plik JPG do druku."
-    ]
+    ],
+    "i18n": "how_it_works"
   },
   "/id-requirements": {
     "title": "Wymagania zdjęcia do dowodu i paszportu – PhotoIDCreator",
@@ -29,7 +30,8 @@
     "h1": "Wymagania zdjęcia do dowodu osobistego i paszportu",
     "paragraphs": [
       "Zdjęcie do dowodu osobistego i paszportu musi mieć wymiary 35×45 mm, jasne i jednolite tło, a twarz powinna być wyraźna, dobrze oświetlona i skierowana na wprost. Sprawdź przykłady poprawnych i niepoprawnych zdjęć."
-    ]
+    ],
+    "i18n": "idRequirements"
   },
   "/foto-tips": {
     "title": "Jak zrobić dobre zdjęcie do dokumentu telefonem – PhotoIDCreator",
@@ -37,7 +39,8 @@
     "h1": "Wskazówki: jak zrobić zdjęcie do dokumentu telefonem",
     "paragraphs": [
       "Stań przodem do okna lub źródła światła, na tle jasnej ściany. Trzymaj telefon na wysokości oczu, w odległości około 1–1,5 metra, i zrób zdjęcie w dobrej jakości, bez filtrów."
-    ]
+    ],
+    "i18n": "foto_tips"
   },
   "/privacy-policy": {
     "title": "Polityka prywatności – PhotoIDCreator",
@@ -112,6 +115,176 @@
       "Фото для заяви на карту побиту (karta pobytu) має відповідати тим самим вимогам, що й фото на польське посвідчення особи: розмір 35×45 мм, світлий однотонний фон, обличчя прямо, нейтральний вираз, фото зроблене не раніше ніж за 6 місяців до подання заяви.",
       "Сфотографуйтеся телефоном, і PhotoIDCreator обріже фото до потрібного розміру, прибере фон і розмістить його на аркуші 10×15 см, який можна надрукувати в будь-якому фотосалоні."
     ]
+  },
+  "/zdjecie-do-paszportu": {
+    "title": "Zdjęcie do paszportu online 35×45 – PhotoIDCreator",
+    "description": "Zrób zdjęcie do paszportu telefonem. PhotoIDCreator przytnie je do 35×45 mm, wyrówna tło i przygotuje arkusz 10×15 do druku – także dla Polaków za granicą.",
+    "h1": "Zdjęcie do paszportu online",
+    "paragraphs": [
+      "Zdjęcie do polskiego paszportu ma takie same wymagania jak zdjęcie do dowodu osobistego: 35×45 mm, jasne jednolite tło i twarz na wprost. Zrób je telefonem w domu, a PhotoIDCreator przytnie je do wymaganego rozmiaru, usunie tło i przygotuje arkusz do druku.",
+      "To wygodne rozwiązanie także dla Polaków mieszkających za granicą, którzy składają wniosek o paszport w konsulacie – arkusz 10×15 cm wydrukujesz w każdym punkcie foto."
+    ],
+    "sections": [
+      {
+        "h2": "Wymagania zdjęcia do paszportu",
+        "paragraphs": [
+          "Zdjęcie do paszportu ma dokładnie te same wymagania co zdjęcie do dowodu osobistego, więc jedno zdjęcie wystarczy do obu dokumentów."
+        ],
+        "link": [
+          "/id-requirements",
+          "Zobacz wymagania zdjęcia do dowodu z przykładami"
+        ]
+      },
+      {
+        "h2": "Zdjęcie do paszportu dziecka",
+        "paragraphs": [
+          "Zdjęcie dziecka również musi mieć 35×45 mm i jasne tło. Niemowlę najłatwiej sfotografować z góry, kładąc je na jasnym prześcieradle. U małych dzieci wymagania co do wyrazu twarzy są łagodniejsze, ale twarz powinna być dobrze widoczna."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Czy zdjęcie do paszportu jest takie samo jak do dowodu?",
+        "a": "Tak. W Polsce zdjęcie do paszportu i dowodu osobistego ma te same wymagania: 35×45 mm, jasne tło, twarz zajmująca 70–80% zdjęcia. Jedno zdjęcie wystarczy do obu dokumentów."
+      },
+      {
+        "q": "Czy mogę zrobić zdjęcie do paszportu w domu?",
+        "a": "Tak. Wystarczy telefon, jasna ściana i dobre światło z przodu (np. okno). PhotoIDCreator przytnie zdjęcie i zamieni tło na jednolite."
+      },
+      {
+        "q": "Ile kosztuje przygotowanie zdjęcia?",
+        "a": "Wgranie zdjęcia, kadrowanie, usunięcie tła i podgląd arkusza nie wymagają rejestracji. Płacisz jednorazowo 8 zł dopiero za pobranie gotowego arkusza w wysokiej rozdzielczości."
+      },
+      {
+        "q": "Gdzie wydrukować arkusz?",
+        "a": "Arkusz 10×15 cm wydrukujesz w dowolnym punkcie foto lub automacie, np. w Rossmannie, albo w domu na papierze fotograficznym. Drukuj w skali 100%, bez dopasowywania do strony, żeby zdjęcia miały dokładnie 35×45 mm."
+      }
+    ],
+    "cta": "Zrób zdjęcie teraz"
+  },
+  "/szablon-zdjecia-do-dowodu": {
+    "title": "Szablon zdjęcia do dowodu 10×15 do druku – PhotoIDCreator",
+    "description": "Gotowy arkusz zdjęć do dowodu 35×45 mm w formacie 10×15 cm, 13×18 lub A4. Wgraj zdjęcie, a aplikacja przytnie je i ułoży na szablonie do wydruku.",
+    "h1": "Szablon zdjęcia do dowodu 10×15 do wydruku",
+    "paragraphs": [
+      "Zamiast ręcznie układać zdjęcia w programie graficznym, wgraj jedno zdjęcie, a PhotoIDCreator przytnie je do 35×45 mm i ułoży kilka kopii na arkuszu w wybranym formacie papieru.",
+      "Arkusz 10×15 cm to standardowy format odbitki – wydrukujesz go w punkcie foto, np. w Rossmannie, i potniesz na pojedyncze zdjęcia do dowodu, paszportu czy legitymacji."
+    ],
+    "sections": [
+      {
+        "h2": "Dostępne formaty arkusza",
+        "list": [
+          "10×15 cm – standardowa odbitka w punkcie foto",
+          "13×18 cm",
+          "A4 – do drukarki domowej",
+          "Inne formaty papieru fotograficznego"
+        ]
+      },
+      {
+        "h2": "Jak wydrukować zdjęcia w prawidłowym rozmiarze",
+        "paragraphs": [
+          "Przy zamawianiu odbitki wybierz format zgodny z arkuszem (np. 10×15 cm) i wyłącz opcję przycinania lub dopasowania kadru. Drukując w domu, ustaw skalę 100% – tylko wtedy każde zdjęcie będzie miało dokładnie 35×45 mm."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Ile zdjęć do dowodu mieści się na arkuszu 10×15?",
+        "a": "Na arkuszu 10×15 cm mieści się kilka zdjęć 35×45 mm – wystarczająco do dowodu, paszportu i zapasowych kopii. Podgląd arkusza zobaczysz przed pobraniem."
+      },
+      {
+        "q": "Czy mogę dodać na jeden arkusz różne zdjęcia?",
+        "a": "Tak. Możesz dodać do arkusza kilka zdjęć, np. dla różnych członków rodziny albo w różnych rozmiarach."
+      },
+      {
+        "q": "Ile kosztuje przygotowanie zdjęcia?",
+        "a": "Wgranie zdjęcia, kadrowanie, usunięcie tła i podgląd arkusza nie wymagają rejestracji. Płacisz jednorazowo 8 zł dopiero za pobranie gotowego arkusza w wysokiej rozdzielczości."
+      },
+      {
+        "q": "Gdzie wydrukować arkusz?",
+        "a": "Arkusz 10×15 cm wydrukujesz w dowolnym punkcie foto lub automacie, np. w Rossmannie, albo w domu na papierze fotograficznym. Drukuj w skali 100%, bez dopasowywania do strony, żeby zdjęcia miały dokładnie 35×45 mm."
+      }
+    ],
+    "cta": "Zrób zdjęcie teraz"
+  },
+  "/zdjecie-do-legitymacji": {
+    "title": "Zdjęcie do legitymacji studenckiej i szkolnej online – PhotoIDCreator",
+    "description": "Przygotuj zdjęcie do legitymacji studenckiej lub szkolnej telefonem: przycięcie do 35×45 mm lub własnego rozmiaru, jasne tło i arkusz do druku.",
+    "h1": "Zdjęcie do legitymacji studenckiej i szkolnej",
+    "paragraphs": [
+      "Większość uczelni i szkół wymaga do legitymacji zdjęcia takiego jak do dowodu osobistego: 35×45 mm, jasne tło, twarz na wprost. PhotoIDCreator przytnie zdjęcie z telefonu do tego rozmiaru, usunie tło i przygotuje arkusz do druku.",
+      "Jeśli Twoja szkoła lub uczelnia wymaga innego wymiaru, wybierz zakładkę z własnym rozmiarem i wpisz go w milimetrach."
+    ],
+    "sections": [
+      {
+        "h2": "Wymagania zdjęcia do legitymacji",
+        "list": [
+          "Najczęściej 35×45 mm – sprawdź wymagania w swoim dziekanacie lub sekretariacie.",
+          "Jasne, jednolite tło.",
+          "Twarz na wprost, dobrze oświetlona, bez nakrycia głowy.",
+          "Aktualne zdjęcie, bez filtrów i retuszu zmieniającego wygląd."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Jaki rozmiar ma zdjęcie do legitymacji studenckiej?",
+        "a": "Na większości uczelni 35×45 mm, czyli tyle samo co zdjęcie do dowodu. Niektóre uczelnie przyjmują zdjęcie jako plik w systemie elektronicznym – wtedy sprawdź wymagania na stronie uczelni."
+      },
+      {
+        "q": "Czy mogę ustawić inny rozmiar zdjęcia?",
+        "a": "Tak. W zakładce z własnym rozmiarem wpiszesz dowolny wymiar w milimetrach, a aplikacja przytnie zdjęcie do tych proporcji."
+      },
+      {
+        "q": "Ile kosztuje przygotowanie zdjęcia?",
+        "a": "Wgranie zdjęcia, kadrowanie, usunięcie tła i podgląd arkusza nie wymagają rejestracji. Płacisz jednorazowo 8 zł dopiero za pobranie gotowego arkusza w wysokiej rozdzielczości."
+      },
+      {
+        "q": "Gdzie wydrukować arkusz?",
+        "a": "Arkusz 10×15 cm wydrukujesz w dowolnym punkcie foto lub automacie, np. w Rossmannie, albo w domu na papierze fotograficznym. Drukuj w skali 100%, bez dopasowywania do strony, żeby zdjęcia miały dokładnie 35×45 mm."
+      }
+    ],
+    "cta": "Zrób zdjęcie teraz"
+  },
+  "/zdjecie-do-prawa-jazdy": {
+    "title": "Zdjęcie do prawa jazdy online 35×45 – PhotoIDCreator",
+    "description": "Zrób zdjęcie do prawa jazdy telefonem. Aplikacja przytnie je do 35×45 mm, wyrówna tło i przygotuje arkusz 10×15 do druku.",
+    "h1": "Zdjęcie do prawa jazdy online",
+    "paragraphs": [
+      "Zdjęcie do prawa jazdy w Polsce ma te same wymagania co zdjęcie do dowodu osobistego: 35×45 mm, jasne jednolite tło, twarz na wprost i neutralny wyraz twarzy. Zrób je telefonem, a PhotoIDCreator przygotuje je do druku.",
+      "Zdjęcie przyda się przy wniosku o pierwsze prawo jazdy (profil kandydata na kierowcę, PKK) i przy wymianie dokumentu."
+    ],
+    "sections": [
+      {
+        "h2": "Wymagania zdjęcia do prawa jazdy",
+        "paragraphs": [
+          "Zdjęcie do prawa jazdy ma te same wymagania co zdjęcie do dowodu osobistego, więc możesz użyć tego samego zdjęcia."
+        ],
+        "link": [
+          "/id-requirements",
+          "Zobacz wymagania zdjęcia do dowodu z przykładami"
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Czy zdjęcie do prawa jazdy jest takie samo jak do dowodu?",
+        "a": "Tak, obowiązują te same wymagania: 35×45 mm, jasne tło, twarz na wprost. Możesz użyć tego samego zdjęcia."
+      },
+      {
+        "q": "Czy w prawie jazdy mogę mieć okulary?",
+        "a": "Tak, jeśli szkła nie są przyciemnione, nie odbijają światła, a oczy są dobrze widoczne."
+      },
+      {
+        "q": "Ile kosztuje przygotowanie zdjęcia?",
+        "a": "Wgranie zdjęcia, kadrowanie, usunięcie tła i podgląd arkusza nie wymagają rejestracji. Płacisz jednorazowo 8 zł dopiero za pobranie gotowego arkusza w wysokiej rozdzielczości."
+      },
+      {
+        "q": "Gdzie wydrukować arkusz?",
+        "a": "Arkusz 10×15 cm wydrukujesz w dowolnym punkcie foto lub automacie, np. w Rossmannie, albo w domu na papierze fotograficznym. Drukuj w skali 100%, bez dopasowywania do strony, żeby zdjęcia miały dokładnie 35×45 mm."
+      }
+    ],
+    "cta": "Zrób zdjęcie teraz"
   },
   "/download-success": {
     "title": "Pobranie zakończone – PhotoIDCreator",

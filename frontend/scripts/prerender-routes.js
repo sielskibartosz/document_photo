@@ -16,6 +16,10 @@ const NAV = {
   pl: [
     ["/", "Zdjęcie do dowodu online"],
     ["/id-requirements", "Wymagania zdjęcia do dowodu"],
+    ["/zdjecie-do-paszportu", "Zdjęcie do paszportu"],
+    ["/szablon-zdjecia-do-dowodu", "Szablon zdjęcia do dowodu 10×15"],
+    ["/zdjecie-do-legitymacji", "Zdjęcie do legitymacji"],
+    ["/zdjecie-do-prawa-jazdy", "Zdjęcie do prawa jazdy"],
     ["/karta-pobytu", "Zdjęcie do karty pobytu"],
     ["/how-it-works", "Jak to działa"],
     ["/foto-tips", "Jak zrobić zdjęcie telefonem"],
@@ -52,11 +56,40 @@ function setMeta(html, attr, key, value) {
   return replaceOnce(html, pattern, `<meta ${attr}="${key}" content="${escapeHtml(value)}"/>`, `meta ${key}`);
 }
 
+// Podstrony "Jak to działa", "Wymagania" i "Wskazówki" mają treść w tłumaczeniach (locales/pl) -
+// wstawiamy do HTML tę samą treść, którą pokazuje aplikacja, żeby Google widział całą stronę.
+const PL = require("../src/locales/pl/translation.json");
+
+function translationContent(key) {
+  const t = key && PL[key];
+  if (!t) return [];
+  const parts = [];
+  for (const text of [t.subtitle, t.header]) if (text) parts.push(`<p>${escapeHtml(text)}</p>`);
+  const items = (t.steps || t.list || []).map((item) =>
+    typeof item === "string" ? escapeHtml(item) : `<strong>${escapeHtml(item.primary)}</strong>: ${escapeHtml(item.secondary)}`
+  );
+  if (t.final_step) items.push(escapeHtml(t.final_step));
+  if (items.length) parts.push(`<ol>${items.map((li) => `<li>${li}</li>`).join("")}</ol>`);
+  if (t.footer) parts.push(`<p>${escapeHtml(t.footer)}</p>`);
+  return parts;
+}
+
 function renderContent(page, lang) {
   if (!page.h1) return "";
   const parts = [`<h1>${escapeHtml(page.h1)}</h1>`];
   for (const p of page.paragraphs || []) parts.push(`<p>${escapeHtml(p)}</p>`);
   if (page.list) parts.push(`<ul>${page.list.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}</ul>`);
+  parts.push(...translationContent(page.i18n));
+  for (const section of page.sections || []) {
+    parts.push(`<h2>${escapeHtml(section.h2)}</h2>`);
+    for (const p of section.paragraphs || []) parts.push(`<p>${escapeHtml(p)}</p>`);
+    if (section.list) parts.push(`<ul>${section.list.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}</ul>`);
+    if (section.link) parts.push(`<p><a href="${section.link[0]}">${escapeHtml(section.link[1])}</a></p>`);
+  }
+  if (page.faq) {
+    parts.push(`<h2>Najczęstsze pytania</h2>`);
+    for (const { q, a } of page.faq) parts.push(`<h3>${escapeHtml(q)}</h3><p>${escapeHtml(a)}</p>`);
+  }
   parts.push(`<nav><ul>${NAV[lang].map(([href, label]) => `<li><a href="${href}">${escapeHtml(label)}</a></li>`).join("")}</ul></nav>`);
   return `<main style="max-width:720px;margin:0 auto;padding:24px 16px;font-family:sans-serif">${parts.join("")}</main>`;
 }
@@ -71,6 +104,21 @@ function alternateLinks(page) {
   const polish = versions.find(([, p]) => !p.lang);
   if (polish) links.push(`<link rel="alternate" hreflang="x-default" href="${SITE + polish[0]}"/>`);
   return links.join("");
+}
+
+// dane strukturalne FAQPage - Google może pokazać pytania bezpośrednio w wynikach wyszukiwania
+function faqJsonLd(page) {
+  if (!page.faq) return "";
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: page.faq.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+  return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`;
 }
 
 function renderPage(template, route, page) {
@@ -90,7 +138,7 @@ function renderPage(template, route, page) {
 
   const headExtra = page.noindex
     ? `<meta name="robots" content="noindex"/>`
-    : `<link rel="canonical" href="${url}"/>${alternateLinks(page)}`;
+    : `<link rel="canonical" href="${url}"/>${alternateLinks(page)}${faqJsonLd(page)}`;
   html = replaceOnce(html, /<\/head>/, `${headExtra}</head>`, "</head>");
   html = replaceOnce(html, /<div id="root"><\/div>/, `<div id="root">${renderContent(page, lang)}</div>`, "#root");
   return html;
